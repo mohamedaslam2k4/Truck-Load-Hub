@@ -23,10 +23,10 @@ TruckLoad Hub is a modern logistics and freight-matching platform designed to br
 
 ## 🛠️ Technology Stack
 
-* **Frontend:** React.js / Next.js (Tailwind CSS)
-* **Backend:** Node.js (Express) or Python (FastAPI)
+* **Frontend:** React.js 
+* **Backend:**  Python (FastAPI)
 * **Database:** PostgreSQL / MongoDB
-* **Authentication:** JWT Auth with Role-Based Access Control (RBAC)
+* **Authentication:**  Auth with Role-Based Access Control (RBAC)
 
 ## 📦 Installation & Setup
 
