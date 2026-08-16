@@ -13,11 +13,10 @@ app = FastAPI()
 
 # 1. CORS Configuration (Keep the exact production URL)
 origins = [
-    "https://onrender.com",  # Production frontend URL
+    "https://truck-load-hub.onrender.com",  # Fix: Must include 'truck-load-hub'
     "http://localhost:5173",                # Local testing
     "http://127.0.0.1:5173"
 ]
-
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
