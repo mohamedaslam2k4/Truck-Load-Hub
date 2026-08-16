@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import Card from "../../components/Card";
+import { API_URL } from "../../api"; 
+
 
 function MyDeals() {
   const [deals, setDeals] = useState([]);
@@ -17,7 +19,7 @@ function MyDeals() {
     }
     try {
       setLoading(true);
-      const response = await fetch(`http://127.0.0.1:8000/deals/driver/${user.id}`);
+      const response = await fetch(`${API_URL}/deals/driver/${user.id}`);
       const data = await response.json(); if (!response.ok) {
         throw new Error(data.detail || "Failed to fetch deals");
       } setDeals(data);
@@ -36,7 +38,7 @@ function MyDeals() {
     const confirmComplete = window.confirm("Are you sure you want to mark this trip as completed?");
     if (!confirmComplete) return; try {
       setCompletingDeal(dealId);
-      const response = await fetch(`http://127.0.0.1:8000/deals/${dealId}/complete`, {method: "PUT", headers: { "Content-Type": "application/json" },});
+      const response = await fetch(`${API_URL}/deals/${dealId}/complete`, {method: "PUT", headers: { "Content-Type": "application/json" },});
 
       const data = await response.json();
       if (!response.ok) {
