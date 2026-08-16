@@ -12,7 +12,7 @@ function AvailableLoads() {
     setLoading(true);
 
     try {
-      const response = await fetch("${API_URL}/driver/available-loads");
+      const response = await fetch(`${API_URL}/driver/available-loads`);
       const data = await response.json();
 
       if (!response.ok) {throw new Error(data.detail || "Failed to fetch available loads");}
@@ -71,7 +71,7 @@ function AvailableLoads() {
 
     // send the deal to backend
     try {
-      const response = await fetch("${API_URL}/driver/deals", {
+      const response = await fetch(`${API_URL}/driver/deals`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ loadId: load.id, driverId: user.id,  dealPrice: numericPrice,  }), });
