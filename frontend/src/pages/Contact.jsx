@@ -67,7 +67,7 @@ function Contact() {
 
     try {
       // Dynamic request using the central API_URL
-      const response = await fetch(`${API_URL}/contact/`, {
+      const response = await fetch(`${API_URL}/contact`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
