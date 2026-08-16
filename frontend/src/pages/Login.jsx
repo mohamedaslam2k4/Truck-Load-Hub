@@ -6,7 +6,6 @@ function Login() {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({ email: "", password: "" });
 
-  // Handle input changes
   const handleChange = (e) => {
     setFormData({
       ...formData,
@@ -14,57 +13,52 @@ function Login() {
     });
   };
 
-  // Handle login
-   // Handle login
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
-      const handleSubmit = async (e) => {
-  e.preventDefault();
+      const rawUrl = import.meta.env.VITE_API_BASE_URL || "https://truck-load-hub-server.onrender.com";
+      const API_BASE_URL = rawUrl.replace(/\/$/, "");
 
-  try {
-    const rawUrl = import.meta.env.VITE_API_BASE_URL || "https://truck-load-hub-server.onrender.com";
-    const API_BASE_URL = rawUrl.replace(/\/$/, ""); // Strip trailing slash
+      const response = await fetch(`${API_BASE_URL}/auth/login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: formData.email.trim(),
+          password: formData.password,
+        }),
+      });
 
-    const response = await fetch(`${API_BASE_URL}/auth/login`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        email: formData.email.trim(),
-        password: formData.password,
-      }),
-    });
+      const data = await response.json();
 
-    const data = await response.json();
+      if (!response.ok) {
+        alert(data.detail || "Login failed");
+        return;
+      }
 
-    if (!response.ok) {
-      alert(data.detail || "Login failed");
-      return;
+      alert("Login successfully!");
+
+      const user = data.user;
+      localStorage.setItem("user", JSON.stringify(user));
+
+      switch (user.role) {
+        case "DRIVER":
+          navigate("/driver");
+          break;
+        case "LOADER":
+          navigate("/loader");
+          break;
+        case "ADMIN":
+          navigate("/admin");
+          break;
+        default:
+          alert("Invalid user role");
+      }
+    } catch (error) {
+      console.error("Login error:", error);
+      alert("Unable to connect to server");
     }
-    alert("Login successfully!");
-
-    const user = data.user;
-    localStorage.setItem("user", JSON.stringify(user));
-
-    switch (user.role) {
-      case "DRIVER":
-        navigate("/driver");
-        break;
-      case "LOADER":
-        navigate("/loader");
-        break;
-      case "ADMIN":
-        navigate("/admin");
-        break;
-      default:
-        alert("Invalid user role");
-    }
-  } catch (error) {
-    console.error("Login error:", error);
-    alert("Unable to connect to server");
-  }
-};
+  };
 
   return (
     <div className="auth-page">
