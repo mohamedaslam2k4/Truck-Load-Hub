@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react";
 import Card from "../../components/Card";
+import { API_URL } from "../../api"; 
+
 
 function ManageLoads() {
   //  Set default state to false to hide form initially
@@ -28,7 +30,7 @@ function ManageLoads() {
     if (!loaderId) return;
     try {
       setLoading(true);
-      const response = await fetch(`http://localhost:8000/loads/loader/${loaderId}`);
+      const response = await fetch(`${API_URL}/loads/loader/${loaderId}`);
 
       if (!response.ok) {
         throw new Error("Failed to fetch loads");
@@ -70,7 +72,7 @@ function ManageLoads() {
     };
 
     try {
-      const response = await fetch("http://localhost:8000/loads", { method: "POST", headers: { "Content-Type": "application/json" },  body: JSON.stringify(payload),});
+      const response = await fetch("${API_URL}/loads", { method: "POST", headers: { "Content-Type": "application/json" },  body: JSON.stringify(payload),});
 
       const data = await response.json();
 
@@ -114,7 +116,7 @@ function ManageLoads() {
 
    //loads update
     try {
-      const response = await fetch(`http://localhost:8000/loads/${loadId}/cancel`, { method: "PUT" });
+      const response = await fetch(`${API_URL}/loads/${loadId}/cancel`, { method: "PUT" });
 
       if (!response.ok) {
         const data = await response.json();
