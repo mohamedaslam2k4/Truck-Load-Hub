@@ -1,33 +1,39 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.routes import admin, auth, contact, loader, driver, deals
+
+# Change your imports to look like this (explicit files):
+from app.routes.admin import router as admin_router
+from app.routes.auth import router as auth_router
+from app.routes.contact import router as contact_router
+from app.routes.loader import router as loader_router
+from app.routes.driver import router as driver_router
+from app.routes.deals import router as deals_router
 
 app = FastAPI()
 
-# 1. Define allowed origins explicitly
+# 1. CORS Configuration (Keep the exact production URL)
 origins = [
-    "https://truck-load-hub.onrender.com",  # Your production frontend
-    "http://localhost:5173",               # Your local development (Vite)
+    "https://onrender.com",  # Production frontend URL
+    "http://localhost:5173",                # Local testing
     "http://127.0.0.1:5173"
 ]
 
-# 2. Apply the middleware with the explicit origins list
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,  # Changed from ["*"]
+    allow_origins=origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# routers
-app.include_router(admin.router)
-app.include_router(auth.router)
-app.include_router(contact.router)
-app.include_router(deals.router)
-app.include_router(driver.router)
-app.include_router(loader.router)
+# 2. Update the router references to use the explicitly renamed variables
+app.include_router(auth_router)    # Placing auth at the top avoids route conflicts
+app.include_router(admin_router)
+app.include_router(contact_router)
+app.include_router(deals_router)
+app.include_router(driver_router)
+app.include_router(loader_router)
 
 @app.get("/")
 def root():
-    return { "message": "TL Hub API is running"}
+    return {"message": "TL Hub API is running"}
