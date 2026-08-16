@@ -4,7 +4,7 @@ from sqlalchemy.orm import Session
 from sqlalchemy import text
 from app.database import get_db
 
-router = APIRouter(prefix="/deals", tags=["Deals"])
+router = APIRouter(tags=["Deals"])
 
 # get driver deals ( to join driver deatils with truck detaisl)
 @router.get("/driver/{driver_id}")
