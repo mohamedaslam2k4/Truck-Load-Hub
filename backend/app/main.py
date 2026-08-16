@@ -10,13 +10,15 @@ from app.routes.loader import router as loader_router
 
 app = FastAPI(title="TruckLoad Hub API")
 
-# 1. Allowed Origins Configuration
+# Updated Allowed Origins: Add local dev URLs alongside production
 origins = [
     "https://truck-load-hub.onrender.com",
     "https://truck-load-hub.onrender.com/",
+    "http://localhost:5173",
+    "http://127.0.0.1:5173",
+    "http://localhost:3000",
 ]
 
-# 2. CORS Middleware
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
@@ -26,14 +28,13 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# 3. Include Routers (Keep prefixes here, remove tags to avoid duplicating router-level tags)
+# Included Routers
 app.include_router(auth_router, prefix="/auth")
 app.include_router(admin_router, prefix="/admin")
 app.include_router(contact_router, prefix="/contact")
 app.include_router(deals_router, prefix="/deals")
 app.include_router(driver_router, prefix="/driver")
 app.include_router(loader_router, prefix="/loader")
-
 
 @app.get("/", tags=["Health"])
 def root():
