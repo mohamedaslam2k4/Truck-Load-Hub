@@ -52,6 +52,7 @@ def register(data: RegisterRequest, db: Session = Depends(get_db)):
 
 # LOGIN
 @router.post("/login")
+@router.post("/login/")
 def login(data: LoginRequest, db: Session = Depends(get_db)):
     user = db.execute(
         text("SELECT id, name, email, password, role, status, city FROM users WHERE email = :email"),
