@@ -1,10 +1,12 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import logo from "/logo.png";
+import { API_URL } from "../api"; // Centralized API import
 
 function Login() {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({ email: "", password: "" });
+  const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
     setFormData({
@@ -15,12 +17,10 @@ function Login() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
 
     try {
-      const rawUrl = import.meta.env.VITE_API_BASE_URL || "https://truck-load-hub-server.onrender.com";
-      const API_BASE_URL = rawUrl.replace(/\/$/, "");
-
-      const response = await fetch(`${API_BASE_URL}/auth/login`, {
+      const response = await fetch(`${API_URL}/auth/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -57,9 +57,10 @@ function Login() {
     } catch (error) {
       console.error("Login error:", error);
       alert("Unable to connect to server");
+    } finally {
+      setLoading(false);
     }
   };
-
   return (
     <div className="auth-page">
       <div className="auth-card">
