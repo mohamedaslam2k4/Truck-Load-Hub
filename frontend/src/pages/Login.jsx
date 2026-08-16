@@ -21,7 +21,7 @@ function Login() {
 
     try {
       // 1. Get the deployed backend URL from environment variables, fallback to local host
-      const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+      const API_BASE_URL =import.meta.env.VITE_API_BASE_URL || "https://truck-load-hub-server.onrender.com";
 
       // 2. Use the variable instead of the hardcoded localhost link
       const response = await fetch(`${API_BASE_URL}/auth/login`, {
