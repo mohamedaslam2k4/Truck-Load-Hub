@@ -34,7 +34,7 @@ app.include_router(admin_router, prefix="/admin")
 app.include_router(contact_router, prefix="/contact")
 app.include_router(deals_router, prefix="/deals")
 app.include_router(driver_router, prefix="/driver")
-app.include_router(loader_router, prefix="/loader")
+app.include_router(loader_router)
 
 @app.get("/", tags=["Health"])
 def root():
