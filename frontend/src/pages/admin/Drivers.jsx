@@ -1,4 +1,6 @@
 import { useEffect, useState } from "react";
+import { API_URL } from "../../api"; 
+
 
 function Drivers() {
   const [drivers, setDrivers] = useState([]);
@@ -8,7 +10,7 @@ function Drivers() {
     try {
       setLoading(true);
 
-      const response = await fetch("http://127.0.0.1:8000/admin/drivers" );
+      const response = await fetch(`${API_URL}/admin/drivers`);
 
       const data = await response.json();
 
