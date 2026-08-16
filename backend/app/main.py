@@ -10,19 +10,12 @@ from app.routes.loader import router as loader_router
 
 app = FastAPI(title="TruckLoad Hub API")
 
-# 1. Allowed Origins Configuration
-origins = [
-    "https://truck-load-hub.onrender.com",
-    "https://truck-load-hub.onrender.com/",
-    "http://localhost:5173",
-    "http://127.0.0.1:5173",
-]
+
 
 # 2. CORS Middleware
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,
-    allow_origin_regex=r"https://.*\.onrender\.com",  # Matches all render dynamic domains
+    allow_origins= allow_headers=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
