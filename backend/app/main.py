@@ -5,8 +5,7 @@ from app.routes import admin, auth, contact, loader, driver, deals
 
 app = FastAPI()
 
-
-# cors (cross origin resorce sharing)=>to allow origins and  prevent error
+# cors (cross origin resource sharing)=>to allow origins and prevent error
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[ 
@@ -19,7 +18,6 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-Use code with caution.
 
 # routers
 app.include_router(admin.router)
