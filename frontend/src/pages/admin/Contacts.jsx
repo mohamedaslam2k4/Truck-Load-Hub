@@ -1,4 +1,6 @@
 import { useEffect, useState } from "react";
+import { API_URL } from "../../api"; 
+
 
 function Contacts() {
   const [contacts, setContacts] = useState([]);
@@ -11,7 +13,7 @@ function Contacts() {
     setLoading(true);
 
     try {
-      const response = await fetch( "http://127.0.0.1:8000/admin/contacts");
+      const response = await fetch( `${API_URL}/admin/contacts`);
       const data = await response.json();
 
       if (!response.ok) {
@@ -34,7 +36,7 @@ function Contacts() {
     setResolvingId(contactId);
 
     try {
-      const response = await fetch( `http://127.0.0.1:8000/admin/contacts/${contactId}/resolve`,
+      const response = await fetch( `${API_URL}/admin/contacts/${contactId}/resolve`,
         {
           method: "PUT",
         });
