@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import Card from "../../components/Card";
+import { API_URL } from "../../api"; 
 
 function AvailableLoads() {
   const [loads, setLoads] = useState([]);
@@ -11,7 +12,7 @@ function AvailableLoads() {
     setLoading(true);
 
     try {
-      const response = await fetch("http://127.0.0.1:8000/driver/available-loads");
+      const response = await fetch("${API_URL}/driver/available-loads");
       const data = await response.json();
 
       if (!response.ok) {throw new Error(data.detail || "Failed to fetch available loads");}
@@ -70,7 +71,7 @@ function AvailableLoads() {
 
     // send the deal to backend
     try {
-      const response = await fetch("http://127.0.0.1:8000/driver/deals", {
+      const response = await fetch("${API_URL}/driver/deals", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ loadId: load.id, driverId: user.id,  dealPrice: numericPrice,  }), });
