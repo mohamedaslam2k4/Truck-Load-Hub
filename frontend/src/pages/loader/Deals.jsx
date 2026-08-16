@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { API_URL } from "../../api"; 
 
 function Deals() {
   const [deals, setDeals] = useState([]);
@@ -20,7 +21,7 @@ function Deals() {
 
     try {
       setLoading(true);
-      const response = await fetch(`http://127.0.0.1:8000/deals/loader/${loaderId}`);
+      const response = await fetch(`${API_URL}/deals/loader/${loaderId}`);
       const data = await response.json();
 
       if (!response.ok) {throw new Error(data.detail || "Failed to fetch deals");}
@@ -41,7 +42,7 @@ function Deals() {
 
     try {
       setProcessingDeal(dealId);
-      const response = await fetch(`http://127.0.0.1:8000/deals/${dealId}/accept`, {method: "PUT",headers: {"Content-Type": "application/json",},});
+      const response = await fetch(`${API_URL}/deals/${dealId}/accept`, {method: "PUT",headers: {"Content-Type": "application/json",},});
 
       const data = await response.json();
 
@@ -65,7 +66,7 @@ function Deals() {
     if (!confirmStart) return;
     try {
       setProcessingDeal(dealId);
-      const response = await fetch(`http://127.0.0.1:8000/deals/${dealId}/start`, { method: "PUT", headers: { "Content-Type": "application/json",}, });
+      const response = await fetch(`${API_URL}/deals/${dealId}/start`, { method: "PUT", headers: { "Content-Type": "application/json",}, });
 
       const data = await response.json();
 
