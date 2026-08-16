@@ -71,6 +71,12 @@ function Register() {
       alert("Phone number must be exactly 10 digits.");
       return false;
     }
+
+    if (!role) {
+      alert("Please select a role.");
+      return false;
+    }
+
     if (formData.password.length < 6) {
       alert("Password must be at least 6 characters long.");
       return false;
@@ -80,6 +86,7 @@ function Register() {
       alert("Passwords do not match.");
       return false;
     }
+
     return true;
   };
 
@@ -88,6 +95,7 @@ function Register() {
     e.preventDefault();
     if (!validateForm()) return;
     setLoading(true);
+
     const payload = {
       name: formData.name.trim(),
       email: formData.email.trim(),
@@ -112,7 +120,7 @@ function Register() {
     try {
       const response = await fetch(`${API_URL}/auth/register`, {
         method: "POST",
-        headers: { "Content-Type": "application/json", },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
 
