@@ -6,7 +6,7 @@ from sqlalchemy.orm import Session
 from app.database import get_db
 from app.schemas import DealCreate
 
-router = APIRouter(prefix="/driver", tags=["Driver"])
+router = APIRouter(tags=["Driver"])
 
 
 # driver root api
