@@ -1,4 +1,6 @@
 import { useEffect, useState } from "react";
+import { API_URL } from "../../api"; 
+
 
 function Loaders() {
   const [loaders, setLoaders] = useState([]);
@@ -12,7 +14,7 @@ function Loaders() {
     try {
       setLoading(true);
 
-      const response = await fetch("http://127.0.0.1:8000/admin/loaders");
+      const response = await fetch(`${API_URL}/admin/loaders`);
 
       const data = await response.json();
 
