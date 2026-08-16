@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import { API_URL } from "../api"; // Central API configuration import
 
 function Contact() {
   const [formData, setFormData] = useState({
@@ -65,7 +66,8 @@ function Contact() {
     };
 
     try {
-      const response = await fetch("http://127.0.0.1:8000/contact/", {
+      // Dynamic request using the central API_URL
+      const response = await fetch(`${API_URL}/contact/`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
