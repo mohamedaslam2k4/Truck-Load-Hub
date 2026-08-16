@@ -15,11 +15,16 @@ function Login() {
   };
 
   // Handle login
+   // Handle login
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
-      const response = await fetch("http://localhost:8000/auth/login", {
+      // 1. Get the deployed backend URL from environment variables, fallback to local host
+      const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
+      // 2. Use the variable instead of the hardcoded localhost link
+      const response = await fetch(`${API_BASE_URL}/auth/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -57,6 +62,7 @@ function Login() {
       alert("Unable to connect to server");
     }
   };
+
 
   return (
     <div className="auth-page">
