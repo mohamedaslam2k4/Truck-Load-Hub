@@ -28,13 +28,13 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# 3. Include Routers
-app.include_router(auth_router, prefix="/auth", tags=["Auth"])
-app.include_router(admin_router, prefix="/admin", tags=["Admin"])
-app.include_router(contact_router, prefix="/contact", tags=["Contact"])
-app.include_router(deals_router, prefix="/deals", tags=["Deals"])
-app.include_router(driver_router, prefix="/driver", tags=["Driver"])
-app.include_router(loader_router, prefix="/loader", tags=["Loader"])
+# 3. Include Routers (Keep prefixes here, remove tags to avoid duplicating router-level tags)
+app.include_router(auth_router, prefix="/auth")
+app.include_router(admin_router, prefix="/admin")
+app.include_router(contact_router, prefix="/contact")
+app.include_router(deals_router, prefix="/deals")
+app.include_router(driver_router, prefix="/driver")
+app.include_router(loader_router, prefix="/loader")
 
 
 @app.get("/", tags=["Health"])
