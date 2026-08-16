@@ -13,7 +13,7 @@ function Contacts() {
     setLoading(true);
 
     try {
-      const response = await fetch( `${API_URL}/admin/contacts`);
+      const response = await fetch(`${API_URL}/admin/contacts`);
       const data = await response.json();
 
       if (!response.ok) {
@@ -36,7 +36,7 @@ function Contacts() {
     setResolvingId(contactId);
 
     try {
-      const response = await fetch( `${API_URL}/admin/contacts/${contactId}/resolve`,
+      const response = await fetch(`${API_URL}/admin/contacts/${contactId}/resolve`,
         {
           method: "PUT",
         });
