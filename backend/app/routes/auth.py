@@ -4,13 +4,12 @@ from sqlalchemy.orm import Session
 from app.database import get_db
 from app.schemas import LoginRequest, RegisterRequest
 
-router = APIRouter(prefix="/auth", tags=["Authentication"])
+# REMOVED prefix="/auth" from APIRouter because main.py already applies prefix="/auth"
+router = APIRouter(tags=["Authentication"])
 
 # REGISTER
-
 @router.post("/register")
 def register(data: RegisterRequest, db: Session = Depends(get_db)):
-    
     if data.role not in ["DRIVER", "LOADER", "ADMIN"]:
         raise HTTPException(status_code=400, detail="Invalid role")
 
@@ -19,15 +18,15 @@ def register(data: RegisterRequest, db: Session = Depends(get_db)):
         raise HTTPException(status_code=400, detail="Email already registered")
 
     try:
-        #user basic details store to db
+        # User basic details store to db
         result = db.execute(
             text("""INSERT INTO users (name, email, phone, password, role, status, city) 
-            VALUES (:name, :email, :phone, :password, :role, 'PENDING', :city)"""),
+                    VALUES (:name, :email, :phone, :password, :role, 'PENDING', :city)"""),
             {"name": data.name, "email": data.email, "phone": data.phone, "password": data.password, "role": data.role, "city": data.city},
         )
         user_id = result.lastrowid
 
-         #user driver profile store to db
+        # Driver profile store to db
         if data.role == "DRIVER":
             db.execute(
                 text("""INSERT INTO driver_profiles (user_id, experience, truck_number, truck_type, capacity, license_number) 
@@ -35,11 +34,11 @@ def register(data: RegisterRequest, db: Session = Depends(get_db)):
                 {"user_id": user_id, "experience": data.experience, "truck_number": data.truckNumber, "truck_type": data.truckType, "capacity": data.capacity, "license_number": data.licenseNumber},
             )
 
-         #user loader profile store to db
+        # Loader profile store to db
         elif data.role == "LOADER":
             db.execute(
                 text("""INSERT INTO loader_profiles (user_id, company_name, contact_person, business_type) 
-                VALUES (:user_id, :company_name, :contact_person, :business_type)"""),
+                        VALUES (:user_id, :company_name, :contact_person, :business_type)"""),
                 {"user_id": user_id, "company_name": data.companyName, "contact_person": data.contactPerson, "business_type": data.businessType},
             )
 
@@ -52,7 +51,6 @@ def register(data: RegisterRequest, db: Session = Depends(get_db)):
 
 # LOGIN
 @router.post("/login")
-@router.post("/login/")
 def login(data: LoginRequest, db: Session = Depends(get_db)):
     user = db.execute(
         text("SELECT id, name, email, password, role, status, city FROM users WHERE email = :email"),
