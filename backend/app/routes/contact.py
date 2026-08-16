@@ -9,7 +9,7 @@ router = APIRouter(tags=["Contact"])
 
 # Added "" alongside "/" to handle both /contact and /contact/ gracefully
 @router.post("")
-@router.post("/")
+
 def create_contact(request: ContactRequest, db: Session = Depends(get_db)):
     db.execute(
         text("INSERT INTO contacts (name, email, phone, message) VALUES (:name, :email, :phone, :message)"),
@@ -24,7 +24,7 @@ def create_contact(request: ContactRequest, db: Session = Depends(get_db)):
     return {"message": "Contact request submitted successfully"}
 
 @router.get("")
-@router.get("/")
+
 def get_contacts(db: Session = Depends(get_db)):
     contacts = db.execute(
         text("SELECT id, name, email, phone, message, created_at FROM contacts ORDER BY created_at DESC")
