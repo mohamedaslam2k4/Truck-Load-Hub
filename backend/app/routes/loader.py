@@ -6,7 +6,7 @@ from sqlalchemy import text
 from app.database import get_db
 from app.schemas import LoadCreate
 
-router = APIRouter(prefix="", tags=["Loader & Loads"])
+router = APIRouter(tags=["Loader & Loads"])
 
 # create loads details to  db 
 @router.post("/loads/", status_code=status.HTTP_201_CREATED)
