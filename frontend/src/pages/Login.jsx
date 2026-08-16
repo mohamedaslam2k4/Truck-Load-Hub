@@ -20,49 +20,51 @@ function Login() {
     e.preventDefault();
 
     try {
-      // 1. Get the deployed backend URL from environment variables, fallback to local host
-      const API_BASE_URL =import.meta.env.VITE_API_BASE_URL || "https://truck-load-hub-server.onrender.com";
+      const handleSubmit = async (e) => {
+  e.preventDefault();
 
-      // 2. Use the variable instead of the hardcoded localhost link
-      const response = await fetch(`${API_BASE_URL}/auth/login`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          email: formData.email.trim(),
-          password: formData.password,
-        }),
-      });
+  try {
+    const rawUrl = import.meta.env.VITE_API_BASE_URL || "https://truck-load-hub-server.onrender.com";
+    const API_BASE_URL = rawUrl.replace(/\/$/, ""); // Strip trailing slash
 
-      const data = await response.json();
+    const response = await fetch(`${API_BASE_URL}/auth/login`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        email: formData.email.trim(),
+        password: formData.password,
+      }),
+    });
 
-      if (!response.ok) {
-        alert(data.detail || "Login failed");
-        return;
-      }
-      alert("Login successfully!");
+    const data = await response.json();
 
-      const user = data.user;
-      localStorage.setItem("user", JSON.stringify(user));
-
-      switch (user.role) {
-        case "DRIVER":
-          navigate("/driver");
-          break;
-        case "LOADER":
-          navigate("/loader");
-          break;
-        case "ADMIN":
-          navigate("/admin");
-          break;
-        default:
-          alert("Invalid user role");
-      }
-    } catch (error) {
-      console.error("Login error:", error);
-      alert("Unable to connect to server");
+    if (!response.ok) {
+      alert(data.detail || "Login failed");
+      return;
     }
-  };
+    alert("Login successfully!");
 
+    const user = data.user;
+    localStorage.setItem("user", JSON.stringify(user));
+
+    switch (user.role) {
+      case "DRIVER":
+        navigate("/driver");
+        break;
+      case "LOADER":
+        navigate("/loader");
+        break;
+      case "ADMIN":
+        navigate("/admin");
+        break;
+      default:
+        alert("Invalid user role");
+    }
+  } catch (error) {
+    console.error("Login error:", error);
+    alert("Unable to connect to server");
+  }
+};
 
   return (
     <div className="auth-page">
