@@ -1,4 +1,6 @@
 import { useEffect, useState } from "react";
+import { API_URL } from "../../api"; 
+
 
 function Verification() {
   const [users, setUsers] = useState([]);
@@ -10,7 +12,7 @@ function Verification() {
   const fetchPendingUsers = async () => {
     try {
       setLoading(true);
-      const response = await fetch( "http://localhost:8000/admin/verification"  );
+      const response = await fetch( `${API_URL}/admin/verification`);
 
       const data = await response.json();
 
@@ -40,7 +42,7 @@ function Verification() {
       setUpdatingId(userId);
 
       // update status send to backend
-      const response = await fetch( `http://localhost:8000/admin/verification/${userId}?status=${status}`,{ method: "PUT", });
+      const response = await fetch( `${API_URL}/admin/verification/${userId}?status=${status}`,{ method: "PUT", });
       
       const data = await response.json();
 
