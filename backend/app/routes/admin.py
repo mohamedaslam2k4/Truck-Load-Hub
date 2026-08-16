@@ -5,7 +5,7 @@ from sqlalchemy import text
 from app.database import get_db
 
 
-router = APIRouter(prefix="/admin", tags=["Admin"])
+router = APIRouter(tags=["Admin"])
 
 # admin dashboard
 
