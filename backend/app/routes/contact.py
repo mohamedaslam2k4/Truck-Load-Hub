@@ -5,10 +5,10 @@ from sqlalchemy.orm import Session
 from app.database import get_db
 from app.schemas import ContactRequest
 
-router = APIRouter(prefix="/contact", tags=["Contact"])
+# Removed prefix="/contact" to prevent /contact/contact/ paths
+router = APIRouter(tags=["Contact"])
 
-# create contact erequest to isnert the db
-
+# create contact request to insert into the db
 @router.post("/")
 def create_contact(request: ContactRequest, db: Session = Depends(get_db)):
     db.execute(
@@ -23,10 +23,7 @@ def create_contact(request: ContactRequest, db: Session = Depends(get_db)):
     db.commit()
     return {"message": "Contact request submitted successfully"}
 
-    
-
-# get all contact reuqest to showing admin dashbaord
-
+# get all contact requests to show in admin dashboard
 @router.get("/")
 def get_contacts(db: Session = Depends(get_db)):
     contacts = db.execute(
