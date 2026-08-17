@@ -1,10 +1,10 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Response
 from sqlalchemy import text
 from sqlalchemy.orm import Session
 from app.database import get_db
 from app.schemas import LoginRequest, RegisterRequest
+from app.auth import create_access_token, get_current_user
 
-# REMOVED prefix="/auth" from APIRouter because main.py already applies prefix="/auth"
 router = APIRouter(tags=["Authentication"])
 
 # REGISTER
@@ -13,7 +13,9 @@ def register(data: RegisterRequest, db: Session = Depends(get_db)):
     if data.role not in ["DRIVER", "LOADER", "ADMIN"]:
         raise HTTPException(status_code=400, detail="Invalid role")
 
-    existing_user = db.execute(text("SELECT id FROM users WHERE email = :email"), {"email": data.email}).first()
+    existing_user = db.execute(
+        text("SELECT id FROM users WHERE email = :email"), {"email": data.email}
+    ).first()
     if existing_user:
         raise HTTPException(status_code=400, detail="Email already registered")
 
@@ -22,7 +24,14 @@ def register(data: RegisterRequest, db: Session = Depends(get_db)):
         result = db.execute(
             text("""INSERT INTO users (name, email, phone, password, role, status, city) 
                     VALUES (:name, :email, :phone, :password, :role, 'PENDING', :city)"""),
-            {"name": data.name, "email": data.email, "phone": data.phone, "password": data.password, "role": data.role, "city": data.city},
+            {
+                "name": data.name,
+                "email": data.email,
+                "phone": data.phone,
+                "password": data.password,
+                "role": data.role,
+                "city": data.city,
+            },
         )
         user_id = result.lastrowid
 
@@ -31,7 +40,14 @@ def register(data: RegisterRequest, db: Session = Depends(get_db)):
             db.execute(
                 text("""INSERT INTO driver_profiles (user_id, experience, truck_number, truck_type, capacity, license_number) 
                         VALUES (:user_id, :experience, :truck_number, :truck_type, :capacity, :license_number)"""),
-                {"user_id": user_id, "experience": data.experience, "truck_number": data.truckNumber, "truck_type": data.truckType, "capacity": data.capacity, "license_number": data.licenseNumber},
+                {
+                    "user_id": user_id,
+                    "experience": data.experience,
+                    "truck_number": data.truckNumber,
+                    "truck_type": data.truckType,
+                    "capacity": data.capacity,
+                    "license_number": data.licenseNumber,
+                },
             )
 
         # Loader profile store to db
@@ -39,7 +55,12 @@ def register(data: RegisterRequest, db: Session = Depends(get_db)):
             db.execute(
                 text("""INSERT INTO loader_profiles (user_id, company_name, contact_person, business_type) 
                         VALUES (:user_id, :company_name, :contact_person, :business_type)"""),
-                {"user_id": user_id, "company_name": data.companyName, "contact_person": data.contactPerson, "business_type": data.businessType},
+                {
+                    "user_id": user_id,
+                    "company_name": data.companyName,
+                    "contact_person": data.contactPerson,
+                    "business_type": data.businessType,
+                },
             )
 
         db.commit()
@@ -49,9 +70,10 @@ def register(data: RegisterRequest, db: Session = Depends(get_db)):
         db.rollback()
         raise HTTPException(status_code=500, detail=str(e))
 
+
 # LOGIN
 @router.post("/login")
-def login(data: LoginRequest, db: Session = Depends(get_db)):
+def login(data: LoginRequest, response: Response, db: Session = Depends(get_db)):
     user = db.execute(
         text("SELECT id, name, email, password, role, status, city FROM users WHERE email = :email"),
         {"email": data.email},
@@ -66,7 +88,48 @@ def login(data: LoginRequest, db: Session = Depends(get_db)):
     if user["status"] == "REJECTED":
         raise HTTPException(status_code=403, detail="Your account has been rejected by admin")
 
+    # Create JWT session token
+    access_token = create_access_token(data={"sub": user["id"], "role": user["role"]})
+
+    # Set secure HttpOnly cookie
+    response.set_cookie(
+        key="session_token",
+        value=access_token,
+        httponly=True,       # Prevents client JavaScript from reading cookie (XSS protection)
+        samesite="lax",      # CSRF protection
+        secure=True,         # Set to True for HTTPS environments
+        max_age=86400        # Cookie duration (1 day)
+    )
+
     return {
         "message": "Login successful",
-        "user": {"id": user["id"], "name": user["name"], "email": user["email"], "role": user["role"], "status": user["status"], "city": user["city"]},
+        "user": {
+            "id": user["id"],
+            "name": user["name"],
+            "email": user["email"],
+            "role": user["role"],
+            "status": user["status"],
+            "city": user["city"],
+        },
+    }
+
+
+# LOGOUT
+@router.post("/logout")
+def logout(response: Response):
+    # Clears the session cookie
+    response.delete_cookie(key="session_token", samesite="lax", secure=True)
+    return {"message": "Logged out successfully"}
+
+
+# ME / SESSION CHECK
+@router.get("/me")
+def get_me(current_user=Depends(get_current_user)):
+    """Used by frontend route guards on page refresh to check if session is active."""
+    return {
+        "id": current_user.id,
+        "name": current_user.name,
+        "email": current_user.email,
+        "role": current_user.role,
+        "status": current_user.status,
     }
