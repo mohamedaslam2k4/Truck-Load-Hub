@@ -105,7 +105,7 @@ function Login() {
           justify-content: flex-end;
           display: flex;
           align-items: center;
-          background: url('https://i.postimg.cc/SsTQDQY8/image.png') no-repeat center center / cover;
+          background: url('/bg.png') no-repeat center center / cover;
           box-sizing: border-box;
           overflow: hidden;
         }
