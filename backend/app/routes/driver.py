@@ -6,6 +6,7 @@ from app.schemas import DealCreate
 
 router = APIRouter(tags=["Driver"])
 
+
 @router.get("/")
 def driver_home():
     return {"message": "Driver API is ready"}
@@ -29,7 +30,7 @@ def get_available_loads(db: Session = Depends(get_db)):
 
 @router.post("/deals", status_code=status.HTTP_201_CREATED)
 def create_deal(data: DealCreate, db: Session = Depends(get_db)):
-    # 1. Validate Driver Profile
+    # 1. Verify that the current driver is authentic and approved
     driver_query = text("""
         SELECT id, name, role, status 
         FROM users 
@@ -37,59 +38,83 @@ def create_deal(data: DealCreate, db: Session = Depends(get_db)):
     """)
     driver = db.execute(driver_query, {"driver_id": data.driverId}).mappings().first()
     if not driver:
-        raise HTTPException(status_code=400, detail="Invalid or unverified driver")
-
-    # 2. Validate Load Eligibility
-    load_query = text("""
-        SELECT id, pickup, destination, min_price, max_price, status, loader_id 
-        FROM loads 
-        WHERE id = :load_id
-    """)
-    load = db.execute(load_query, {"load_id": data.loadId}).mappings().first()
-    if not load:
-        raise HTTPException(status_code=404, detail="Load not found")
-
-    if load["status"] != "AVAILABLE":
-        raise HTTPException(status_code=400, detail="This load is no longer available")
-
-    # 3. Check Financial Boundaries
-    if data.dealPrice < float(load["min_price"]) or data.dealPrice > float(load["max_price"]):
         raise HTTPException(
-            status_code=400, 
-            detail=f"Deal price must be between ₹{load['min_price']} and ₹{load['max_price']}"
+            status_code=status.HTTP_400_BAD_REQUEST, 
+            detail="Invalid or unverified driver profile"
         )
 
-    # 4. Check for Existing Offer Duplicate
-    deal_check_query = text("""
-        SELECT 1 
-        FROM deals 
-        WHERE load_id = :load_id AND driver_id = :driver_id AND status = 'PENDING'
-    """)
-    existing_deal = db.execute(deal_check_query, {"load_id": data.loadId, "driver_id": data.driverId}).scalar()
-    if existing_deal:
-        raise HTTPException(status_code=400, detail="You already have a pending deal for this load")
-
-    # 5. Execute DB Mutations Safely
+    # Begin transactional lifecycle block with protective row locks
     try:
-        # Using RETURNING guarantees identity mapping regardless of DB engine engine variants
+        # 2. Lock and read the row to eliminate concurrency race conditions
+        load_query = text("""
+            SELECT id, pickup, destination, min_price, max_price, status, loader_id 
+            FROM loads 
+            WHERE id = :load_id 
+            FOR UPDATE
+        """)
+        load = db.execute(load_query, {"load_id": data.loadId}).mappings().first()
+        
+        if not load:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND, 
+                detail="Target load profile not found"
+            )
+
+        if load["status"] != "AVAILABLE":
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST, 
+                detail="This load has already been taken or is unavailable"
+            )
+
+        # 3. Validate pricing structure parameters
+        if data.dealPrice < float(load["min_price"]) or data.dealPrice > float(load["max_price"]):
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST, 
+                detail=f"Deal price must be between ₹{load['min_price']} and ₹{load['max_price']}"
+            )
+
+        # 4. Enforce idempotency boundaries (no duplicate pending items)
+        deal_check_query = text("""
+            SELECT 1 
+            FROM deals 
+            WHERE load_id = :load_id AND driver_id = :driver_id AND status = 'PENDING'
+        """)
+        existing_deal = db.execute(deal_check_query, {"load_id": data.loadId, "driver_id": data.driverId}).scalar()
+        if existing_deal:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST, 
+                detail="You have already submitted a pending offer for this load"
+            )
+
+        # 5. Commit mutations atomically
         insert_deal_query = text("""
             INSERT INTO deals (load_id, driver_id, deal_price, status) 
             VALUES (:load_id, :driver_id, :deal_price, 'PENDING')
             RETURNING id
         """)
-        deal_id = db.execute(insert_deal_query, {
+        result = db.execute(insert_deal_query, {
             "load_id": data.loadId, 
             "driver_id": data.driverId, 
             "deal_price": data.dealPrice
-        }).scalar()
+        })
+        
+        # Dual-layer safety lookup for variable engines (Postgres vs MySQL)
+        deal_id = result.scalar() or result.lastrowid
 
         update_load_query = text("UPDATE loads SET status = 'BOOKED' WHERE id = :load_id")
         db.execute(update_load_query, {"load_id": data.loadId})
-        
+
         db.commit()
+
+    except HTTPException:
+        db.rollback()
+        raise
     except Exception:
         db.rollback()
-        raise HTTPException(status_code=500, detail="Failed to safely process deal submission transaction")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, 
+            detail="Transaction failed. Database engine state reverted safely."
+        )
 
     return {
         "message": "Deal request sent successfully", 
