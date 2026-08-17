@@ -1,7 +1,7 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import logo from "/logo.png";
-import { api } from "../api";
+import { API_URL } from "../api";
 
 const initialFormData = {
   name: "",
@@ -21,25 +21,29 @@ const initialFormData = {
 };
 
 function Register() {
+  const navigate = useNavigate();
   const [role, setRole] = useState("");
   const [formData, setFormData] = useState(initialFormData);
+  const [loading, setLoading] = useState(false);
 
+  // handle input change
   const handleChange = (e) => {
     const { name, value } = e.target;
 
     if (name === "phone") {
       const digitsOnly = value.replace(/\D/g, "");
       if (digitsOnly.length > 10) return;
-      setFormData({ ...formData, phone: digitsOnly });
+      setFormData((prev) => ({ ...prev, phone: digitsOnly }));
       return;
     }
 
-    setFormData({
-      ...formData,
+    setFormData((prev) => ({
+      ...prev,
       [name]: value,
-    });
+    }));
   };
 
+  // role change
   const handleRoleChange = (e) => {
     const selectedRole = e.target.value;
     setRole(selectedRole);
@@ -55,6 +59,7 @@ function Register() {
     }));
   };
 
+  // form validate
   const validateForm = () => {
     if (formData.name.trim().length < 2) {
       alert("Name must be at least 2 characters long.");
@@ -66,56 +71,75 @@ function Register() {
       alert("Phone number must be exactly 10 digits.");
       return false;
     }
+
+    if (!role) {
+      alert("Please select a role.");
+      return false;
+    }
+
     if (formData.password.length < 6) {
       alert("Password must be at least 6 characters long.");
       return false;
     }
+
     if (formData.password !== formData.confirmPassword) {
       alert("Passwords do not match.");
       return false;
     }
+
     return true;
   };
 
+  // form submit
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     if (!validateForm()) return;
+    setLoading(true);
+
+    const payload = {
+      name: formData.name.trim(),
+      email: formData.email.trim(),
+      phone: formData.phone.trim(),
+      city: formData.city.trim(),
+      password: formData.password,
+      role: role,
+    };
+
+    if (role === "DRIVER") {
+      payload.experience = formData.experience ? Number(formData.experience) : null;
+      payload.truckNumber = formData.truckNumber?.trim() || "";
+      payload.truckType = formData.truckType || "";
+      payload.capacity = formData.capacity ? Number(formData.capacity) : null;
+      payload.licenseNumber = formData.licenseNumber?.trim() || "";
+    } else if (role === "LOADER") {
+      payload.companyName = formData.companyName?.trim() || "";
+      payload.contactPerson = formData.contactPerson?.trim() || "";
+      payload.businessType = formData.businessType?.trim() || "";
+    }
 
     try {
-      const payload = {
-        name: formData.name.trim(),
-        email: formData.email.trim(),
-        phone: formData.phone.trim(),
-        city: formData.city.trim(),
-        password: formData.password,
-        role: role,
-
-        // driver payload
-        experience: formData.experience ? Number(formData.experience) : null,
-        truckNumber: formData.truckNumber ? formData.truckNumber.trim() : null,
-        truckType: formData.truckType || null,
-        capacity: formData.capacity ? Number(formData.capacity) : null,
-        licenseNumber: formData.licenseNumber ? formData.licenseNumber.trim() : null,
-
-        // loader payload
-        companyName: formData.companyName ? formData.companyName.trim() : null,
-        contactPerson: formData.contactPerson ? formData.contactPerson.trim() : null,
-        businessType: formData.businessType ? formData.businessType.trim() : null,
-      };
-
-      await api("/auth/register", {
+      const response = await fetch(`${API_URL}/auth/register`, {
         method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.detail || "Registration failed");
+      }
 
       alert("Registration successful! Your account is waiting for admin verification.");
 
       setFormData(initialFormData);
       setRole("");
+      navigate("/login");
     } catch (error) {
       console.error("Registration error:", error);
-      alert(error.message || "Registration failed");
+      alert(error.message || "Unable to connect to server");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -133,55 +157,22 @@ function Register() {
         <form onSubmit={handleSubmit}>
           <div className="form-group">
             <label htmlFor="name">Full Name</label>
-            <input
-              type="text"
-              id="name"
-              name="name"
-              placeholder="Enter your name"
-              value={formData.name}
-              onChange={handleChange}
-              required
-            />
+            <input type="text" id="name" name="name" placeholder="Enter your name" value={formData.name} onChange={handleChange} required />
           </div>
 
           <div className="form-group">
             <label htmlFor="email">Email</label>
-            <input
-              type="email"
-              id="email"
-              name="email"
-              placeholder="Enter your email"
-              value={formData.email}
-              onChange={handleChange}
-              required
-            />
+            <input type="email" id="email" name="email" placeholder="Enter your email" value={formData.email} onChange={handleChange} required />
           </div>
 
           <div className="form-group">
             <label htmlFor="phone">Phone</label>
-            <input
-              type="tel"
-              id="phone"
-              name="phone"
-              placeholder="Enter your 10 digit phone number"
-              value={formData.phone}
-              onChange={handleChange}
-              maxLength="10"
-              required
-            />
+            <input type="tel" id="phone" name="phone" placeholder="Enter your 10 digit phone number" value={formData.phone} onChange={handleChange} maxLength="10" required />
           </div>
 
           <div className="form-group">
             <label htmlFor="city">City</label>
-            <input
-              type="text"
-              id="city"
-              name="city"
-              placeholder="Enter your city"
-              value={formData.city}
-              onChange={handleChange}
-              required
-            />
+            <input type="text" id="city" name="city" placeholder="Enter your city" value={formData.city} onChange={handleChange} required />
           </div>
 
           <div className="form-group">
@@ -199,43 +190,18 @@ function Register() {
 
               <div className="form-group">
                 <label htmlFor="experience">Experience (years)</label>
-                <input
-                  type="number"
-                  id="experience"
-                  name="experience"
-                  placeholder="Experience in years"
-                  min="0"
-                  value={formData.experience}
-                  onChange={handleChange}
-                  required
-                />
+                <input type="number" id="experience" name="experience" placeholder="Experience in years" min="0" value={formData.experience} onChange={handleChange} required />
               </div>
 
               <div className="form-group">
                 <label htmlFor="truckNumber">Truck Number</label>
-                <input
-                  type="text"
-                  id="truckNumber"
-                  name="truckNumber"
-                  placeholder="Enter truck number"
-                  value={formData.truckNumber}
-                  onChange={handleChange}
-                  required
-                />
+                <input type="text" id="truckNumber" name="truckNumber" placeholder="Enter truck number" value={formData.truckNumber} onChange={handleChange} required />
               </div>
 
               <div className="form-group">
                 <label htmlFor="truckType">Truck Type</label>
-                <select
-                  id="truckType"
-                  name="truckType"
-                  value={formData.truckType}
-                  onChange={handleChange}
-                  required
-                >
-                  <option value="" disabled>
-                    Select truck type
-                  </option>
+                <select id="truckType" name="truckType" value={formData.truckType} onChange={handleChange} required>
+                  <option value="" disabled>Select truck type</option>
                   <option value="pickup">Pickup Truck</option>
                   <option value="box_truck">Box / Delivery Truck</option>
                   <option value="flatbed">Flatbed Truck</option>
@@ -246,29 +212,12 @@ function Register() {
 
               <div className="form-group">
                 <label htmlFor="capacity">Capacity (tons)</label>
-                <input
-                  type="number"
-                  id="capacity"
-                  name="capacity"
-                  placeholder="Capacity in tons"
-                  min="0"
-                  value={formData.capacity}
-                  onChange={handleChange}
-                  required
-                />
+                <input type="number" id="capacity" name="capacity" placeholder="Capacity in tons" min="0" value={formData.capacity} onChange={handleChange} required />
               </div>
 
               <div className="form-group">
                 <label htmlFor="licenseNumber">License Number</label>
-                <input
-                  type="text"
-                  id="licenseNumber"
-                  name="licenseNumber"
-                  placeholder="Enter license number"
-                  value={formData.licenseNumber}
-                  onChange={handleChange}
-                  required
-                />
+                <input type="text" id="licenseNumber" name="licenseNumber" placeholder="Enter license number" value={formData.licenseNumber} onChange={handleChange} required />
               </div>
             </div>
           )}
@@ -279,82 +228,40 @@ function Register() {
 
               <div className="form-group">
                 <label htmlFor="companyName">Company Name</label>
-                <input
-                  type="text"
-                  id="companyName"
-                  name="companyName"
-                  placeholder="Enter company name"
-                  value={formData.companyName}
-                  onChange={handleChange}
-                  required
-                />
+                <input type="text" id="companyName" name="companyName" placeholder="Enter company name" value={formData.companyName} onChange={handleChange} required />
               </div>
 
               <div className="form-group">
                 <label htmlFor="contactPerson">Contact Person</label>
-                <input
-                  type="text"
-                  id="contactPerson"
-                  name="contactPerson"
-                  placeholder="Enter contact person"
-                  value={formData.contactPerson}
-                  onChange={handleChange}
-                  required
-                />
+                <input type="text" id="contactPerson" name="contactPerson" placeholder="Enter contact person" value={formData.contactPerson} onChange={handleChange} required />
               </div>
 
               <div className="form-group">
                 <label htmlFor="businessType">Business Type</label>
-                <input
-                  type="text"
-                  id="businessType"
-                  name="businessType"
-                  placeholder="Example: Manufacturing"
-                  value={formData.businessType}
-                  onChange={handleChange}
-                  required
-                />
+                <input type="text" id="businessType" name="businessType" placeholder="Example: Manufacturing" value={formData.businessType} onChange={handleChange} required />
               </div>
             </div>
           )}
 
           <div className="form-group">
             <label htmlFor="password">Password</label>
-            <input
-              type="password"
-              id="password"
-              name="password"
-              placeholder="Enter your password"
-              value={formData.password}
-              onChange={handleChange}
-              required
-            />
+            <input type="password" id="password" name="password" placeholder="Enter your password" value={formData.password} onChange={handleChange} required />
           </div>
 
           <div className="form-group">
             <label htmlFor="confirmPassword">Confirm Password</label>
-            <input
-              type="password"
-              id="confirmPassword"
-              name="confirmPassword"
-              placeholder="Confirm your password"
-              value={formData.confirmPassword}
-              onChange={handleChange}
-              required
-            />
+            <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Confirm your password" value={formData.confirmPassword} onChange={handleChange} required />
           </div>
 
-          <button type="submit" className="primary-button">
-            Create Account
+          <button type="submit" className="primary-button" disabled={loading}>
+            {loading ? "Registering..." : "Create Account"}
           </button>
         </form>
 
         <p className="auth-link">
           Already have an account? <Link to="/login">Login</Link>
         </p>
-        <Link to="/" className="back-link">
-          ← Back to Home
-        </Link>
+        <Link to="/" className="back-link">← Back to Home</Link>
       </div>
 
       <style>{`
@@ -363,8 +270,8 @@ function Register() {
           max-width: 100%;
           margin: 0 auto;
           height: 100vh;
-          padding-left: 100px; 
-          justify-content: flex-start; 
+          padding-left: 100px;
+          justify-content: flex-start;
           display: flex;
           align-items: center;
           box-sizing: border-box;
@@ -378,8 +285,8 @@ function Register() {
           left: 0;
           width: 100%;
           height: 100%;
-          background: url('https://i.postimg.cc/SsTQDQY8/image.png') no-repeat center center / cover;
-          transform: scaleX(-1); 
+          background: url('/bg.png') no-repeat center center / cover;
+          transform: scaleX(-1);
           z-index: -1;
         }
 
@@ -485,7 +392,7 @@ function Register() {
           padding: 12px;
           border: none;
           border-radius: 8px;
-          background: #298ce2;
+          background: #298ce2; 
           color: #ffffff;
           font-weight: bold;
           cursor: pointer;
@@ -493,9 +400,14 @@ function Register() {
           margin-top: 10px;
         }
 
-        .primary-button:hover {
-          background: #60a8cc;
+        .primary-button:hover:not(:disabled) {
+          background: #60a8cc; 
           color: #051329;
+        }
+
+        .primary-button:disabled {
+          opacity: 0.6;
+          cursor: not-allowed;
         }
 
         .auth-link {
@@ -529,6 +441,14 @@ function Register() {
 
         .auth-card::-webkit-scrollbar {
           width: 6px;
+        }
+        .auth-card::-webkit-scrollbar-track {
+          background: rgba(255, 255, 255, 0.1);
+          border-radius: 10px;
+        }
+        .auth-card::-webkit-scrollbar-thumb {
+          background: rgba(255, 255, 255, 0.4);
+          border-radius: 10px;
         }
       `}</style>
     </div>
