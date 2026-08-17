@@ -1,4 +1,4 @@
-here my roues/ auth.py from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy import text
 from sqlalchemy.orm import Session
 from app.database import get_db
