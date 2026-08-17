@@ -1,3 +1,72 @@
+Skip to content
+mohamedaslam2k4
+Truck-Load-Hub
+Repository navigation
+Code
+Issues
+Pull requests
+Agents
+Actions
+Projects
+Wiki
+Security and quality
+Insights
+Settings
+Truck-Load-Hub/frontend/src
+/
+App.jsx
+in
+main
+
+Edit
+
+Preview
+Indent mode
+
+Spaces
+Indent size
+
+2
+Line wrap mode
+
+No wrap
+Editing App.jsx file contents
+  1
+  2
+  3
+  4
+  5
+  6
+  7
+  8
+  9
+ 10
+ 11
+ 12
+ 13
+ 14
+ 15
+ 16
+ 17
+ 18
+ 19
+ 20
+ 21
+ 22
+ 23
+ 24
+ 25
+ 26
+ 27
+ 28
+ 29
+ 30
+ 31
+ 32
+ 33
+ 34
+ 35
+ 36
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 
 // Layout & Security
@@ -34,34 +103,5 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
 
-        {/* Admin Routes: ONLY ADMIN */}
-        <Route element={<ProtectedRoute allowedRoles={["ADMIN"]} />}>
-          <Route path="/admin" element={<Navigate to="/admin/verification" replace />} />
-          <Route path="/admin/verification" element={<DashboardLayout role="ADMIN"><AdminVerification /></DashboardLayout>} />
-          <Route path="/admin/drivers" element={<DashboardLayout role="ADMIN"><AdminDrivers /></DashboardLayout>} />
-          <Route path="/admin/loaders" element={<DashboardLayout role="ADMIN"><AdminLoaders /></DashboardLayout>} />
-          <Route path="/admin/contacts" element={<DashboardLayout role="ADMIN"><AdminContacts /></DashboardLayout>} />
-        </Route>
-
-        {/* Driver Routes: Accessible by DRIVER and ADMIN */}
-        <Route element={<ProtectedRoute allowedRoles={["DRIVER", "ADMIN"]} />}>
-          <Route path="/driver" element={<Navigate to="/driver/available-loads" replace />} />
-          <Route path="/driver/available-loads" element={<DashboardLayout role="DRIVER"><DriverAvailableLoads /></DashboardLayout>} />
-          <Route path="/driver/deals" element={<DashboardLayout role="DRIVER"><DriverMyDeals /></DashboardLayout>} />
-        </Route>
-
-        {/* Loader Routes: Accessible by LOADER and ADMIN */}
-        <Route element={<ProtectedRoute allowedRoles={["LOADER", "ADMIN"]} />}>
-          <Route path="/loader" element={<Navigate to="/loader/manage-loads" replace />} />
-          <Route path="/loader/manage-loads" element={<DashboardLayout role="LOADER"><LoaderManageLoads /></DashboardLayout>} />
-          <Route path="/loader/deals" element={<DashboardLayout role="LOADER"><LoaderDeals /></DashboardLayout>} />
-        </Route>
-
-        {/* Catch-all Redirect for unknown URLs */}
-        <Route path="*" element={<Navigate to="/login" replace />} />
-      </Routes>
-    </BrowserRouter>
-  );
-}
-
-export default App;
+Use Control + Shift + m to toggle the tab key moving focus. Alternatively, use esc then tab to move to the next interactive element on the page.
+ 
