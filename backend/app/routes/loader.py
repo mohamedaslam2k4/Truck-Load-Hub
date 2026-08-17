@@ -1,97 +1,127 @@
 from fastapi import APIRouter, Depends, HTTPException, status
-from sqlalchemy.orm import Session
 from sqlalchemy import text
+from sqlalchemy.orm import Session
 from app.database import get_db
-from app.schemas import LoadCreate
-from app.auth import require_role, get_current_user
-from app.models import User
+from app.schemas import DealCreate
 
-router = APIRouter(tags=["Loader & Loads"])
-loader_guard = Depends(require_role(["LOADER"]))
+router = APIRouter(tags=["Driver"])
 
-@router.post("/loads/", status_code=status.HTTP_201_CREATED)
-def create_load(load: LoadCreate, db: Session = Depends(get_db), current_user: User = loader_guard):
-    if load.minPrice > load.maxPrice:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Minimum price cannot be greater than maximum price.")
 
-    payload = load.model_dump()
-    payload["loaderId"] = current_user.id  # Overrides payload loader ID with session user ID
+@router.get("/")
+def driver_home():
+    return {"message": "Driver API is ready"}
 
+
+@router.get("/available-loads")
+def get_available_loads(db: Session = Depends(get_db)):
     query = text("""
-        INSERT INTO loads (pickup, destination, load_type, weight, truck_type, pickup_date, min_price, max_price, description, loader_id, status) 
-        VALUES (:pickup, :destination, :loadType, :weight, :truckType, :pickupDate, :minPrice, :maxPrice, :description, :loaderId, 'AVAILABLE')
-    """)
-
-    result = db.execute(query, payload)
-    db.commit()
-    return {"message": "Load created successfully", "loadId": result.lastrowid}
-
-@router.get("/loads/loader/{loader_id}")
-def get_loader_loads(loader_id: int, db: Session = Depends(get_db), current_user: User = Depends(require_role(["LOADER", "ADMIN"]))):
-    if current_user.role == "LOADER" and current_user.id != loader_id:
-        raise HTTPException(status_code=403, detail="Forbidden")
-
-    query = text("""
-        SELECT id, pickup, destination, load_type AS loadType, weight, 
-               truck_type AS truckType, pickup_date AS pickupDate, 
-               min_price AS minPrice, max_price AS maxPrice, description, 
-               status, loader_id AS loaderId 
-        FROM loads WHERE loader_id = :loader_id ORDER BY created_at DESC
-    """)
-    loads = db.execute(query, {"loader_id": loader_id}).mappings().all()
-    return [dict(load) for load in loads]
-
-@router.get("/loads/available")
-def get_available_loads(db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
-    query = text("""
-        SELECT id, pickup, destination, load_type AS loadType, weight, 
-               truck_type AS truckType, pickup_date AS pickupDate, 
-               min_price AS minPrice, max_price AS maxPrice, description, 
-               status, loader_id AS loaderId 
-        FROM loads WHERE status = 'AVAILABLE' ORDER BY created_at DESC
+        SELECT id, pickup, destination, load_type AS "loadType", weight, 
+               truck_type AS "truckType", pickup_date AS "pickupDate", 
+               min_price AS "minPrice", max_price AS "maxPrice", description, 
+               status, loader_id AS "loaderId" 
+        FROM loads 
+        WHERE status = 'AVAILABLE' 
+          AND id NOT IN (SELECT load_id FROM deals WHERE status = 'PENDING') 
+        ORDER BY created_at DESC
     """)
     loads = db.execute(query).mappings().all()
     return [dict(load) for load in loads]
 
-@router.put("/loads/{load_id}/cancel")
-def cancel_load(load_id: int, db: Session = Depends(get_db), current_user: User = loader_guard):
-    load = db.execute(text("SELECT loader_id FROM loads WHERE id = :load_id"), {"load_id": load_id}).mappings().first()
-    if not load:
-        raise HTTPException(status_code=404, detail="Load not found")
-    if load["loader_id"] != current_user.id:
-        raise HTTPException(status_code=403, detail="Forbidden: You cannot cancel another user's load")
 
-    db.execute(text("UPDATE loads SET status = 'CANCELLED' WHERE id = :load_id"), {"load_id": load_id})
-    db.commit()
-    return {"message": "Load cancelled successfully"}
-
-@router.get("/loader/available-drivers")
-def get_available_drivers(db: Session = Depends(get_db), current_user: User = loader_guard):
-    query = text("""
-        SELECT u.id AS user_id, u.name, u.phone, u.city, 
-               dp.experience, dp.truck_number, dp.truck_type, 
-               dp.capacity, dp.license_number 
-        FROM users u 
-        INNER JOIN driver_profiles dp ON u.id = dp.user_id 
-        WHERE u.role = 'DRIVER' AND u.status = 'VERIFIED' 
-        ORDER BY u.created_at DESC
+@router.post("/deals", status_code=status.HTTP_201_CREATED)
+def create_deal(data: DealCreate, db: Session = Depends(get_db)):
+    # 1. Verify that the current driver is authentic and approved
+    driver_query = text("""
+        SELECT id, name, role, status 
+        FROM users 
+        WHERE id = :driver_id AND role = 'DRIVER' AND status = 'VERIFIED'
     """)
+    driver = db.execute(driver_query, {"driver_id": data.driverId}).mappings().first()
+    if not driver:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST, 
+            detail="Invalid or unverified driver profile"
+        )
 
-    drivers = db.execute(query).mappings().all()
-    result = []
-    for driver in drivers:
-        d = dict(driver)
-        d["driverUserId"] = d["user_id"]
-        d["driverId"] = f"DRV-{d['user_id']:03d}"
-        d["vehicleType"] = d["truck_type"]
-        d["vehicleNumber"] = d["truck_number"]
-        d["location"] = d["city"]
-        d["experience"] = f"{d['experience']} Years" if d["experience"] is not None else "Not specified"
-        d["capacity"] = float(d["capacity"]) if d["capacity"] is not None else None
-        d["availabilityStatus"] = "Available"
+    # Begin transactional lifecycle block with protective row locks
+    try:
+        # 2. Lock and read the row to eliminate concurrency race conditions
+        load_query = text("""
+            SELECT id, pickup, destination, min_price, max_price, status, loader_id 
+            FROM loads 
+            WHERE id = :load_id 
+            FOR UPDATE
+        """)
+        load = db.execute(load_query, {"load_id": data.loadId}).mappings().first()
         
-        for key in ["user_id", "truck_type", "truck_number", "city", "license_number"]:
-            d.pop(key, None)
-        result.append(d)
+        if not load:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND, 
+                detail="Target load profile not found"
+            )
 
-    return result
+        if load["status"] != "AVAILABLE":
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST, 
+                detail="This load has already been taken or is unavailable"
+            )
+
+        # 3. Validate pricing structure parameters
+        if data.dealPrice < float(load["min_price"]) or data.dealPrice > float(load["max_price"]):
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST, 
+                detail=f"Deal price must be between ₹{load['min_price']} and ₹{load['max_price']}"
+            )
+
+        # 4. Enforce idempotency boundaries (no duplicate pending items)
+        deal_check_query = text("""
+            SELECT 1 
+            FROM deals 
+            WHERE load_id = :load_id AND driver_id = :driver_id AND status = 'PENDING'
+        """)
+        existing_deal = db.execute(deal_check_query, {"load_id": data.loadId, "driver_id": data.driverId}).scalar()
+        if existing_deal:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST, 
+                detail="You have already submitted a pending offer for this load"
+            )
+
+        # 5. Commit mutations atomically
+        insert_deal_query = text("""
+            INSERT INTO deals (load_id, driver_id, deal_price, status) 
+            VALUES (:load_id, :driver_id, :deal_price, 'PENDING')
+            RETURNING id
+        """)
+        result = db.execute(insert_deal_query, {
+            "load_id": data.loadId, 
+            "driver_id": data.driverId, 
+            "deal_price": data.dealPrice
+        })
+        
+        # Dual-layer safety lookup for variable engines (Postgres vs MySQL)
+        deal_id = result.scalar() or result.lastrowid
+
+        update_load_query = text("UPDATE loads SET status = 'BOOKED' WHERE id = :load_id")
+        db.execute(update_load_query, {"load_id": data.loadId})
+
+        db.commit()
+
+    except HTTPException:
+        db.rollback()
+        raise
+    except Exception:
+        db.rollback()
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, 
+            detail="Transaction failed. Database engine state reverted safely."
+        )
+
+    return {
+        "message": "Deal request sent successfully", 
+        "dealId": deal_id, 
+        "loadId": data.loadId, 
+        "driverId": data.driverId, 
+        "driverName": driver["name"], 
+        "dealPrice": data.dealPrice, 
+        "status": "PENDING"
+    }
