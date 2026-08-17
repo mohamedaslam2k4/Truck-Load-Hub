@@ -34,7 +34,7 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
 
-        {/* Protected Admin Routes */}
+        {/* Admin Routes: ONLY ADMIN */}
         <Route element={<ProtectedRoute allowedRoles={["ADMIN"]} />}>
           <Route path="/admin" element={<Navigate to="/admin/verification" replace />} />
           <Route path="/admin/verification" element={<DashboardLayout role="ADMIN"><AdminVerification /></DashboardLayout>} />
@@ -43,21 +43,21 @@ function App() {
           <Route path="/admin/contacts" element={<DashboardLayout role="ADMIN"><AdminContacts /></DashboardLayout>} />
         </Route>
 
-        {/* Protected Driver Routes */}
-        <Route element={<ProtectedRoute allowedRoles={["DRIVER"]} />}>
+        {/* Driver Routes: Accessible by DRIVER and ADMIN */}
+        <Route element={<ProtectedRoute allowedRoles={["DRIVER", "ADMIN"]} />}>
           <Route path="/driver" element={<Navigate to="/driver/available-loads" replace />} />
           <Route path="/driver/available-loads" element={<DashboardLayout role="DRIVER"><DriverAvailableLoads /></DashboardLayout>} />
           <Route path="/driver/deals" element={<DashboardLayout role="DRIVER"><DriverMyDeals /></DashboardLayout>} />
         </Route>
 
-        {/* Protected Loader Routes */}
-        <Route element={<ProtectedRoute allowedRoles={["LOADER"]} />}>
+        {/* Loader Routes: Accessible by LOADER and ADMIN */}
+        <Route element={<ProtectedRoute allowedRoles={["LOADER", "ADMIN"]} />}>
           <Route path="/loader" element={<Navigate to="/loader/manage-loads" replace />} />
           <Route path="/loader/manage-loads" element={<DashboardLayout role="LOADER"><LoaderManageLoads /></DashboardLayout>} />
           <Route path="/loader/deals" element={<DashboardLayout role="LOADER"><LoaderDeals /></DashboardLayout>} />
         </Route>
 
-        {/* Catch-all Redirect */}
+        {/* Catch-all Redirect for unknown URLs */}
         <Route path="*" element={<Navigate to="/login" replace />} />
       </Routes>
     </BrowserRouter>
