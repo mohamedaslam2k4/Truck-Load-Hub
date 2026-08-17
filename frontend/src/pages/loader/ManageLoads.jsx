@@ -143,11 +143,7 @@ function ManageLoads() {
           <p>Create and manage your loads.</p>
         </div>
 
-        <button 
-          type="button" 
-          className="toggle-button" 
-          onClick={() => setShowForm(!showForm)}
-        >
+        <button type="button"    className="toggle-button"   onClick={() => setShowForm(!showForm)} >
           {showForm ? "- Hide Create Load " : "+ Create New Load "}
         </button>
       </div>
@@ -238,31 +234,31 @@ function ManageLoads() {
 
                 <div className="load-details">
                   <div className="detail">
-                    <span>Load Type</span>
+                    <span>Load Type :</span>
                     <strong>{load.loadType}</strong>
                   </div>
                   <div className="detail">
-                    <span>Weight</span>
+                    <span>Weight :</span>
                     <strong>{load.weight} Tons</strong>
                   </div>
                   <div className="detail">
-                    <span>Truck Type</span>
+                    <span>Truck Type :</span>
                     <strong>{load.truckType}</strong>
                   </div>
                   <div className="detail">
-                    <span>Pickup Date</span>
+                    <span>Pickup Date:</span>
                     <strong>{load.pickupDate}</strong>
                   </div>
                 </div>
 
                 <div className="price">
-                  <span>Price Range</span>
+                  <span>Price Range :</span>
                   <strong>₹{Number(load.minPrice).toLocaleString()} - ₹{Number(load.maxPrice).toLocaleString()}</strong>
                 </div>
 
                 {load.description && (
                   <div className="description">
-                    <span>Description</span>
+                    <span>Description :</span>
                     <p>{load.description}</p>
                   </div>
                 )}
@@ -311,7 +307,7 @@ function ManageLoads() {
         .cancelled { background: #ddd; color: #666; }
         .completed { background: #ddd; color: #222; }
         .load-details { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px; }
-        .detail { display: flex; flex-direction: column; gap: 5px; }
+        .detail { display: flex; gap: 5px; }
         .detail span, .price span, .description span { font-size: 13px; color: #777; }
         .detail strong { font-size: 15px; }
         .price { display: flex; justify-content: space-between; align-items: center; padding: 14px 0; border-top: 1px solid #eee; border-bottom: 1px solid #eee; margin-bottom: 15px; }
