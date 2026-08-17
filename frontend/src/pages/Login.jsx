@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import logo from "/logo.png";
 import { API_URL } from "../api"; // Centralized API import
 
-function Login() {
+function Login({ setUserRole }) {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({ email: "", password: "" });
   const [loading, setLoading] = useState(false);
@@ -36,12 +36,24 @@ function Login() {
         return;
       }
 
-      alert("Login successfully!");
-
       const user = data.user;
+      const role = user.role ? user.role.toUpperCase() : "";
+
+      // 1. Save user details in localStorage
       localStorage.setItem("user", JSON.stringify(user));
 
-      switch (user.role) {
+      // 2. Save role in sessionStorage for URL route protection
+      sessionStorage.setItem("role", role);
+
+      // 3. Update React State in App.jsx
+      if (setUserRole) {
+        setUserRole(role);
+      }
+
+      alert("Login successfully!");
+
+      // 4. Navigate based on user role
+      switch (role) {
         case "DRIVER":
           navigate("/driver");
           break;
@@ -61,6 +73,7 @@ function Login() {
       setLoading(false);
     }
   };
+
   return (
     <div className="auth-page">
       <div className="auth-card">
@@ -83,8 +96,8 @@ function Login() {
             <input type="password" id="password" name="password" placeholder="Enter your password" value={formData.password} onChange={handleChange} required />
           </div>
 
-          <button type="submit" className="primary-button">
-            Login
+          <button type="submit" className="primary-button" disabled={loading}>
+            {loading ? "Logging in..." : "Login"}
           </button>
         </form>
 
@@ -174,7 +187,7 @@ function Login() {
           font-size: 14px;
         }
 
-         .form-group input {
+        .form-group input {
           width: 100%;
           padding: 12px;
           background: rgba(255, 255, 255, 0.6);
@@ -185,21 +198,19 @@ function Login() {
           box-sizing: border-box;
         }
 
-        .form-group textarea {
-          resize: vertical;
-        }
-
-        .form-group input:focus{
+        .form-group input:focus {
           outline: none;
           border-color: #222;
           background: rgba(255, 255, 255, 0.85);
         }
+
         .primary-button {
           width: 100%;
           padding: 12px;
           border: none;
           border-radius: 8px;
-          background: #298ce2; color: #ffffff;
+          background: #298ce2;
+          color: #ffffff;
           font-weight: bold;
           cursor: pointer;
           font-size: 16px;
@@ -207,7 +218,13 @@ function Login() {
         }
 
         .primary-button:hover {
-          background: #60a8cc; color: #051329;
+          background: #60a8cc;
+          color: #051329;
+        }
+
+        .primary-button:disabled {
+          background: #888;
+          cursor: not-allowed;
         }
 
         .auth-link {
@@ -239,7 +256,6 @@ function Login() {
           color: #9c9393;
         }
 
-        /* Custom scrollbar for glassmorphism card */
         .auth-card::-webkit-scrollbar {
           width: 6px;
         }
