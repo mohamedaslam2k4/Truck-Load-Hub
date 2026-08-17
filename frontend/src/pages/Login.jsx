@@ -1,11 +1,12 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import logo from "/logo.png";
-import { api } from "../api";
+import { API_URL } from "../api"; // Centralized API import
 
 function Login() {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({ email: "", password: "" });
+  const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
     setFormData({
@@ -16,21 +17,31 @@ function Login() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
 
     try {
-      const data = await api("/auth/login", {
+      const response = await fetch(`${API_URL}/auth/login`, {
         method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           email: formData.email.trim(),
           password: formData.password,
         }),
       });
 
+      const data = await response.json();
+
+      if (!response.ok) {
+        alert(data.detail || "Login failed");
+        return;
+      }
+
       alert("Login successfully!");
 
       const user = data.user;
+      localStorage.setItem("user", JSON.stringify(user));
 
-      switch (user?.role) {
+      switch (user.role) {
         case "DRIVER":
           navigate("/driver");
           break;
@@ -45,10 +56,11 @@ function Login() {
       }
     } catch (error) {
       console.error("Login error:", error);
-      alert(error.message || "Unable to connect to server");
+      alert("Unable to connect to server");
+    } finally {
+      setLoading(false);
     }
   };
-
   return (
     <div className="auth-page">
       <div className="auth-card">
@@ -63,28 +75,12 @@ function Login() {
         <form onSubmit={handleSubmit}>
           <div className="form-group">
             <label htmlFor="email">Email</label>
-            <input
-              type="email"
-              id="email"
-              name="email"
-              placeholder="Enter your email"
-              value={formData.email}
-              onChange={handleChange}
-              required
-            />
+            <input type="email" id="email" name="email" placeholder="Enter your email" value={formData.email} onChange={handleChange} required />
           </div>
 
           <div className="form-group">
             <label htmlFor="password">Password</label>
-            <input
-              type="password"
-              id="password"
-              name="password"
-              placeholder="Enter your password"
-              value={formData.password}
-              onChange={handleChange}
-              required
-            />
+            <input type="password" id="password" name="password" placeholder="Enter your password" value={formData.password} onChange={handleChange} required />
           </div>
 
           <button type="submit" className="primary-button">
@@ -109,7 +105,7 @@ function Login() {
           justify-content: flex-end;
           display: flex;
           align-items: center;
-          background: url('https://i.postimg.cc/SsTQDQY8/image.png') no-repeat center center / cover;
+          background: url('/bg.png') no-repeat center center / cover;
           box-sizing: border-box;
           overflow: hidden;
         }
@@ -178,7 +174,7 @@ function Login() {
           font-size: 14px;
         }
 
-        .form-group input {
+         .form-group input {
           width: 100%;
           padding: 12px;
           background: rgba(255, 255, 255, 0.6);
@@ -189,19 +185,21 @@ function Login() {
           box-sizing: border-box;
         }
 
-        .form-group input:focus {
+        .form-group textarea {
+          resize: vertical;
+        }
+
+        .form-group input:focus{
           outline: none;
           border-color: #222;
           background: rgba(255, 255, 255, 0.85);
         }
-
         .primary-button {
           width: 100%;
           padding: 12px;
           border: none;
           border-radius: 8px;
-          background: #298ce2;
-          color: #ffffff;
+          background: #298ce2; color: #ffffff;
           font-weight: bold;
           cursor: pointer;
           font-size: 16px;
@@ -209,8 +207,7 @@ function Login() {
         }
 
         .primary-button:hover {
-          background: #60a8cc;
-          color: #051329;
+          background: #60a8cc; color: #051329;
         }
 
         .auth-link {
@@ -242,6 +239,7 @@ function Login() {
           color: #9c9393;
         }
 
+        /* Custom scrollbar for glassmorphism card */
         .auth-card::-webkit-scrollbar {
           width: 6px;
         }
