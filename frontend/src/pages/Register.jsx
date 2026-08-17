@@ -285,7 +285,7 @@ function Register() {
           left: 0;
           width: 100%;
           height: 100%;
-          background: url('https://i.postimg.cc/SsTQDQY8/image.png') no-repeat center center / cover;
+          background: url('/bg.png') no-repeat center center / cover;
           transform: scaleX(-1);
           z-index: -1;
         }
