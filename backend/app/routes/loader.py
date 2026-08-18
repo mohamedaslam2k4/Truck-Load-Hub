@@ -3,6 +3,7 @@ from sqlalchemy.orm import Session
 from sqlalchemy import text
 from app.database import get_db
 from app.schemas import LoadCreate
+from datetime import date
 
 router = APIRouter(tags=["Loader & Loads"])
 
@@ -59,7 +60,7 @@ def create_load(load: LoadCreate, db: Session = Depends(get_db)):
 def get_loader_loads(loader_id: int, db: Session = Depends(get_db)):
     query = text("""
         SELECT id, pickup, destination, load_type AS "loadType", weight, 
-               truck_type AS "truckType", pickup_date AS "pickupDate", 
+               truck_type AS "truckType", DATE_FORMAT(pickup_date, '%d/%m/%Y') AS pickupDate, 
                min_price AS "minPrice", max_price AS "maxPrice", description, 
                status, loader_id AS "loaderId" 
         FROM loads 
@@ -74,7 +75,7 @@ def get_loader_loads(loader_id: int, db: Session = Depends(get_db)):
 def get_available_loads(db: Session = Depends(get_db)):
     query = text("""
         SELECT id, pickup, destination, load_type AS "loadType", weight, 
-               truck_type AS "truckType", pickup_date AS "pickupDate", 
+               truck_type AS "truckType", DATE_FORMAT(pickup_date, '%d/%m/%Y') AS pickupDate, 
                min_price AS "minPrice", max_price AS "maxPrice", description, 
                status, loader_id AS "loaderId" 
         FROM loads 
