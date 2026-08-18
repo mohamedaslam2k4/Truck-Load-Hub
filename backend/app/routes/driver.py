@@ -30,7 +30,7 @@ def get_available_loads(db: Session = Depends(get_db)):
 
 @router.post("/deals", status_code=status.HTTP_201_CREATED)
 def create_deal(data: DealCreate, db: Session = Depends(get_db)):
-    # 1. Verify that the current driver is authentic and approved
+    # 1. Verify driver profile
     driver_query = text("""
         SELECT id, name, role, status 
         FROM users 
@@ -43,9 +43,8 @@ def create_deal(data: DealCreate, db: Session = Depends(get_db)):
             detail="Invalid or unverified driver profile"
         )
 
-    # Begin transactional lifecycle block with protective row locks
     try:
-        # 2. Lock and read the row to eliminate concurrency race conditions
+        # 2. Lock load row for concurrent request protection
         load_query = text("""
             SELECT id, pickup, destination, min_price, max_price, status, loader_id 
             FROM loads 
@@ -66,27 +65,31 @@ def create_deal(data: DealCreate, db: Session = Depends(get_db)):
                 detail="This load has already been taken or is unavailable"
             )
 
-        # 3. Validate pricing structure parameters
+        # 3. Validate price constraints
         if data.dealPrice < float(load["min_price"]) or data.dealPrice > float(load["max_price"]):
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST, 
                 detail=f"Deal price must be between ₹{load['min_price']} and ₹{load['max_price']}"
             )
 
-        # 4. Enforce idempotency boundaries (no duplicate pending items)
+        # 4. Check for duplicate pending offers
         deal_check_query = text("""
             SELECT 1 
             FROM deals 
             WHERE load_id = :load_id AND driver_id = :driver_id AND status = 'PENDING'
         """)
-        existing_deal = db.execute(deal_check_query, {"load_id": data.loadId, "driver_id": data.driverId}).scalar()
+        existing_deal = db.execute(
+            deal_check_query, 
+            {"load_id": data.loadId, "driver_id": data.driverId}
+        ).scalar()
+
         if existing_deal:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST, 
                 detail="You have already submitted a pending offer for this load"
             )
 
-        # 5. Commit mutations atomically
+        # 5. Insert record safely and retrieve returned primary key
         insert_deal_query = text("""
             INSERT INTO deals (load_id, driver_id, deal_price, status) 
             VALUES (:load_id, :driver_id, :deal_price, 'PENDING')
@@ -98,9 +101,11 @@ def create_deal(data: DealCreate, db: Session = Depends(get_db)):
             "deal_price": data.dealPrice
         })
         
-        # Dual-layer safety lookup for variable engines (Postgres vs MySQL)
-        deal_id = result.scalar() or result.lastrowid
+        # Safely fetch generated ID from row result
+        row = result.fetchone()
+        deal_id = row[0] if row else None
 
+        # Update load status
         update_load_query = text("UPDATE loads SET status = 'BOOKED' WHERE id = :load_id")
         db.execute(update_load_query, {"load_id": data.loadId})
 
@@ -109,11 +114,13 @@ def create_deal(data: DealCreate, db: Session = Depends(get_db)):
     except HTTPException:
         db.rollback()
         raise
-    except Exception:
+    except Exception as e:
         db.rollback()
+        # Log explicit error trace to Render console for debugging
+        print(f"[DATABASE ERROR] {str(e)}")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, 
-            detail="Transaction failed. Database engine state reverted safely."
+            detail=f"Transaction failed: {str(e)}"
         )
 
     return {
