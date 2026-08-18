@@ -104,7 +104,14 @@ function Login({ setUserRole }) {
       </div>
 
       <style>{`
-
+           /* FULL-SCREEN CONTAINER FOR BACKGROUND */
+        .auth-page {
+          width: 100vw;
+          height: 100vh;
+          background: url('/bg.png') no-repeat center center / cover;
+          box-sizing: border-box;
+          overflow: hidden;
+        }
         /* ALIGNMENT WRAPPER FOR WIDE SCREENS */
         .auth-container {
           max-width: 1600px;
