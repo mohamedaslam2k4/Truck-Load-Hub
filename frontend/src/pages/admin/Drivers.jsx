@@ -151,7 +151,6 @@ function Drivers() {
       <style>{`
         .drivers-page {
           width: 100%;
-          max-width: 1100px;
         }
 
         .page-header {
