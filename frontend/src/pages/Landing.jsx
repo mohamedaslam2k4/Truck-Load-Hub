@@ -141,7 +141,7 @@ function Landing() {
 
       <style>{`
   
-        .section-container { max-width: 1300px; margin: 0 auto; width: 100%; }
+        .section-container { margin: 0 auto; width: 100%; }
         a { padding: 5px 5px; }
 
         .primary-button { 
