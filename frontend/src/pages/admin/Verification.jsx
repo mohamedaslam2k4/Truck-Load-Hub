@@ -114,7 +114,6 @@ function Verification() {
       <style>{`
         .verification-page {
           width: 100%;
-          max-width: 1100px;
           box-sizing: border-box;
         }
 
