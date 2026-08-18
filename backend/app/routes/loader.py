@@ -15,15 +15,19 @@ def create_load(load: LoadCreate, db: Session = Depends(get_db)):
             detail="Minimum price cannot be greater than maximum price."
         )
 
-    # Cross-DB compliant RETURNING pattern wrapped within an isolated session block
     try:
         query = text("""
-            INSERT INTO loads (pickup, destination, load_type, weight, truck_type, pickup_date, min_price, max_price, description, loader_id, status) 
-            VALUES (:pickup, :destination, :loadType, :weight, :truckType, :pickupDate, :minPrice, :maxPrice, :description, :loaderId, 'AVAILABLE')
+            INSERT INTO loads (
+                pickup, destination, load_type, weight, truck_type, 
+                pickup_date, min_price, max_price, description, loader_id, status
+            ) 
+            VALUES (
+                :pickup, :destination, :loadType, :weight, :truckType, 
+                CAST(:pickupDate AS DATE), :minPrice, :maxPrice, :description, :loaderId, 'AVAILABLE'
+            )
             RETURNING id
         """)
         
-        # Explicit mapping ensures alignment with camelCase schemas
         result = db.execute(query, {
             "pickup": load.pickup,
             "destination": load.destination,
@@ -36,13 +40,17 @@ def create_load(load: LoadCreate, db: Session = Depends(get_db)):
             "description": load.description,
             "loaderId": load.loaderId
         })
-        load_id = result.scalar() or result.lastrowid
+        
+        row = result.fetchone()
+        load_id = row[0] if row else None
+        
         db.commit()
-    except Exception:
+    except Exception as e:
         db.rollback()
+        print(f"❌ Raw SQL Error on POST /loads/: {str(e)}")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, 
-            detail="Failed to initialize and save load details."
+            detail=f"Failed to initialize and save load details: {str(e)}"
         )
 
     return {"message": "Load created successfully", "loadId": load_id}
