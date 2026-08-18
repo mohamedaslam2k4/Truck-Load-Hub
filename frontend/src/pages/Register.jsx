@@ -211,9 +211,9 @@ function Register() {
         )}
       
         <div className="form-group"><label htmlFor="password">Password</label>
-          <input type="password" id="password" name="password" placeholder="Enter your password" value={formData.password} onChange={handleChange} maxLength={30} required /></div>
+          <input type="password" id="password" name="password" placeholder="Enter your password" value={formData.password} onChange={handleChange} maxLength={50} required /></div>
         <div className="form-group"><label htmlFor="confirmPassword">Confirm Password</label>
-          <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Confirm your password" value={formData.confirmPassword} onChange={handleChange} maxLength={30} required /></div>
+          <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Confirm your password" value={formData.confirmPassword} onChange={handleChange} maxLength={50} required /></div>
       
         <button type="submit" className="primary-button" disabled={loading}>{loading ? "Registering..." : "Create Account"}</button>
       </form>
