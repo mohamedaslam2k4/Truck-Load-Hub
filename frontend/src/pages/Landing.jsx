@@ -3,13 +3,14 @@ import logo from "/logo.png";
 
 function Landing() {
   return (
-    <div className="landing">
-   
-      <nav className="navbar">
-        <div className="section-container nav-container">
+    <div className="landing-wrapper">
+      <div className="landing-container">
+        
+        {/* NAVBAR */}
+        <nav className="navbar">
           <a href="#home" className="logo">
-           <img src={logo} alt="logo" />
-           TruckLoad Hub
+            <img src={logo} alt="logo" />
+            TruckLoad Hub
           </a>
 
           <div className="nav-links">
@@ -22,11 +23,10 @@ function Landing() {
             <Link to="/login" className="secondary-button">Login</Link>
             <Link to="/register" className="primary-button">Get Started</Link>
           </div>
-        </div>
-      </nav>
+        </nav>
 
-      <section className="hero" id="home">
-        <div className="section-container">
+        {/* HERO */}
+        <section className="hero" id="home">
           <div className="hero-content">
             <h1>Connect Trucks With Loads</h1>
             <p>
@@ -35,15 +35,18 @@ function Landing() {
             </p>
 
             <div className="hero-buttons">
-              <Link to="/register" state={{ defaultRole: "DRIVER" }} className="primary-button"> Find Loads </Link>
-              <Link to="/register" state={{ defaultRole: "LOADER" }} className="secondary-button"> Post a Load </Link>
+              <Link to="/register" state={{ defaultRole: "DRIVER" }} className="primary-button">
+                Find Loads
+              </Link>
+              <Link to="/register" state={{ defaultRole: "LOADER" }} className="secondary-button">
+                Post a Load
+              </Link>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      <section className="how-it-works" id="how-it-works">
-        <div className="section-container">
+        {/* HOW IT WORKS */}
+        <section className="how-it-works" id="how-it-works">
           <h2>How It Works</h2>
 
           <div className="steps">
@@ -77,129 +80,142 @@ function Landing() {
               <p>Complete the delivery successfully.</p>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      <section className="role-section" id="drivers">
-        <div className="section-container">
+        {/* DRIVERS */}
+        <section className="role-section" id="drivers">
           <div className="role-card">
             <div>
               <h2>For Drivers</h2>
               <p>
-                Find suitable loads for your truck and connect with verified
-                loaders.
+                Find suitable loads for your truck and connect with verified loaders.
               </p>
             </div>
-            <Link to="/register" state={{ defaultRole: "DRIVER" }} className="primary-button"> Register as Driver</Link>
+            <Link to="/register" state={{ defaultRole: "DRIVER" }} className="primary-button">
+              Register as Driver
+            </Link>
           </div>
-        </div>
-      </section>
+        </section>
 
-      <section className="role-section" id="loaders">
-        <div className="section-container">
+        {/* LOADERS */}
+        <section className="role-section" id="loaders">
           <div className="role-card">
             <div>
               <h2>For Loaders</h2>
-              <p> Publish your loads and connect with verified drivers.</p>
+              <p>Publish your loads and connect with verified drivers.</p>
             </div>
-            <Link to="/register" state={{ defaultRole: "LOADER" }} className="primary-button"> Register as Loader </Link>
+            <Link to="/register" state={{ defaultRole: "LOADER" }} className="primary-button">
+              Register as Loader
+            </Link>
           </div>
-        </div>
-      </section>
+        </section>
 
-      <section className="contact-section" id="contact">
-        <div className="section-container">
+        {/* CONTACT */}
+        <section className="contact-section" id="contact">
           <div className="contact-content">
             <h2>Contact Us</h2>
-            <p> Have questions or need help? Get in touch with the TL Hub team. </p>
+            <p>Have questions or need help? Get in touch with the TL Hub team.</p>
 
             <div className="contact-info">
-              <p>
-                <strong>Email:</strong> support@tlhub.com
-              </p>
-              <p>
-                <strong>Phone:</strong> +91 98765 43210
-              </p>
-              <p>
-                <strong>Location:</strong> India
-              </p>
+              <p><strong>Email:</strong> support@tlhub.com</p>
+              <p><strong>Phone:</strong> +91 98765 43210</p>
+              <p><strong>Location:</strong> India</p>
             </div>
 
             <Link to="/contact" className="primary-button">
               Contact Us
             </Link>
           </div>
-        </div>
-      </section>
+        </section>
 
-      <footer className="footer">
-        <div className="section-container">
+        {/* FOOTER */}
+        <footer className="footer">
           <p>© 2026 TruckLoad Hub. All rights reserved.</p>
-        </div>
-      </footer>
+        </footer>
+
+      </div>
 
       <style>{`
-        /* MODERN MAXIMUM CONTENT WRAPPER */
-        .section-container {
-          max-width: 1300px;
-          margin: 0 auto;
+        html {
+          scroll-behavior: smooth;
+        }
+
+        body {
+          margin: 0;
+          font-family: system-ui, -apple-system, sans-serif;
+          color: #222;
+          background-color: #f8f9fa; /* Background color behind the 1300px card/container */
+        }
+
+        /* OUTER WRAPPER (Full screen width) */
+        .landing-wrapper {
           width: 100%;
+          display: flex;
+          justify-content: center;
+        }
+
+        /* MAIN CONTAINER (Fixed max-width 1300px centered with side margins) */
+        .landing-container {
+          max-width: 1300px;
+          width: 100%;
+          margin: 0 auto;
+          box-shadow: 0 0 20px rgba(0,0,0,0.05);
+          background-color: #ffffff;
+          box-sizing: border-box;
         }
 
         a {
+          text-decoration: none;
           padding: 5px 5px;
         }
 
         /* BUTTONS */
-        .primary-button { 
-          background: #222; 
-          color: #fff !important; 
-          padding: 7px 16px; 
-          border-radius: 6px; 
-          font-weight: 600; 
-          display: inline-block; 
+        .primary-button {
+          background: #222;
+          color: #fff !important;
+          padding: 7px 16px;
+          border-radius: 6px;
+          font-weight: 600;
+          display: inline-block;
           cursor: pointer;
-          transition: background 0.2s ease-in-out; 
-        } 
+          transition: background 0.2s ease-in-out;
+        }
 
-        .secondary-button { 
-          background: #f0f0f0; 
-          color: #222 !important; 
-          padding: 7px 16px; 
-          border-radius: 6px; 
-          font-weight: 600; 
-          display: inline-block; 
-          border: 1.3px solid #464646; 
+        .secondary-button {
+          background: #f0f0f0;
+          color: #222 !important;
+          padding: 7px 16px;
+          border-radius: 6px;
+          font-weight: 600;
+          border: 1px solid #ccc;
+          display: inline-block;
           cursor: pointer;
           transition: background 0.2s ease-in-out, border-color 0.2s ease-in-out;
         }
 
         .primary-button:hover {
-          background: #444; 
+          background: #444;
         }
 
         .secondary-button:hover {
-          background: #e0e0e0; 
-          border-color: #999; 
+          background: #e0e0e0;
+          border-color: #999;
         }
 
-        /* NAVBAR (Fills screen width) */
+        /* NAVBAR */
         .navbar {
           height: 70px;
-          padding: 0 6%;
+          padding: 0 4%;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
           background: white;
           border-bottom: 1px solid #696868;
           position: sticky;
           top: 0;
           width: 100%;
+          box-sizing: border-box;
           z-index: 1000;
-        }
-
-        .nav-container {
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-          height: 100%;
         }
 
         .logo {
@@ -209,9 +225,10 @@ function Landing() {
           font-weight: bold;
           color: #222;
           font-size: 24px;
+          gap: 10px;
         }
 
-        .logo img { 
+        .logo img {
           width: 60px;
           height: 60px;
         }
@@ -219,7 +236,7 @@ function Landing() {
         .nav-links {
           display: flex;
           align-items: center;
-          gap: 20px;
+          gap: 15px;
         }
 
         .nav-links a {
@@ -227,53 +244,56 @@ function Landing() {
         }
 
         .nav-links a:hover {
-          background: #817d7d; 
+          background: #817d7d;
           border-radius: 5px;
-          transition: background 0.2s ease-in-out; 
+          transition: background 0.2s ease-in-out;
         }
-        
-        /* HERO (Image expands up to full screen width) */
-        .hero { 
-          padding: 100px 6%; 
-          text-align: center; 
-          background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('https://postimg.cc') no-repeat center/cover; 
+
+        /* HERO */
+        .hero {
+          padding: 100px 4%;
+          text-align: center;
+          background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('https://i.postimg.cc/3J5bzZBj/image.png') no-repeat center/cover;
           width: 100%;
+          box-sizing: border-box;
         }
 
         .hero-content {
-          background-color: rgba(226, 226, 226, 0.8); 
+          background-color: rgba(226, 226, 226, 0.8);
           border-radius: 8px;
-          padding: 5px 20px 20px;
+          padding: 20px;
           display: inline-block;
           max-width: 1000px;
           width: 100%;
+          box-sizing: border-box;
         }
 
-        .hero h1 { 
-          font-size: 60px; 
-          margin-bottom: 16px; 
-          color: #000; 
-        } 
+        .hero h1 {
+          font-size: 60px;
+          margin-bottom: 16px;
+          color: #000;
+        }
 
-        .hero p { 
-          font-size: 18px; 
-          color: #111; 
-          margin-bottom: 20px; 
-        } 
+        .hero p {
+          font-size: 18px;
+          color: #111;
+          margin-bottom: 20px;
+        }
 
-        .hero-buttons { 
-          display: flex; 
-          gap: 15px; 
-          justify-content: center; 
+        .hero-buttons {
+          display: flex;
+          gap: 15px;
+          justify-content: center;
           margin-top: 20px;
         }
 
-        /* HOW IT WORKS (Gray panel stretches across screen width) */
+        /* HOW IT WORKS */
         .how-it-works {
-          padding: 65px 6%;
+          padding: 65px 4%;
           text-align: center;
           background: #a8a8a8;
           width: 100%;
+          box-sizing: border-box;
         }
 
         .how-it-works h2 {
@@ -290,25 +310,22 @@ function Landing() {
         }
 
         .step {
-          padding: 24px;
-          background: #f9f9f9;
+          background: #fff;
+          padding: 20px;
           border-radius: 8px;
-          border: 2px solid #9b9b9b;
         }
 
         .step-number {
-          font-size: 28px;
+          font-size: 24px;
           font-weight: bold;
-          color: #f5f4f4;
-          background: #9b9b9b;
-          border-radius: 8px;
-          margin-bottom: 10px;
+          color: #555;
         }
 
         /* ROLE SECTION */
         .role-section {
-          padding: 80px 6% 40px;
+          padding: 60px 4%;
           width: 100%;
+          box-sizing: border-box;
         }
 
         .role-card {
@@ -316,17 +333,20 @@ function Landing() {
           justify-content: space-between;
           align-items: center;
           background: #fff;
-          padding: 30px;
           border-radius: 8px;
           border: 1px solid #ddd;
+          padding: 30px;
+          max-width: 900px;
+          margin: 0 auto;
         }
 
         /* CONTACT SECTION */
         .contact-section {
-          padding: 80px 6%;
+          padding: 60px 4%;
           background: #f1f1f1;
           width: 100%;
           text-align: center;
+          box-sizing: border-box;
         }
 
         .contact-content {
@@ -335,16 +355,25 @@ function Landing() {
         }
 
         .contact-info {
+          display: flex;
+          justify-content: center;
+          gap: 40px;
           margin: 20px 0;
+          flex-wrap: wrap;
         }
 
         /* FOOTER */
         .footer {
-          padding: 30px 6%;
-          background: #222;
-          color: #fff;
+          padding: 30px 4%;
+          color: #060606;
+          background: #a8a8a8;
           text-align: center;
-          width: 100%;
+          box-sizing: border-box;
+        }
+
+        /* SCROLL OFFSET */
+        #home, #how-it-works, #drivers, #loaders, #contact {
+          scroll-margin-top: 70px;
         }
       `}</style>
     </div>
