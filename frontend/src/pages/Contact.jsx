@@ -115,7 +115,7 @@ function Contact() {
           </div>
           <div className="form-group">
             <label htmlFor="message">Your Query</label>
-            <textarea id="message" name="message" rows="4" value={formData.message} onChange={handleChange} placeholder="Enter your query..." maxLength={300} required /></div>
+            <textarea id="message" name="message" rows="4" value={formData.message} onChange={handleChange} placeholder="Enter your query..." maxLength={200} required /></div>
           <button type="submit" className="primary-button" disabled={loading}>{loading ? "Sending..." : "Send Message"}</button>
         </form>
 
