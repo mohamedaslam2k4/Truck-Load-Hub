@@ -148,6 +148,10 @@ function Landing() {
           text-decoration: none;
           padding:5px 5px;
         }
+        .landing{
+            width:100%;
+            margin:0 auto;
+            }
 
         /* BUTTONS */
         .primary-button { 
