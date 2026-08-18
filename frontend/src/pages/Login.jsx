@@ -104,23 +104,6 @@ function Login({ setUserRole }) {
       </div>
 
       <style>{`
-        html {
-          scroll-behavior: smooth;
-        }
-
-        body {
-          margin: 0;
-          font-family: system-ui, -apple-system, sans-serif;
-          color: #222;
-        }
-        /* FULL-SCREEN CONTAINER FOR BACKGROUND */
-        .auth-page {
-          width: 100vw;
-          height: 100vh;
-          background: url('/bg.png') no-repeat center center / cover;
-          box-sizing: border-box;
-          overflow: hidden;
-        }
 
         /* ALIGNMENT WRAPPER FOR WIDE SCREENS */
         .auth-container {
