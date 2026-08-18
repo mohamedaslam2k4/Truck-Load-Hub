@@ -140,7 +140,7 @@ function Landing() {
       </footer>
 
       <style>{`
-        .landing { width: 100%;margin 0 auto; }
+  
         .section-container { max-width: 1300px; margin: 0 auto; width: 100%; }
         a { padding: 5px 5px; }
 
