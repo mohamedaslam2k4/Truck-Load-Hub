@@ -1,3 +1,4 @@
+import React from "react";
 import { Link } from "react-router-dom";
 import logo from "/logo.png";
 
@@ -18,12 +19,8 @@ function Landing() {
             <a href="#loaders">Loaders</a>
             <a href="#contact">Contact</a>
 
-            <Link to="/login" className="secondary-button">
-              Login
-            </Link>
-            <Link to="/register" className="primary-button">
-              Get Started
-            </Link>
+            <Link to="/login" className="secondary-button">Login</Link>
+            <Link to="/register" className="primary-button">Get Started</Link>
           </div>
         </div>
       </nav>
@@ -38,20 +35,8 @@ function Landing() {
             </p>
 
             <div className="hero-buttons">
-              <Link
-                to="/register"
-                state={{ defaultRole: "DRIVER" }}
-                className="primary-button"
-              >
-                Find Loads
-              </Link>
-              <Link
-                to="/register"
-                state={{ defaultRole: "LOADER" }}
-                className="secondary-button"
-              >
-                Post a Load
-              </Link>
+              <Link to="/register" state={{ defaultRole: "DRIVER" }} className="primary-button"> Find Loads </Link>
+              <Link to="/register" state={{ defaultRole: "LOADER" }} className="secondary-button"> Post a Load </Link>
             </div>
           </div>
         </div>
@@ -105,13 +90,7 @@ function Landing() {
                 loaders.
               </p>
             </div>
-            <Link
-              to="/register"
-              state={{ defaultRole: "DRIVER" }}
-              className="primary-button"
-            >
-              Register as Driver
-            </Link>
+            <Link to="/register" state={{ defaultRole: "DRIVER" }} className="primary-button"> Register as Driver</Link>
           </div>
         </div>
       </section>
@@ -121,15 +100,9 @@ function Landing() {
           <div className="role-card">
             <div>
               <h2>For Loaders</h2>
-              <p>Publish your loads and connect with verified drivers.</p>
+              <p> Publish your loads and connect with verified drivers.</p>
             </div>
-            <Link
-              to="/register"
-              state={{ defaultRole: "LOADER" }}
-              className="primary-button"
-            >
-              Register as Loader
-            </Link>
+            <Link to="/register" state={{ defaultRole: "LOADER" }} className="primary-button"> Register as Loader </Link>
           </div>
         </div>
       </section>
@@ -138,7 +111,7 @@ function Landing() {
         <div className="section-container">
           <div className="contact-content">
             <h2>Contact Us</h2>
-            <p>Have questions or need help? Get in touch with the TL Hub team.</p>
+            <p> Have questions or need help? Get in touch with the TL Hub team. </p>
 
             <div className="contact-info">
               <p>
@@ -166,45 +139,14 @@ function Landing() {
       </footer>
 
       <style>{`
-        /* GLOBAL RESET & BOX-SIZING FIX */
-        *, *::before, *::after {
-          box-sizing: border-box;
-        }
+        .landing { width: 100%;margin 0 auto; }
+        .section-container { max-width: 1300px; margin: 0 auto; width: 100%; }
+        a { padding: 5px 5px; }
 
-        html {
-          scroll-behavior: smooth;
-        }
-
-        body {
-          margin: 0;
-          font-family: system-ui, -apple-system, sans-serif;
-          color: #222;
-          background-color: #fff;
-        }
-
-        .landing {
-          width: 100%;
-          overflow-x: hidden;
-        }
-
-        /* CENTERED INNER CONTENT CONTAINER (Max-width 1300px) */
-        .section-container {
-          max-width: 1300px;
-          margin: 0 auto;
-          width: 100%;
-          padding: 0 20px;
-        }
-
-        a {
-          text-decoration: none;
-          padding: 5px 5px;
-        }
-
-        /* BUTTONS */
         .primary-button { 
           background: #222; 
           color: #fff !important; 
-          padding: 8px 18px; 
+          padding: 7px 16px; 
           border-radius: 6px; 
           font-weight: 600; 
           display: inline-block; 
@@ -215,7 +157,7 @@ function Landing() {
         .secondary-button { 
           background: #f0f0f0; 
           color: #222 !important; 
-          padding: 8px 18px; 
+          padding: 7px 16px; 
           border-radius: 6px; 
           font-weight: 600; 
           display: inline-block; 
@@ -224,18 +166,12 @@ function Landing() {
           transition: background 0.2s ease-in-out, border-color 0.2s ease-in-out;
         }
 
-        .primary-button:hover {
-          background: #444; 
-        }
+        .primary-button:hover { background: #444; }
+        .secondary-button:hover { background: #e0e0e0; border-color: #999; }
 
-        .secondary-button:hover {
-          background: #e0e0e0; 
-          border-color: #999; 
-        }
-
-        /* NAVBAR (STRETCHES FULL WIDTH) */
         .navbar {
           height: 70px;
+          padding: 0 6%;
           background: white;
           border-bottom: 1px solid #696868;
           position: sticky;
@@ -257,51 +193,47 @@ function Landing() {
           align-items: center;
           font-weight: bold;
           color: #222;
-          font-size: 22px;
-          gap: 8px;
+          font-size: 24px;
         }
 
         .logo img { 
-          width: 50px;
-          height: 50px;
+          width: 60px;
+          height: 60px;
         }
 
         .nav-links {
           display: flex;
           align-items: center;
-          gap: 15px;
+          gap: 20px;
         }
 
-        .nav-links a {
-          color: #0a0909;
-          font-weight: 500;
-        }
+        .nav-links a { color: #0a0909; }
 
         .nav-links a:hover {
-          background: #e8e8e8; 
+          background: #817d7d; 
+          color: #fff;
           border-radius: 5px;
           transition: background 0.2s ease-in-out; 
         }
         
-        /* HERO SECTION */
         .hero { 
-          padding: 80px 0; 
+          padding: 100px 6%; 
           text-align: center; 
-          background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('https://postimg.cc') no-repeat center/cover; 
+          background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('https://images.unsplash.com/photo-1601584115197-04ecc0da31d7?auto=format&fit=crop&w=1600&q=80') no-repeat center/cover; 
           width: 100%;
         }
 
         .hero-content {
-          background-color: rgba(226, 226, 226, 0.9); 
+          background-color: rgba(226, 226, 226, 0.8); 
           border-radius: 8px;
-          padding: 30px;
+          padding: 5px 20px 20px;
           display: inline-block;
-          max-width: 900px;
+          max-width: 1000px;
           width: 100%;
         }
 
         .hero h1 { 
-          font-size: clamp(32px, 5vw, 56px); 
+          font-size: 60px; 
           margin-bottom: 16px; 
           color: #000; 
         } 
@@ -316,13 +248,11 @@ function Landing() {
           display: flex; 
           gap: 15px; 
           justify-content: center; 
-          flex-wrap: wrap;
           margin-top: 20px;
         }
 
-        /* HOW IT WORKS SECTION */
         .how-it-works {
-          padding: 65px 0;
+          padding: 65px 6%;
           text-align: center;
           background: #a8a8a8;
           width: 100%;
@@ -336,8 +266,8 @@ function Landing() {
 
         .steps {
           display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-          gap: 20px;
+          grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+          gap: 24px;
           margin-top: 40px;
         }
 
@@ -357,9 +287,8 @@ function Landing() {
           margin-bottom: 10px;
         }
 
-        /* ROLE SECTIONS */
         .role-section {
-          padding: 60px 0;
+          padding: 80px 6% 40px;
           width: 100%;
         }
 
@@ -371,13 +300,10 @@ function Landing() {
           padding: 30px;
           border-radius: 8px;
           border: 1px solid #ddd;
-          flex-wrap: wrap;
-          gap: 20px;
         }
 
-        /* CONTACT SECTION */
         .contact-section {
-          padding: 60px 0;
+          padding: 80px 6%;
           background: #f1f1f1;
           width: 100%;
           text-align: center;
@@ -388,26 +314,14 @@ function Landing() {
           margin: 0 auto;
         }
 
-        .contact-info {
-          margin: 20px 0;
-          display: flex;
-          justify-content: center;
-          gap: 20px;
-          flex-wrap: wrap;
-        }
+        .contact-info { margin: 20px 0; }
 
-        /* FOOTER */
         .footer {
-          padding: 30px 0;
+          padding: 30px 6%;
           background: #222;
           color: #fff;
           text-align: center;
           width: 100%;
-        }
-
-        /* SCROLL MARGIN OFFSET */
-        #home, #how-it-works, #drivers, #loaders, #contact {
-          scroll-margin-top: 70px;
         }
       `}</style>
     </div>
