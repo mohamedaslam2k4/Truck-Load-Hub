@@ -44,7 +44,7 @@ def create_deal(data: DealCreate, db: Session = Depends(get_db)):
         )
 
     try:
-        # 2. Lock load row for concurrent request protection
+        # 2. Check load availability and price bounds
         load_query = text("""
             SELECT id, pickup, destination, min_price, max_price, status, loader_id 
             FROM loads 
@@ -89,11 +89,10 @@ def create_deal(data: DealCreate, db: Session = Depends(get_db)):
                 detail="You have already submitted a pending offer for this load"
             )
 
-        # 5. Insert record safely and retrieve returned primary key
+        # 5. Insert deal (MySQL standard INSERT without RETURNING)
         insert_deal_query = text("""
             INSERT INTO deals (load_id, driver_id, deal_price, status) 
             VALUES (:load_id, :driver_id, :deal_price, 'PENDING')
-            RETURNING id
         """)
         result = db.execute(insert_deal_query, {
             "load_id": data.loadId, 
@@ -101,9 +100,8 @@ def create_deal(data: DealCreate, db: Session = Depends(get_db)):
             "deal_price": data.dealPrice
         })
         
-        # Safely fetch generated ID from row result
-        row = result.fetchone()
-        deal_id = row[0] if row else None
+        # MySQL last row ID extraction
+        deal_id = result.lastrowid
 
         # Update load status
         update_load_query = text("UPDATE loads SET status = 'BOOKED' WHERE id = :load_id")
@@ -116,7 +114,6 @@ def create_deal(data: DealCreate, db: Session = Depends(get_db)):
         raise
     except Exception as e:
         db.rollback()
-        # Log explicit error trace to Render console for debugging
         print(f"[DATABASE ERROR] {str(e)}")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, 
