@@ -132,7 +132,6 @@ function Contact() {
       </div>
       <style>{`
         .auth-page {
-          max-width: 1300px;
           margin: 0 auto;
           height: 100vh;
           padding-left: 100px;
