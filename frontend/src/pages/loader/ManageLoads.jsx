@@ -158,23 +158,23 @@ function ManageLoads() {
               <div className="form-grid">
                 <div className="form-group">
                   <label htmlFor="pickup">Pickup Location</label>
-                  <input type="text" id="pickup" name="pickup" placeholder="Eg: Mumbai" value={formData.pickup} onChange={handleChange} required />
+                  <input type="text" id="pickup" name="pickup" placeholder="Eg: Mumbai" value={formData.pickup} onChange={handleChange} maxLength={30} required />
                 </div>
                 <div className="form-group">
                   <label htmlFor="destination">Drop Location</label>
-                  <input type="text" id="destination" name="destination" placeholder="Eg: Pune" value={formData.destination} onChange={handleChange} required />
+                  <input type="text" id="destination" name="destination" placeholder="Eg: Pune" value={formData.destination} onChange={handleChange} maxLength={30} required />
                 </div>
                 <div className="form-group">
                   <label htmlFor="loadType">Load Type</label>
-                  <input type="text" id="loadType" name="loadType" placeholder="Eg: General" value={formData.loadType} onChange={handleChange} required />
+                  <input type="text" id="loadType" name="loadType" placeholder="Eg: General" value={formData.loadType} onChange={handleChange} maxLength={30} required />
                 </div>
                 <div className="form-group">
                   <label htmlFor="weight">Weight (Tons)</label>
-                  <input type="number" id="weight" name="weight" placeholder="Eg: 10" min="0" step="1" value={formData.weight} onChange={handleChange} required />
+                  <input type="number" id="weight" name="weight" placeholder="Eg: 10" min="0" step="1" value={formData.weight} onChange={handleChange} max="10000" required />
                 </div>
                 <div className="form-group">
                   <label htmlFor="truckType">Truck Type</label>
-                  <input type="text" id="truckType" name="truckType" placeholder="Eg: Open" value={formData.truckType} onChange={handleChange} required />
+                  <input type="text" id="truckType" name="truckType" placeholder="Eg: Open" value={formData.truckType} onChange={handleChange} maxLength={30} required />
                 </div>
                 <div className="form-group">
                   <label htmlFor="pickupDate">Pickup Date</label>
@@ -182,17 +182,17 @@ function ManageLoads() {
                 </div>
                 <div className="form-group">
                   <label htmlFor="minPrice">Minimum Price (₹)</label>
-                  <input type="number" id="minPrice" name="minPrice" placeholder="Eg: 20000" min="0" value={formData.minPrice} onChange={handleChange} required />
+                  <input type="number" id="minPrice" name="minPrice" placeholder="Eg: 20000" min="0" value={formData.minPrice}  max="10000000"onChange={handleChange} required />
                 </div>
                 <div className="form-group">
                   <label htmlFor="maxPrice">Maximum Price (₹)</label>
-                  <input type="number" id="maxPrice" name="maxPrice" placeholder="Eg: 25000" min="0" value={formData.maxPrice} onChange={handleChange} required />
+                  <input type="number" id="maxPrice" name="maxPrice" placeholder="Eg: 25000" min="0" value={formData.maxPrice}  max="10000000"  onChange={handleChange} required />
                 </div>
               </div>
 
               <div className="form-group">
                 <label htmlFor="description">Description</label>
-                <textarea id="description" name="description" rows="4" placeholder="Enter additional load details..." value={formData.description} onChange={handleChange} />
+                <textarea id="description" name="description" rows="4" placeholder="Enter additional load details..." value={formData.description} onChange={handleChange} maxLength={200}/>
               </div>
               <button type="submit" className="create-button">Create Load</button>
             </form>
