@@ -112,6 +112,15 @@ function Login({ setUserRole }) {
       </div>
 
       <style>{`
+        html {
+          scroll-behavior: smooth;
+        }
+
+        body {
+          margin: 0;
+          font-family: system-ui, -apple-system, sans-serif;
+          color: #222;
+        }
         /* FULL-SCREEN CONTAINER FOR BACKGROUND */
         .auth-page {
           width: 100vw;
