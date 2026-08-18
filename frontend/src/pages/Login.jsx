@@ -76,51 +76,62 @@ function Login({ setUserRole }) {
 
   return (
     <div className="auth-page">
-      <div className="auth-card">
-        <div className="logo">
-          <img src={logo} alt="logo" />
-          <h1>TruckLoad Hub</h1>
+      <div className="auth-container">
+        <div className="auth-card">
+          <div className="logo">
+            <img src={logo} alt="logo" />
+            <h1>TruckLoad Hub</h1>
+          </div>
+
+          <h2>Login</h2>
+          <p>Login to your account</p>
+
+          <form onSubmit={handleSubmit}>
+            <div className="form-group">
+              <label htmlFor="email">Email</label>
+              <input type="email" id="email" name="email" placeholder="Enter your email" value={formData.email} onChange={handleChange} required />
+            </div>
+
+            <div className="form-group">
+              <label htmlFor="password">Password</label>
+              <input type="password" id="password" name="password" placeholder="Enter your password" value={formData.password} onChange={handleChange} required />
+            </div>
+
+            <button type="submit" className="primary-button" disabled={loading}>
+              {loading ? "Logging in..." : "Login"}
+            </button>
+          </form>
+
+          <p className="auth-link">
+            Don't have an account? <Link to="/register">Register</Link>
+          </p>
+          <Link to="/" className="back-link">
+            ← Back to Home
+          </Link>
         </div>
-
-        <h2>Login</h2>
-        <p>Login to your account</p>
-
-        <form onSubmit={handleSubmit}>
-          <div className="form-group">
-            <label htmlFor="email">Email</label>
-            <input type="email" id="email" name="email" placeholder="Enter your email" value={formData.email} onChange={handleChange} required />
-          </div>
-
-          <div className="form-group">
-            <label htmlFor="password">Password</label>
-            <input type="password" id="password" name="password" placeholder="Enter your password" value={formData.password} onChange={handleChange} required />
-          </div>
-
-          <button type="submit" className="primary-button" disabled={loading}>
-            {loading ? "Logging in..." : "Login"}
-          </button>
-        </form>
-
-        <p className="auth-link">
-          Don't have an account? <Link to="/register">Register</Link>
-        </p>
-        <Link to="/" className="back-link">
-          ← Back to Home
-        </Link>
       </div>
 
       <style>{`
+        /* FULL-SCREEN CONTAINER FOR BACKGROUND */
         .auth-page {
-          max-width: 1300px;
-          margin: 0 auto;
+          width: 100vw;
           height: 100vh;
-          padding-right: 100px;
-          justify-content: flex-end;
-          display: flex;
-          align-items: center;
           background: url('/bg.png') no-repeat center center / cover;
           box-sizing: border-box;
           overflow: hidden;
+        }
+
+        /* ALIGNMENT WRAPPER FOR WIDE SCREENS */
+        .auth-container {
+          max-width: 1600px;
+          width: 100%;
+          height: 100%;
+          margin: 0 auto;
+          display: flex;
+          align-items: center;
+          justify-content: flex-end;
+          padding-right: 100px;
+          box-sizing: border-box;
         }
 
         .auth-card {
@@ -266,6 +277,17 @@ function Login({ setUserRole }) {
         .auth-card::-webkit-scrollbar-thumb {
           background: rgba(255, 255, 255, 0.4);
           border-radius: 10px;
+        }
+
+        /* RESPONSIVE RESPONSIVENESS FOR TABLETS/MOBILES */
+        @media (max-width: 768px) {
+          .auth-container {
+            justify-content: center;
+            padding-right: 0;
+          }
+          .auth-card {
+            max-width: 90%;
+          }
         }
       `}</style>
     </div>
