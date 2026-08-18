@@ -103,11 +103,11 @@ function Contact() {
        <form onSubmit={handleSubmit}>
           <div className="form-group">
             <label htmlFor="name">Name</label>
-            <input type="text" id="name" name="name" value={formData.name} onChange={handleChange} placeholder="Enter your name" maxLength={30} required />
+            <input type="text" id="name" name="name" value={formData.name} onChange={handleChange} placeholder="Enter your name" maxLength={50} required />
           </div>
           <div className="form-group">
             <label htmlFor="email">Email</label>
-            <input type="email" id="email" name="email" value={formData.email} onChange={handleChange} placeholder="Enter your email"  maxLength={30} required />
+            <input type="email" id="email" name="email" value={formData.email} onChange={handleChange} placeholder="Enter your email"  maxLength={50} required />
           </div>
           <div className="form-group">
             <label htmlFor="phone">Phone</label>
@@ -115,7 +115,7 @@ function Contact() {
           </div>
           <div className="form-group">
             <label htmlFor="message">Your Query</label>
-            <textarea id="message" name="message" rows="4" value={formData.message} onChange={handleChange} placeholder="Enter your query..." maxLength={200} required /></div>
+            <textarea id="message" name="message" rows="4" value={formData.message} onChange={handleChange} placeholder="Enter your query..." maxLength={100} required /></div>
           <button type="submit" className="primary-button" disabled={loading}>{loading ? "Sending..." : "Send Message"}</button>
         </form>
 
