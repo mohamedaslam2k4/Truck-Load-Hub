@@ -16,6 +16,7 @@ def create_load(load: LoadCreate, db: Session = Depends(get_db)):
         )
 
     try:
+        # MySQL compatible query (Removed RETURNING id)
         query = text("""
             INSERT INTO loads (
                 pickup, destination, load_type, weight, truck_type, 
@@ -23,9 +24,8 @@ def create_load(load: LoadCreate, db: Session = Depends(get_db)):
             ) 
             VALUES (
                 :pickup, :destination, :loadType, :weight, :truckType, 
-                CAST(:pickupDate AS DATE), :minPrice, :maxPrice, :description, :loaderId, 'AVAILABLE'
+                :pickupDate, :minPrice, :maxPrice, :description, :loaderId, 'AVAILABLE'
             )
-            RETURNING id
         """)
         
         result = db.execute(query, {
@@ -41,13 +41,12 @@ def create_load(load: LoadCreate, db: Session = Depends(get_db)):
             "loaderId": load.loaderId
         })
         
-        row = result.fetchone()
-        load_id = row[0] if row else None
-        
         db.commit()
+        load_id = result.lastrowid
+
     except Exception as e:
         db.rollback()
-        print(f"❌ Raw SQL Error on POST /loads/: {str(e)}")
+        print(f"❌ Database Error: {str(e)}")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, 
             detail=f"Failed to initialize and save load details: {str(e)}"
