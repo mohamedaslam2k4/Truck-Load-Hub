@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { API_URL } from "../api"; // Centralized API import
+import { API_URL } from "../api"; 
+import logo from "/logo.png";
 
 function Login({ setUserRole }) {
   const navigate = useNavigate();
