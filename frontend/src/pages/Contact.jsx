@@ -139,7 +139,7 @@ function Contact() {
           justify-content: flex-start;
           display: flex;
           align-items: center;
-          background: url('https://i.postimg.cc/mgN06wgz/image.png') no-repeat center center / cover;
+          background: url('/cont.png') no-repeat center center / cover;
           box-sizing: border-box;
           overflow: hidden;
         }
