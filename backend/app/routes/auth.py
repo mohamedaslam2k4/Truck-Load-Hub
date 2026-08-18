@@ -21,7 +21,7 @@ def register(data: RegisterRequest, db: Session = Depends(get_db)):
         # User basic details store to db
         result = db.execute(
             text("""INSERT INTO users (name, email, phone, password, role, status, city) 
-                    VALUES (:name, :email, :phone, :password, :role, 'PENDING', :city)"""),
+                    VALUES (:name, :email, :phone, :password, :role, 'VERIFIED', :city)"""),
             {"name": data.name, "email": data.email, "phone": data.phone, "password": data.password, "role": data.role, "city": data.city},
         )
         user_id = result.lastrowid
@@ -43,7 +43,7 @@ def register(data: RegisterRequest, db: Session = Depends(get_db)):
             )
 
         db.commit()
-        return {"message": "Registration successful", "user_id": user_id, "role": data.role, "status": "PENDING"}
+        return {"message": "Registration successful", "user_id": user_id, "role": data.role, "status": "VERIFIED"}
 
     except Exception as e:
         db.rollback()
