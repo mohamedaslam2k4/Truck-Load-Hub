@@ -86,21 +86,13 @@ function Login({ setUserRole }) {
           <h2>Login</h2>
           <p>Login to your account</p>
 
-          <form onSubmit={handleSubmit}>
-            <div className="form-group">
-              <label htmlFor="email">Email</label>
-              <input type="email" id="email" name="email" placeholder="Enter your email" value={formData.email} onChange={handleChange} maxLength={20} required />
-            </div>
-
-            <div className="form-group">
-              <label htmlFor="password">Password</label>
-              <input type="password" id="password" name="password" placeholder="Enter your password" value={formData.password} onChange={handleChange} maxLength={20} required />
-            </div>
-
-            <button type="submit" className="primary-button" disabled={loading}>
-              {loading ? "Logging in..." : "Login"}
-            </button>
-          </form>
+         <form onSubmit={handleSubmit}>
+          <div className="form-group"><label htmlFor="email">Email</label>
+            <input type="email" id="email" name="email" placeholder="Enter your email" value={formData.email} onChange={handleChange} maxLength={100} required /></div>
+          <div className="form-group"><label htmlFor="password">Password</label>
+            <input type="password" id="password" name="password" placeholder="Enter your password" value={formData.password} onChange={handleChange} maxLength={50} required /></div>
+          <button type="submit" className="primary-button" disabled={loading}>{loading ? "Logging in..." : "Login"}</button>
+        </form>
 
           <p className="auth-link">
             Don't have an account? <Link to="/register">Register</Link>
