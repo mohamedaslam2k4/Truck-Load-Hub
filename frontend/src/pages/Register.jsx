@@ -156,9 +156,9 @@ function Register() {
 
      <form onSubmit={handleSubmit}>
         <div className="form-group"><label htmlFor="name">Full Name</label>
-          <input type="text" id="name" name="name" placeholder="Enter your name" value={formData.name} onChange={handleChange} maxLength={30} required /></div>
+          <input type="text" id="name" name="name" placeholder="Enter your name" value={formData.name} onChange={handleChange} maxLength={50} required /></div>
         <div className="form-group"><label htmlFor="email">Email</label>
-          <input type="email" id="email" name="email" placeholder="Enter your email" value={formData.email} onChange={handleChange} maxLength={30} required /></div>
+          <input type="email" id="email" name="email" placeholder="Enter your email" value={formData.email} onChange={handleChange} maxLength={50} required /></div>
         <div className="form-group"><label htmlFor="phone">Phone</label>
           <input type="tel" id="phone" name="phone" placeholder="Enter your 10 digit phone number" value={formData.phone} onChange={handleChange} maxLength={10} required /></div>
         <div className="form-group"><label htmlFor="city">City</label>
@@ -202,11 +202,11 @@ function Register() {
           <div className="profile-section">
             <h3>Loader Information</h3>
             <div className="form-group"><label htmlFor="companyName">Company Name</label>
-              <input type="text" id="companyName" name="companyName" placeholder="Enter company name" value={formData.companyName} onChange={handleChange} maxLength={30} required /></div>
+              <input type="text" id="companyName" name="companyName" placeholder="Enter company name" value={formData.companyName} onChange={handleChange} maxLength={50} required /></div>
             <div className="form-group"><label htmlFor="contactPerson">Contact Person</label>
-              <input type="text" id="contactPerson" name="contactPerson" placeholder="Enter contact person" value={formData.contactPerson} onChange={handleChange} maxLength={30} required /></div>
+              <input type="text" id="contactPerson" name="contactPerson" placeholder="Enter contact person" value={formData.contactPerson} onChange={handleChange} maxLength={50} required /></div>
             <div className="form-group"><label htmlFor="businessType">Business Type</label>
-              <input type="text" id="businessType" name="businessType" placeholder="Example: Manufacturing" value={formData.businessType} onChange={handleChange} maxLength={30} required /></div>
+              <input type="text" id="businessType" name="businessType" placeholder="Example: Manufacturing" value={formData.businessType} onChange={handleChange} maxLength={50} required /></div>
           </div>
         )}
       
