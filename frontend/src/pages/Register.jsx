@@ -177,7 +177,7 @@ function Register() {
           <div className="profile-section">
             <h3>Driver Information</h3>
             <div className="form-group"><label htmlFor="experience">Experience (years)</label>
-              <input type="number" id="experience" name="experience" placeholder="Experience in years" min="0" max="100" value={formData.experience} onChange={handleChange} required /></div>
+              <input type="number" id="experience" name="experience" placeholder="Experience in years" min="0" max="100" value={formData.experience} onChange={handleChange} maxLength={3} required /></div>
             <div className="form-group"><label htmlFor="truckNumber">Truck Number</label>
               <input type="text" id="truckNumber" name="truckNumber" placeholder="Enter truck number" value={formData.truckNumber} onChange={handleChange} maxLength={15} required /></div>
             <div className="form-group">
@@ -192,7 +192,7 @@ function Register() {
               </select>
             </div>
             <div className="form-group"><label htmlFor="capacity">Capacity (tons)</label>
-              <input type="number" id="capacity" name="capacity" placeholder="Capacity in tons" min="0" max="10000" value={formData.capacity} onChange={handleChange} required /></div>
+              <input type="number" id="capacity" name="capacity" placeholder="Capacity in tons" min="0" max="10000" value={formData.capacity} onChange={handleChange} maxLength={5} required /></div>
             <div className="form-group"><label htmlFor="licenseNumber">License Number</label>
               <input type="text" id="licenseNumber" name="licenseNumber" placeholder="Enter license number" value={formData.licenseNumber} onChange={handleChange} maxLength={20} required /></div>
           </div>
