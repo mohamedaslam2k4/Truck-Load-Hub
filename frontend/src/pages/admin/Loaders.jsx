@@ -163,7 +163,7 @@ function Loaders() {
       </div>
 
      <style>{`
-        .loaders-page { width: 100%; max-width: 1100px; }
+        .loaders-page { width: 100%;}
 
         .page-header { margin-bottom: 25px; }
 
