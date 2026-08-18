@@ -1,7 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import logo from "/logo.png";
-import hero from "/hero/png";
+
 
 function Landing() {
   return (
@@ -220,7 +220,7 @@ function Landing() {
         .hero { 
           padding: 100px 6%; 
           text-align: center; 
-          background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('/hero') no-repeat center/cover; 
+          background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('/hero.png') no-repeat center/cover; 
           width: 100%;
         }
 
