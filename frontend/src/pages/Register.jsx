@@ -90,8 +90,9 @@ function Register() {
     return true;
   };
 
-  // form submit
-const handleSubmit = async (e) => {
+
+// form submit
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validateForm()) return;
     setLoading(true);
@@ -103,19 +104,15 @@ const handleSubmit = async (e) => {
       city: formData.city.trim(),
       password: formData.password,
       role: role,
+      experience: role === "DRIVER" && formData.experience ? Number(formData.experience) : null,
+      truckNumber: role === "DRIVER" ? formData.truckNumber?.trim() || null : null,
+      truckType: role === "DRIVER" ? formData.truckType || null : null,
+      capacity: role === "DRIVER" && formData.capacity ? Number(formData.capacity) : null,
+      licenseNumber: role === "DRIVER" ? formData.licenseNumber?.trim() || null : null,
+      companyName: role === "LOADER" ? formData.companyName?.trim() || null : null,
+      contactPerson: role === "LOADER" ? formData.contactPerson?.trim() || null : null,
+      businessType: role === "LOADER" ? formData.businessType?.trim() || null : null,
     };
-
-    if (role === "DRIVER") {
-      payload.experience = formData.experience ? Number(formData.experience) : null;
-      payload.truckNumber = formData.truckNumber?.trim() || "";
-      payload.truckType = formData.truckType || "";
-      payload.capacity = formData.capacity ? Number(formData.capacity) : null;
-      payload.licenseNumber = formData.licenseNumber?.trim() || "";
-    } else if (role === "LOADER") {
-      payload.companyName = formData.companyName?.trim() || "";
-      payload.contactPerson = formData.contactPerson?.trim() || "";
-      payload.businessType = formData.businessType?.trim() || "";
-    }
 
     try {
       const response = await fetch(`${API_URL}/auth/register`, {
@@ -127,13 +124,18 @@ const handleSubmit = async (e) => {
       const data = await response.json();
 
       if (!response.ok) {
-        // Extract exact error string safely to prevent [object Object]
-        const serverMsg = typeof data === "object" 
-          ? (data.message || data.error || "Registration failed") 
-          : data;
-        
-        alert(serverMsg); 
-        return;
+        // Parse FastAPI detail field safely
+        let serverMsg = "Registration failed";
+
+        if (typeof data.detail === "string") {
+          serverMsg = data.detail; // Catches "Email already registered", "Invalid role", etc.
+        } else if (Array.isArray(data.detail)) {
+          // Extracts field names for Pydantic validation errors
+          serverMsg = data.detail.map((err) => `${err.loc[err.loc.length - 1]}: ${err.msg}`).join(", ");
+        }
+
+        alert(serverMsg);
+        return; // Stops execution on error
       }
 
       alert("Registration successful! Your account is waiting for admin verification.");
@@ -148,6 +150,7 @@ const handleSubmit = async (e) => {
       setLoading(false);
     }
   };
+  
   return (
     <div className="auth-page">
       <div className="auth-card">
