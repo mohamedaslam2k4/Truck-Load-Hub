@@ -108,9 +108,6 @@ function Verification() {
         </div>
       ))}
     </div>
-
-  
-
       <style>{`
         .verification-page {
           width: 100%;
@@ -286,7 +283,6 @@ function Verification() {
           background: #eee;
         }
       `}</style>
-
     </div>
   );
 }
