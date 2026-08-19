@@ -120,13 +120,7 @@ function Sidebar({ role }) {
 
         <nav className="sidebar-links">
           {links.map((link) => (
-            <NavLink
-              key={link.path}
-              to={link.path}
-              className={({ isActive }) =>
-                isActive ? "sidebar-link active" : "sidebar-link"
-              }
-            >
+            <NavLink key={link.path}  to={link.path}  className={({ isActive }) =>   isActive ? "sidebar-link active" : "sidebar-link"}>
               {link.icon && <span className="link-icon">{link.icon}</span>}
               <span className="link-text">{link.name}</span>
             </NavLink>
@@ -140,8 +134,9 @@ function Sidebar({ role }) {
           <div className="profile-avatar">{initials}</div>
           <div className="profile-info">
               <div className="profile-tag">
-              <span className="role-text">{userRole}</span> • User ID: #{userId}
+              <span className="role-text">{userRole}</span>  •  User ID:  #{userId}
             </div>
+            <hr>
             <div className="profile-name">{name}</div>
             <div className="profile-email">{email}</div>
           
