@@ -136,7 +136,7 @@ function Sidebar({ role }) {
               <div className="profile-tag">
               <span className="role-text">{userRole}</span>  •  User ID:  #{userId}
             </div>
-            <hr>
+         
             <div className="profile-name">{name}</div>
             <div className="profile-email">{email}</div>
           
@@ -256,7 +256,9 @@ function Sidebar({ role }) {
           display: flex;
           flex-direction: column;
           overflow: hidden;
-        }
+          border-bottom:1px solid black;
+          padding-bottom:2px;
+          }
 
         .profile-name {
           font-size: 13px;
