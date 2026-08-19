@@ -11,7 +11,8 @@ function Contacts() {
     setLoading(true);
 
     try {
-      const response = await fetch(`${API_URL}/admin/contacts`);
+      // Pass filter parameter to the API
+      const response = await fetch(`${API_URL}/admin/contacts?status=${filter}`);
       const data = await response.json();
 
       if (!response.ok) {
@@ -27,9 +28,10 @@ function Contacts() {
     }
   };
 
+  // Re-fetch contacts whenever the filter selection changes
   useEffect(() => {
     fetchContacts();
-  }, []);
+  }, [filter]);
 
   const resolveContact = async (contactId) => {
     setResolvingId(contactId);
@@ -48,15 +50,7 @@ function Contacts() {
         throw new Error(data.detail || "Failed to resolve contact");
       }
 
-      // Update local status from pending to closed/resolved
-      setContacts((currentContacts) =>
-        currentContacts.map((contact) =>
-          contact.id === contactId
-            ? { ...contact, status: "closed" }
-            : contact
-        )
-      );
-
+      fetchContacts();
       alert("Contact marked as resolved.");
     } catch (error) {
       console.error("Error resolving contact:", error);
@@ -65,14 +59,6 @@ function Contacts() {
       setResolvingId(null);
     }
   };
-
-  // Filter logic
-  const filteredContacts = contacts.filter((contact) => {
-    const isClosed = contact.status === "closed" || contact.status === "resolved";
-    if (filter === "pending") return !isClosed;
-    if (filter === "resolved") return isClosed;
-    return true; // "all"
-  });
 
   return (
     <div role="ADMIN">
@@ -88,7 +74,7 @@ function Contacts() {
           <div className="card-header">
             <div>
               <h2>Contact Requests</h2>
-              <p>{filteredContacts.length} requests shown</p>
+              <p>{contacts.length} requests shown</p>
             </div>
 
             <div className="header-actions">
@@ -105,7 +91,7 @@ function Contacts() {
                   <option value="all">All</option>
                 </select>
               </div>
-              <span className="contact-count">{filteredContacts.length}</span>
+              <span className="contact-count">{contacts.length}</span>
             </div>
           </div>
 
@@ -115,18 +101,20 @@ function Contacts() {
           )}
 
           {/* Empty state */}
-          {!loading && filteredContacts.length === 0 && (
+          {!loading && contacts.length === 0 && (
             <div className="empty-state">
               <h3>No Contact Requests</h3>
-              <p>There are no {filter !== "all" ? filter : ""} support requests.</p>
+              <p>There are no {filter} support requests.</p>
             </div>
           )}
 
           {/* Contact Records */}
           {!loading &&
-            filteredContacts.map((contact) => {
+            contacts.map((contact) => {
               const isResolved =
-                contact.status === "closed" || contact.status === "resolved";
+                contact.status === "CLOSED" ||
+                contact.status === "closed" ||
+                contact.status === "resolved";
 
               return (
                 <div className="contact-row" key={contact.id}>
