@@ -1,14 +1,12 @@
 import { useEffect, useState } from "react";
 import { API_URL } from "../../api"; 
 
-
 function Contacts() {
   const [contacts, setContacts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [resolvingId, setResolvingId] = useState(null);
+  const [filter, setFilter] = useState("pending"); // "pending", "resolved", "all"
 
-
-  // get fetch  pending contact request 
   const fetchContacts = async () => {
     setLoading(true);
 
@@ -17,16 +15,17 @@ function Contacts() {
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error( data.detail || "Failed to fetch contact requests" );
+        throw new Error(data.detail || "Failed to fetch contact requests");
       }
 
       setContacts(data);
-
     } catch (error) {
-      console.error( "Error fetching contacts:",error);
+      console.error("Error fetching contacts:", error);
       alert("Unable to load contact requests");
-
-    } finally { setLoading(false);}};
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
     fetchContacts();
@@ -36,33 +35,48 @@ function Contacts() {
     setResolvingId(contactId);
 
     try {
-      const response = await fetch(`${API_URL}/admin/contacts/${contactId}/resolve`,
+      const response = await fetch(
+        `${API_URL}/admin/contacts/${contactId}/resolve`,
         {
           method: "PUT",
-        });
+        }
+      );
 
       const data = await response.json();
 
-      if (!response.ok) { throw new Error(data.detail || "Failed to resolve contact");}
-      
-      // chnage status pending => closed
-     
-      setContacts((currentContacts) =>currentContacts.filter((contact) => contact.id !== contactId));
+      if (!response.ok) {
+        throw new Error(data.detail || "Failed to resolve contact");
+      }
+
+      // Update local status from pending to closed/resolved
+      setContacts((currentContacts) =>
+        currentContacts.map((contact) =>
+          contact.id === contactId
+            ? { ...contact, status: "closed" }
+            : contact
+        )
+      );
+
       alert("Contact marked as resolved.");
-
     } catch (error) {
-      console.error( "Error resolving contact:", error );
-      alert( error.message || "Failed to resolve contact" );
-
+      console.error("Error resolving contact:", error);
+      alert(error.message || "Failed to resolve contact");
     } finally {
       setResolvingId(null);
     }
   };
 
+  // Filter logic
+  const filteredContacts = contacts.filter((contact) => {
+    const isClosed = contact.status === "closed" || contact.status === "resolved";
+    if (filter === "pending") return !isClosed;
+    if (filter === "resolved") return isClosed;
+    return true; // "all"
+  });
+
   return (
     <div role="ADMIN">
       <div className="contacts-page">
-
         <div className="page-header">
           <div>
             <h1>Contacts</h1>
@@ -72,72 +86,108 @@ function Contacts() {
 
         <div className="contacts-card">
           <div className="card-header">
-
             <div>
               <h2>Contact Requests</h2>
-              <p>{contacts.length} requests received</p>
+              <p>{filteredContacts.length} requests shown</p>
             </div>
 
-            <span className="contact-count">{contacts.length}</span>
-
+            <div className="header-actions">
+              <div className="filter-group">
+                <label htmlFor="status-filter">Filter:</label>
+                <select
+                  id="status-filter"
+                  value={filter}
+                  onChange={(e) => setFilter(e.target.value)}
+                  className="filter-dropdown"
+                >
+                  <option value="pending">Pending</option>
+                  <option value="resolved">Resolved</option>
+                  <option value="all">All</option>
+                </select>
+              </div>
+              <span className="contact-count">{filteredContacts.length}</span>
+            </div>
           </div>
-          
-          {/*Loading*/}
-          {loading && (<div className="loading">Loading contact requests...</div>)}
 
+          {/* Loading */}
+          {loading && (
+            <div className="loading">Loading contact requests...</div>
+          )}
 
-          {/* when no data it show empty  */}
-          {!loading && contacts.length === 0 && (
+          {/* Empty state */}
+          {!loading && filteredContacts.length === 0 && (
             <div className="empty-state">
               <h3>No Contact Requests</h3>
-              <p>There are no pending support requests.</p>
-            </div>)}
-
-
-          {/* when data show templte */}
-          {!loading && contacts.map((contact) => (
-
-            <div className="contact-row" key={contact.id}>
-              <div className="contact-info">
-                <div className="contact-header">
-
-                  <div>
-                    <div className="contact-name">
-                      <h3>{contact.name}</h3>
-                      <span className="status pending">{contact.status}</span>
-                    </div>
-                    <p className="subject">Contact Request</p>
-                  </div>
-                  <span className="date">Date: {contact.createdAt}</span>
-                </div>
-
-         
-                <div className="details">
-                  <p><strong>Email:</strong> {contact.email}</p>
-                  <p><strong>Phone:</strong> {contact.phone || "Not provided"}</p>
-                </div>
-
-      
-                <div className="message">
-                  <span>Message</span>
-                  <p>{contact.message}</p>
-                </div>
-              </div>
-
-     
-              <div className="actions">
-                <button className="resolve" onClick={() => resolveContact(contact.id)} disabled={resolvingId === contact.id}>
-                  {resolvingId === contact.id ? "Resolving..." : "Mark Resolved"}
-                  </button>
-              </div>
+              <p>There are no {filter !== "all" ? filter : ""} support requests.</p>
             </div>
-          ))}
+          )}
+
+          {/* Contact Records */}
+          {!loading &&
+            filteredContacts.map((contact) => {
+              const isResolved =
+                contact.status === "closed" || contact.status === "resolved";
+
+              return (
+                <div className="contact-row" key={contact.id}>
+                  <div className="contact-info">
+                    <div className="contact-header">
+                      <div>
+                        <div className="contact-name">
+                          <h3>{contact.name}</h3>
+                          <span
+                            className={`status ${
+                              isResolved ? "resolved" : "pending"
+                            }`}
+                          >
+                            {contact.status}
+                          </span>
+                        </div>
+                        <p className="subject">Contact Request</p>
+                      </div>
+                      <span className="date">Date: {contact.createdAt}</span>
+                    </div>
+
+                    <div className="details">
+                      <p>
+                        <strong>Email:</strong> {contact.email}
+                      </p>
+                      <p>
+                        <strong>Phone:</strong>{" "}
+                        {contact.phone || "Not provided"}
+                      </p>
+                    </div>
+
+                    <div className="message">
+                      <span>Message</span>
+                      <p>{contact.message}</p>
+                    </div>
+                  </div>
+
+                  <div className="actions">
+                    {isResolved ? (
+                      <span className="resolved-badge">✓ Resolved</span>
+                    ) : (
+                      <button
+                        className="resolve"
+                        onClick={() => resolveContact(contact.id)}
+                        disabled={resolvingId === contact.id}
+                      >
+                        {resolvingId === contact.id
+                          ? "Resolving..."
+                          : "Mark Resolved"}
+                      </button>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
         </div>
       </div>
 
       <style>{`
         .contacts-page {
-       width: 100%;
+          width: 100%;
         }
 
         .page-header {
@@ -165,7 +215,36 @@ function Contacts() {
           display: flex;
           justify-content: space-between;
           align-items: center;
-          margin-bottom: 10px;
+          margin-bottom: 15px;
+        }
+
+        .header-actions {
+          display: flex;
+          align-items: center;
+          gap: 15px;
+        }
+
+        .filter-group {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          font-size: 14px;
+          color: #555;
+          font-weight: 500;
+        }
+
+        .filter-dropdown {
+          padding: 6px 12px;
+          border: 1px solid #ccc;
+          border-radius: 6px;
+          background-color: #fff;
+          font-size: 14px;
+          cursor: pointer;
+          outline: none;
+        }
+
+        .filter-dropdown:focus {
+          border-color: #222;
         }
 
         .card-header h2 {
@@ -186,11 +265,9 @@ function Contacts() {
           border-radius: 20px;
           background: #222;
           color: #fff;
-
           display: flex;
           align-items: center;
           justify-content: center;
-
           font-size: 13px;
           font-weight: bold;
         }
@@ -233,7 +310,6 @@ function Contacts() {
           display: flex;
           justify-content: space-between;
           align-items: flex-start;
-
           gap: 20px;
           margin-bottom: 12px;
         }
@@ -254,11 +330,17 @@ function Contacts() {
           border-radius: 4px;
           font-size: 11px;
           font-weight: bold;
+          text-transform: capitalize;
         }
 
         .status.pending {
           background: #222;
           color: #fff;
+        }
+
+        .status.resolved {
+          background: #e6f4ea;
+          color: #137333;
         }
 
         .subject {
@@ -310,20 +392,17 @@ function Contacts() {
 
         .actions {
           flex-shrink: 0;
-          margin:auto;
+          margin: auto;
         }
 
         .resolve {
           padding: 9px 16px;
           border: 1px solid #222;
           border-radius: 6px;
-
           background: #222;
           color: #fff;
-
           font-size: 14px;
           font-weight: 600;
-
           cursor: pointer;
         }
 
@@ -336,8 +415,16 @@ function Contacts() {
           cursor: not-allowed;
         }
 
+        .resolved-badge {
+          font-size: 14px;
+          font-weight: 600;
+          color: #137333;
+          padding: 8px 12px;
+          background: #e6f4ea;
+          border-radius: 6px;
+          display: inline-block;
+        }
       `}</style>
-
     </div>
   );
 }
