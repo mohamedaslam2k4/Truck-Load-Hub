@@ -139,11 +139,12 @@ function Sidebar({ role }) {
         <div className="profile-badge">
           <div className="profile-avatar">{initials}</div>
           <div className="profile-info">
+              <div className="profile-tag">
+              <span className="role-text">{userRole}</span> • User ID: #{userId}
+            </div>
             <div className="profile-name">{name}</div>
             <div className="profile-email">{email}</div>
-            <div className="profile-tag">
-              <span className="role-text">{userRole}</span> • ID: {userId}
-            </div>
+          
           </div>
         </div>
 
@@ -272,7 +273,8 @@ function Sidebar({ role }) {
         }
 
         .profile-email {
-          font-size: 11px;
+          font-size: 12px;
+          font-weight:700;
           color: #666;
           white-space: nowrap;
           overflow: hidden;
