@@ -134,7 +134,7 @@ function Sidebar({ role }) {
           <div className="profile-avatar">{initials}</div>
           <div className="profile-info">
               <div className="profile-tag">
-              <span className="role-text">{userRole}</span>  •  User ID:  #{userId}
+              <span className="role-text">{userRole} • User ID: </span> #{userId}
             </div>
          
             <div className="profile-name">{name}</div>
@@ -256,8 +256,7 @@ function Sidebar({ role }) {
           display: flex;
           flex-direction: column;
           overflow: hidden;
-          border-bottom:1px solid black;
-          padding-bottom:2px;
+        
           }
 
         .profile-name {
@@ -283,6 +282,8 @@ function Sidebar({ role }) {
           color: #888;
           font-weight:700;
           margin-top: 1px;
+          border-bottom:1px solid black;
+          padding-bottom:2px;
         }
 
         .role-text {
