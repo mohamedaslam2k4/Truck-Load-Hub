@@ -32,7 +32,7 @@ function Login({ setUserRole }) {
       const data = await response.json();
 
       if (!response.ok) {
-        alert(data.detail || "Login failed");
+        alert( "Login failed");
         return;
       }
 
