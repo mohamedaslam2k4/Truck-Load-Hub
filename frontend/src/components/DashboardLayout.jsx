@@ -18,17 +18,7 @@ function DashboardLayout({ role, children }) {
         .dashboard-layout {
           min-height: 100vh;
           background: #f5f6f8;
-          zoom: 80%; /* Scales entire dashboard to 80% */
-        }
-
-        /* Firefox fallback */
-        @supports not (zoom: 0.8) {
-          .dashboard-layout {
-            transform: scale(0.8);
-            transform-origin: top left;
-            width: 125%;
-            min-height: 125vh;
-          }
+      
         }
 
         .dashboard-body {
