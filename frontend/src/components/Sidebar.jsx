@@ -298,7 +298,7 @@ function Sidebar({ role }) {
           gap: 8px;
           width: 100%;
           padding: 10px;
-          background: #605f5f;
+          background: #222222;
           color: #ffffff;
           border: none;
           border-radius: 6px;
@@ -309,7 +309,7 @@ function Sidebar({ role }) {
         }
 
         .logout-btn:hover {
-          background: #222222;
+          background: #605f5f;
         }
 
         .logout-icon {
