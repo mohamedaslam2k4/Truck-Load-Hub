@@ -2,19 +2,32 @@ import { useEffect, useState } from "react";
 import Card from "../../components/Card";
 import { API_URL } from "../../api";
 
+// Helper function to safely format ISO/string dates
+const formatDate = (dateString) => {
+  if (!dateString) return "N/A";
+  const date = new Date(dateString);
+  return isNaN(date.getTime()) ? "N/A" : date.toLocaleDateString("en-IN");
+};
+
 function MyDeals() {
   const [deals, setDeals] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState("ALL");
   const [completingDeal, setCompletingDeal] = useState(null);
 
-  // Safely extract driver details from localStorage (supports multiple user object schemas)
-  const storedUser = localStorage.getItem("user");
-  const user = storedUser ? JSON.parse(storedUser) : {};
+  // Safely extract driver details from localStorage
+  const getStoredUser = () => {
+    try {
+      const storedUser = localStorage.getItem("user");
+      return storedUser ? JSON.parse(storedUser) : {};
+    } catch (e) {
+      console.error("Failed to parse user from localStorage", e);
+      return {};
+    }
+  };
+
+  const user = getStoredUser();
   const driverId = user?.id || user?.driverId || user?.userId;
-
-
- 
 
   // Fetch driver deals
   const fetchDeals = async () => {
@@ -33,7 +46,7 @@ function MyDeals() {
       if (!response.ok) {
         throw new Error(data.detail || "Failed to fetch deals");
       }
-      setDeals(data);
+      setDeals(Array.isArray(data) ? data : []);
     } catch (error) {
       console.error("Error fetching deals:", error);
       alert(`Unable to load your deals: ${error.message}`);
@@ -129,14 +142,14 @@ function MyDeals() {
               filteredDeals.map((deal) => (
                 <Card key={deal.dealId}>
                   <div className="load-header">
-                   <span className="load-id">Deal # {deal.dealId}</span>
+                    <span className="load-id">Deal # {deal.dealId}</span>
                     <div className="route">
                       <span>{deal.pickup}</span>
                       <span className="arrow">→</span>
                       <span>{deal.destination}</span>
                     </div>
                     <span
-                      className={`status ${deal.status
+                      className={`status ${(deal.status || "")
                         .toLowerCase()
                         .replace(/\s+/g, "-")}`}
                     >
