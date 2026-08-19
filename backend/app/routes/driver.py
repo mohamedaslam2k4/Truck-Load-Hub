@@ -21,7 +21,7 @@ def get_available_loads(db: Session = Depends(get_db)):
                status, loader_id AS "loaderId" 
         FROM loads 
         WHERE status = 'AVAILABLE' 
-          AND id NOT IN (SELECT load_id FROM deals WHERE status = 'PENDING') 
+          AND  
         ORDER BY created_at DESC
     """)
     loads = db.execute(query).mappings().all()
