@@ -55,14 +55,14 @@ function App() {
         </Route>
 
         {/* Driver Routes (DRIVER + ADMIN) */}
-        <Route element={<ProtectedRoute userRole={userRole} allowedRoles={["DRIVER", "ADMIN"]} />}>
+        <Route element={<ProtectedRoute userRole={userRole} allowedRoles={["DRIVER"]} />}>
           <Route path="/driver" element={<Navigate to="/driver/available-loads" replace />} />
           <Route path="/driver/available-loads" element={<DashboardLayout role={userRole || "DRIVER"} setUserRole={setUserRole}><DriverAvailableLoads /></DashboardLayout>} />
           <Route path="/driver/deals" element={<DashboardLayout role={userRole || "DRIVER"} setUserRole={setUserRole}><DriverMyDeals /></DashboardLayout>} />
         </Route>
 
         {/* Loader Routes (LOADER + ADMIN) */}
-        <Route element={<ProtectedRoute userRole={userRole} allowedRoles={["LOADER", "ADMIN"]} />}>
+        <Route element={<ProtectedRoute userRole={userRole} allowedRoles={["LOADER"]} />}>
           <Route path="/loader" element={<Navigate to="/loader/manage-loads" replace />} />
           <Route path="/loader/manage-loads" element={<DashboardLayout role={userRole || "LOADER"} setUserRole={setUserRole}><LoaderManageLoads /></DashboardLayout>} />
           <Route path="/loader/deals" element={<DashboardLayout role={userRole || "LOADER"} setUserRole={setUserRole}><LoaderDeals /></DashboardLayout>} />
