@@ -91,7 +91,7 @@ function Register() {
   };
 
   // form submit
-  const handleSubmit = async (e) => {
+const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validateForm()) return;
     setLoading(true);
@@ -127,7 +127,13 @@ function Register() {
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error("Registration failed");
+        // Extract exact error string safely to prevent [object Object]
+        const serverMsg = typeof data === "object" 
+          ? (data.message || data.error || "Registration failed") 
+          : data;
+        
+        alert(serverMsg); 
+        return;
       }
 
       alert("Registration successful! Your account is waiting for admin verification.");
@@ -142,7 +148,6 @@ function Register() {
       setLoading(false);
     }
   };
-
   return (
     <div className="auth-page">
       <div className="auth-card">
