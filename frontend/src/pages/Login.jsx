@@ -15,73 +15,70 @@ function Login({ setUserRole }) {
     });
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
+ const handleSubmit = async (e) => {
+  e.preventDefault();
+  setLoading(true);
 
-    try {
-      const response = await fetch(`${API_URL}/auth/login`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          email: formData.email.trim(),
-          password: formData.password,
-        }),
-      });
+  try {
+    const response = await fetch(`${API_URL}/auth/login`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        email: formData.email.trim(),
+        password: formData.password,
+      }),
+    });
 
-      const data = await response.json();
+    const data = await response.json();
 
-      if (!response.ok) {
-        // Extract plain string detail message from FastAPI
-        let errorMessage = "Invalid credentials";
+    if (!response.ok) {
+      let errorMessage = "Invalid email or password";
 
-        if (typeof data.detail === "string") {
-          errorMessage = data.detail; // Catches 401, 403 status detail strings directly from backend
-        } else if (typeof data.message === "string") {
-          errorMessage = data.message;
-        }
-
-        alert(errorMessage);
-        return;
+      // Extracts 401 & 403 string details
+      if (typeof data.detail === "string") {
+        errorMessage = data.detail;
+      } 
+      // Extracts 422 Pydantic schema validation errors
+      else if (Array.isArray(data.detail) && data.detail.length > 0) {
+        errorMessage = data.detail.map((err) => `${err.loc[err.loc.length - 1]}: ${err.msg}`).join("\n");
       }
 
-      const user = data.user;
-      const role = user.role ? user.role.toUpperCase() : "";
-
-      // 1. Save user details in localStorage
-      localStorage.setItem("user", JSON.stringify(user));
-
-      // 2. Save role in sessionStorage for URL route protection
-      sessionStorage.setItem("role", role);
-
-      // 3. Update React State in App.jsx
-      if (setUserRole) {
-        setUserRole(role);
-      }
-
-      alert("Login successfully!");
-
-      // 4. Navigate based on user role
-      switch (role) {
-        case "DRIVER":
-          navigate("/driver");
-          break;
-        case "LOADER":
-          navigate("/loader");
-          break;
-        case "ADMIN":
-          navigate("/admin");
-          break;
-        default:
-          alert("Invalid user role");
-      }
-    } catch (error) {
-      console.error("Login error:", error);
-      alert("Unable to connect to server");
-    } finally {
-      setLoading(false);
+      alert(errorMessage);
+      return;
     }
-  };
+
+    const user = data.user;
+    const role = user.role ? user.role.toUpperCase() : "";
+
+    localStorage.setItem("user", JSON.stringify(user));
+    sessionStorage.setItem("role", role);
+
+    if (setUserRole) {
+      setUserRole(role);
+    }
+
+    alert("Login successfully!");
+
+    switch (role) {
+      case "DRIVER":
+        navigate("/driver");
+        break;
+      case "LOADER":
+        navigate("/loader");
+        break;
+      case "ADMIN":
+        navigate("/admin");
+        break;
+      default:
+        alert("Invalid user role");
+    }
+  } catch (error) {
+    console.error("Login error:", error);
+    alert("Unable to connect to server");
+  } finally {
+    setLoading(false);
+  }
+};
 
   return (
     <div className="auth-page">
