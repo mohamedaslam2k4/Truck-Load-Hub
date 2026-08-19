@@ -278,9 +278,9 @@ function Sidebar({ role }) {
         }
 
         .profile-tag {
-          font-size: 10px;
+          font-size: 11px;
           color: #888;
-          font-weight:700;
+          font-weight:800;
           margin-top: 1px;
           border-bottom:1px solid black;
           padding-bottom:2px;
