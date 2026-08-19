@@ -69,7 +69,7 @@ function Sidebar({ role }) {
         </nav>
       </div>
 
-      {/* MATCHED BOTTOM SECTION */}
+      {/* MATCHING EXISTING SIDEBAR UI COLOURS */}
       <div className="sidebar-bottom">
         <div className="profile-badge">
           <div className="profile-avatar">{initials}</div>
@@ -93,8 +93,8 @@ function Sidebar({ role }) {
       <style>{`
         .dashboard-sidebar {
           width: 240px;
-          background: #ffffff;
-          border-right: 1px solid #e2e8f0;
+          background: #fff;
+          border-right: 1px solid #ddd;
           padding: 20px 15px;
           flex-shrink: 0;
           position: sticky;
@@ -112,14 +112,14 @@ function Sidebar({ role }) {
         }
 
         .sidebar-title {
-          font-size: 15px;
-          font-weight: 700;
+          font-size: 16px;
+          font-weight: bold;
           text-align: center;
-          color: #ffffff;
+          color: #fff;
           padding: 10px 12px;
           margin-bottom: 20px;
-          background: #334155;
-          border-radius: 8px;
+          background: #605f5f;
+          border-radius: 6px;
         }
 
         .sidebar-links {
@@ -134,52 +134,51 @@ function Sidebar({ role }) {
           padding: 10px 12px;
           border-radius: 6px;
           text-decoration: none;
-          color: #475569;
-          font-size: 14px;
-          font-weight: 600;
-          transition: background 0.2s, color 0.2s;
+          color: #444;
+          font-size: 15px;
+          font-weight: bold;
+          transition: background 0.2s;
         }
 
         .sidebar-link:hover {
-          background: #f1f5f9;
-          color: #0f172a;
+          background: #f2f2f2;
         }
 
         .sidebar-link.active {
-          background: #1e293b;
-          color: #ffffff;
+          background: #222;
+          color: #fff;
         }
 
-        /* MATCHED BOTTOM SECTION */
+        /* BOTTOM SECTION */
         .sidebar-bottom {
           display: flex;
           flex-direction: column;
           gap: 10px;
           padding-top: 15px;
-          border-top: 1px solid #e2e8f0;
+          border-top: 1px solid #eee;
         }
 
-        /* PROFILE BADGE STYLES */
+        /* PROFILE BADGE MATCHING UI */
         .profile-badge {
           display: flex;
           align-items: center;
           gap: 10px;
           padding: 10px;
-          background: #f8fafc;
-          border: 1px solid #e2e8f0;
-          border-radius: 8px;
+          background: #f2f2f2;
+          border: 1px solid #ddd;
+          border-radius: 6px;
         }
 
         .profile-avatar {
           width: 36px;
           height: 36px;
-          border-radius: 6px;
-          background: #334155;
+          border-radius: 50%;
+          background: #605f5f;
           color: #ffffff;
           display: flex;
           align-items: center;
           justify-content: center;
-          font-weight: 700;
+          font-weight: bold;
           font-size: 13px;
           flex-shrink: 0;
         }
@@ -192,8 +191,8 @@ function Sidebar({ role }) {
 
         .profile-name {
           font-size: 13px;
-          font-weight: 700;
-          color: #1e293b;
+          font-weight: bold;
+          color: #222;
           white-space: nowrap;
           overflow: hidden;
           text-overflow: ellipsis;
@@ -201,7 +200,7 @@ function Sidebar({ role }) {
 
         .profile-email {
           font-size: 11px;
-          color: #64748b;
+          color: #666;
           white-space: nowrap;
           overflow: hidden;
           text-overflow: ellipsis;
@@ -209,16 +208,16 @@ function Sidebar({ role }) {
 
         .profile-tag {
           font-size: 10px;
-          color: #94a3b8;
+          color: #888;
           margin-top: 1px;
         }
 
         .role-text {
-          color: #475569;
-          font-weight: 700;
+          color: #222;
+          font-weight: bold;
         }
 
-        /* MATCHING LOGOUT BUTTON STYLES */
+        /* LOGOUT BUTTON MATCHING UI */
         .logout-btn {
           display: flex;
           align-items: center;
@@ -226,20 +225,18 @@ function Sidebar({ role }) {
           gap: 8px;
           width: 100%;
           padding: 10px;
-          background: #f8fafc;
-          color: #475569;
-          border: 1px solid #e2e8f0;
-          border-radius: 8px;
-          font-size: 13px;
-          font-weight: 700;
+          background: #605f5f;
+          color: #ffffff;
+          border: none;
+          border-radius: 6px;
+          font-size: 14px;
+          font-weight: bold;
           cursor: pointer;
-          transition: all 0.2s ease;
+          transition: background 0.2s;
         }
 
         .logout-btn:hover {
-          background: #fee2e2;
-          color: #dc2626;
-          border-color: #fca5a5;
+          background: #222222;
         }
 
         .logout-icon {
