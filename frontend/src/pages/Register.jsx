@@ -26,7 +26,7 @@ function Register() {
   const [formData, setFormData] = useState(initialFormData);
   const [loading, setLoading] = useState(false);
 
-  // handle input change
+  // Handle input change
   const handleChange = (e) => {
     const { name, value } = e.target;
 
@@ -43,7 +43,7 @@ function Register() {
     }));
   };
 
-  // role change
+  // Role change reset logic
   const handleRoleChange = (e) => {
     const selectedRole = e.target.value;
     setRole(selectedRole);
@@ -59,7 +59,7 @@ function Register() {
     }));
   };
 
-  // form validate
+  // Form validation
   const validateForm = () => {
     if (formData.name.trim().length < 2) {
       alert("Name must be at least 2 characters long.");
@@ -90,8 +90,7 @@ function Register() {
     return true;
   };
 
-
-// form submit
+  // Form submit
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validateForm()) return;
@@ -124,18 +123,24 @@ function Register() {
       const data = await response.json();
 
       if (!response.ok) {
-        // Parse FastAPI detail field safely
         let serverMsg = "Registration failed";
 
+        // Handle string errors (e.g. 400 "Email already registered")
         if (typeof data.detail === "string") {
-          serverMsg = data.detail; // Catches "Email already registered", "Invalid role", etc.
-        } else if (Array.isArray(data.detail)) {
-          // Extracts field names for Pydantic validation errors
-          serverMsg = data.detail.map((err) => `${err.loc[err.loc.length - 1]}: ${err.msg}`).join(", ");
+          serverMsg = data.detail;
+        } 
+        // Handle FastAPI 422 Validation Error arrays
+        else if (Array.isArray(data.detail) && data.detail.length > 0) {
+          serverMsg = data.detail
+            .map((err) => `${err.loc[err.loc.length - 1]}: ${err.msg}`)
+            .join("\n");
+        } 
+        else if (typeof data.message === "string") {
+          serverMsg = data.message;
         }
 
         alert(serverMsg);
-        return; // Stops execution on error
+        return;
       }
 
       alert("Registration successful! Your account is waiting for admin verification.");
