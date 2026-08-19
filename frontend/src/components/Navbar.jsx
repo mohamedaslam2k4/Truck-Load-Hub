@@ -54,6 +54,7 @@ function Navbar({ role, setUserRole }) {
           position: sticky;
           top: 0;
           z-index: 1000;
+          zoom:90%;
         }
         .navbar-title {
           display: flex;
