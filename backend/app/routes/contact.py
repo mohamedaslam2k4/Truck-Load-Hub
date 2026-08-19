@@ -6,8 +6,6 @@ from app.database import get_db
 from app.schemas import ContactRequest
 
 router = APIRouter(tags=["Contact"])
-
-# Added "" alongside "/" to handle both /contact and /contact/ gracefully
 @router.post("")
 
 def create_contact(request: ContactRequest, db: Session = Depends(get_db)):
