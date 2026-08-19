@@ -284,6 +284,7 @@ function Sidebar({ role }) {
         .profile-tag {
           font-size: 10px;
           color: #888;
+          font-weight:700;
           margin-top: 1px;
         }
 
