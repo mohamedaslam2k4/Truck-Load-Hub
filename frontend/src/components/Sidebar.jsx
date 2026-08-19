@@ -147,8 +147,8 @@ function Sidebar({ role }) {
           padding: 20px 15px;
           flex-shrink: 0;
           position: sticky;
-          top: 70px;
-          height: calc(100vh - 70px);
+          top: 60px;
+          height: calc(100vh - 60px);
           display: flex;
           flex-direction: column;
           justify-content: space-between;
