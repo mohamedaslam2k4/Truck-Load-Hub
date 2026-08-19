@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from sqlalchemy import text
 from app.database import get_db
@@ -17,7 +17,6 @@ def fetch_deal_or_404(deal_id: int, db: Session):
 
 
 # --- Endpoints ---
-
 @router.get("/driver/{driver_id}")
 def get_driver_deals(driver_id: int, db: Session = Depends(get_db)):
     query = text("""
@@ -46,7 +45,8 @@ def get_loader_deals(loader_id: int, db: Session = Depends(get_db)):
                l.truck_type AS "truckType", l.pickup_date AS "pickupDate", 
                driver.name AS "driverName", driver.phone AS "driverPhone", 
                driver.city AS "driverCity", dp.truck_type AS "vehicleType", 
-               dp.truck_number AS "vehicleNumber",dp.license_number AS licenseNumber,  dp.capacity, dp.experience 
+               dp.truck_number AS "vehicleNumber", dp.license_number AS licenseNumber, 
+               dp.capacity, dp.experience 
         FROM deals d 
         INNER JOIN loads l ON d.load_id = l.id 
         INNER JOIN users driver ON d.driver_id = driver.id 
@@ -65,8 +65,28 @@ def accept_deal(deal_id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=400, detail="Only pending deals can be accepted")
     
     try:
-        db.execute(text("UPDATE deals SET status = 'ACCEPTED' WHERE id = :deal_id"), {"deal_id": deal_id})
-        db.execute(text("UPDATE loads SET status = 'BOOKED' WHERE id = :load_id"), {"load_id": deal["load_id"]})
+        # 1. Accept selected deal
+        db.execute(
+            text("UPDATE deals SET status = 'ACCEPTED' WHERE id = :deal_id"), 
+            {"deal_id": deal_id}
+        )
+        
+        # 2. Automatically reject all other competing pending bids for this load
+        db.execute(
+            text("""
+                UPDATE deals 
+                SET status = 'REJECTED' 
+                WHERE load_id = :load_id AND id != :deal_id AND status = 'PENDING'
+            """), 
+            {"load_id": deal["load_id"], "deal_id": deal_id}
+        )
+        
+        # 3. Mark load as BOOKED (hides it from available loads)
+        db.execute(
+            text("UPDATE loads SET status = 'BOOKED' WHERE id = :load_id"), 
+            {"load_id": deal["load_id"]}
+        )
+        
         db.commit()
     except Exception as e:
         db.rollback()
@@ -115,8 +135,8 @@ def reject_deal(deal_id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=400, detail="Only pending deals can be rejected")
     
     try:
+        # Mark deal as REJECTED without modifying load status (load stays AVAILABLE)
         db.execute(text("UPDATE deals SET status = 'REJECTED' WHERE id = :deal_id"), {"deal_id": deal_id})
-        db.execute(text("UPDATE loads SET status = 'AVAILABLE' WHERE id = :load_id"), {"load_id": deal["load_id"]})
         db.commit()
     except Exception:
         db.rollback()
