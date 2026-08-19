@@ -66,7 +66,6 @@ function Contact() {
     };
 
     try {
-      // Dynamic request using the central API_URL
       const response = await fetch(`${API_URL}/contact`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -76,7 +75,25 @@ function Contact() {
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.detail || "Failed to submit query");
+        let serverMsg = "Failed to submit query";
+
+        // Handle string error details
+        if (typeof data.detail === "string") {
+          serverMsg = data.detail;
+        } 
+        // Handle FastAPI 422 Validation Error arrays (e.g. invalid email)
+        else if (Array.isArray(data.detail) && data.detail.length > 0) {
+          serverMsg = data.detail
+            .map((err) => `${err.loc[err.loc.length - 1]}: ${err.msg}`)
+            .join("\n");
+        } 
+        // Handle custom message objects
+        else if (typeof data.message === "string") {
+          serverMsg = data.message;
+        }
+
+        alert(serverMsg);
+        return;
       }
 
       alert("Your query has been submitted successfully!");
@@ -88,7 +105,8 @@ function Contact() {
         message: "",
       });
     } catch (error) {
-      alert(`Error: ${error.message}`);
+      console.error("Contact submission error:", error);
+      alert("Unable to connect to server");
     } finally {
       setLoading(false);
     }
@@ -100,14 +118,14 @@ function Contact() {
         <h1>Contact Us</h1>
         <p>Have a question or need help? Send us a message.</p>
 
-       <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit}>
           <div className="form-group">
             <label htmlFor="name">Name</label>
             <input type="text" id="name" name="name" value={formData.name} onChange={handleChange} placeholder="Enter your name" maxLength={50} required />
           </div>
           <div className="form-group">
             <label htmlFor="email">Email</label>
-            <input type="email" id="email" name="email" value={formData.email} onChange={handleChange} placeholder="Enter your email"  maxLength={50} required />
+            <input type="email" id="email" name="email" value={formData.email} onChange={handleChange} placeholder="Enter your email" maxLength={50} required />
           </div>
           <div className="form-group">
             <label htmlFor="phone">Phone</label>
@@ -115,7 +133,8 @@ function Contact() {
           </div>
           <div className="form-group">
             <label htmlFor="message">Your Query</label>
-            <textarea id="message" name="message" rows="4" value={formData.message} onChange={handleChange} placeholder="Enter your query..." maxLength={100} required /></div>
+            <textarea id="message" name="message" rows="4" value={formData.message} onChange={handleChange} placeholder="Enter your query..." maxLength={100} required />
+          </div>
           <button type="submit" className="primary-button" disabled={loading}>{loading ? "Sending..." : "Send Message"}</button>
         </form>
 
@@ -123,6 +142,7 @@ function Contact() {
           ← Back to Home
         </Link>
       </div>
+
       <style>{`
         .auth-page {
           width:100%;
@@ -205,7 +225,8 @@ function Contact() {
           padding: 12px;
           border: none;
           border-radius: 8px;
-          background-color: #0082d8; color: #ffffff;
+          background-color: #0082d8; 
+          color: #ffffff;
           font-weight: bold;
           cursor: pointer;
           font-size: 16px;
@@ -213,7 +234,8 @@ function Contact() {
         }
 
         .primary-button:hover:not(:disabled) {
-          background: #60a8cc; color: #051329;
+          background: #60a8cc; 
+          color: #051329;
         }
 
         .primary-button:disabled {
