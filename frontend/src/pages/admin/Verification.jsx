@@ -1,300 +1,293 @@
 import { useEffect, useState } from "react";
-import { API_URL } from "../../api"; 
+import { API_URL } from "../../api"; 
+
 
 function Verification() {
-  const [users, setUsers] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [updatingId, setUpdatingId] = useState(null);
+  const [users, setUsers] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [updatingId, setUpdatingId] = useState(null);
 
-  const fetchPendingUsers = async () => {
-    try {
-      setLoading(true);
-      const response = await fetch(`${API_URL}/admin/verification`);
-      const data = await response.json();
 
-      if (!response.ok) {
-        throw new Error(data.detail || "Failed to fetch pending users");
-      }
+  // get pending users
+  const fetchPendingUsers = async () => {
+    try {
+      setLoading(true);
+      const response = await fetch( `${API_URL}/admin/verification`);
 
-      setUsers(data);
-    } catch (error) {
-      console.error("Error fetching pending users:", error);
-      alert(error.message || "Unable to load pending users");
-    } finally {
-      setLoading(false);
-    }
-  };
+      const data = await response.json();
 
-  useEffect(() => {
-    fetchPendingUsers();
-  }, []);
+      if (!response.ok) {
+        throw new Error(data.detail || "Failed to fetch pending users" );
+      }
 
-  const updateStatus = async (userId, status) => {
-    try {
-      setUpdatingId(userId);
+      setUsers(data);
+    } catch (error) {
+      console.error( "Error fetching pending users:", error );
 
-      const response = await fetch(`${API_URL}/admin/verification/${userId}?status=${status}`, { 
-        method: "PUT", 
-      });
-      
-      const data = await response.json();
+      alert( error.message || "Unable to load pending users" );
+    } finally {
+      setLoading(false);
+    }
+  };
 
-      if (!response.ok) {
-        throw new Error(data.detail || "Failed to update user");
-      }
+  // load details when admin opens page
+  useEffect(() => {
+    fetchPendingUsers();
+  }, []);
 
-      setUsers((currentUsers) => currentUsers.filter((user) => user.id !== userId));
 
-      alert(status === "VERIFIED" ? "User approved successfully." : "User rejected successfully.");
-    } catch (error) {
-      console.error("Error updating user:", error);
-      alert(error.message || "Unable to update user");
-    } finally {
-      setUpdatingId(null);
-    }
-  };
+  // approve or reject user
+  const updateStatus = async (userId, status) => {
+    try {
+      setUpdatingId(userId);
 
-  return (
-    <div className="verification-page">
-      <div className="page-header">
-        <h1>Verification</h1>
-        <p>Review and verify newly registered drivers and loaders.</p>
-      </div>
+      // update status send to backend
+      const response = await fetch( `${API_URL}/admin/verification/${userId}?status=${status}`,{ method: "PUT", });
+      
+      const data = await response.json();
 
-      <div className="verification-card">
-        <div className="card-header">
-          <h2>Pending Users</h2>
-          <span className="pending-count">{users.length}</span>
-        </div>
+      if (!response.ok) {
+        throw new Error(data.detail || "Failed to update user" );
+      }
 
-        {loading && <div className="loading">Loading pending users...</div>}
-        
-        {!loading && users.length === 0 && (
-          <div className="empty-state">
-            <h3>No Pending Users</h3>
-            <p>All registered users have been reviewed.</p>
-          </div>
-        )}
+      // Remove updated user from pending list
+      setUsers((currentUsers) => currentUsers.filter(  (user) => user.id !== userId ));
 
-        {!loading &&
-          users.map((user) => (
-            <div className="user-row" key={user.id}>
-              <div className="user-info">
-                <div className="user-name-wrapper">
-                  <span className="user-name">{user.name}</span>
-                  {user.role && (
-                    <span className={`role-badge ${user.role.toLowerCase()}`}>
-                      {user.role.toUpperCase()}
-                    </span>
-                  )}
-                </div>
+      alert(status === "VERIFIED"   ? "User approved successfully."  : "User rejected successfully." );
+    } catch (error) {
+      console.error(
+        "Error updating user:",
+        error
+      );
 
-                <div className="user-details">
-                  <p><strong>Email:</strong> {user.email}</p>
-                  <p><strong>Phone:</strong> {user.phone || "Not provided"}</p>
-                  <p><strong>City:</strong> {user.city || "Not provided"}</p>
-                  <p><strong>Registered:</strong> {user.created_at ? new Date(user.created_at).toLocaleDateString() : "Not available"}</p>
-                </div>
-              </div>
+      alert( error.message ||  "Unable to update user"  );
+    } finally {
+      setUpdatingId(null);
+    }
+  };
 
-              <div className="actions">
-                <button
-                  className="approve"
-                  disabled={updatingId === user.id}
-                  onClick={() => updateStatus(user.id, "VERIFIED")}
-                >
-                  {updatingId === user.id ? "Updating..." : "Approve"}
-                </button>
 
-                <button
-                  className="reject"
-                  disabled={updatingId === user.id}
-                  onClick={() => updateStatus(user.id, "REJECTED")}
-                >
-                  Reject
-                </button>
-              </div>
-            </div>
-          ))}
-      </div>
+  return (
+    <div className="verification-page">
+    <div className="page-header">
+      <h1>Verification</h1>
+      <p>Review and verify newly registered drivers and loaders.</p>
+    </div>
+    <div className="verification-card">
+      <div className="card-header">
+        <h2>Pending Users</h2>
+        <span className="pending-count">{users.length}</span>
+      </div>
+      {loading && (<div className="loading">Loading pending users...</div>)}
+      {!loading && users.length === 0 && (<div className="empty-state"><h3>No Pending Users</h3><p>All registered users have been reviewed.</p></div>)}
+      {!loading && users.map((user) => (
+        <div className="user-row" key={user.id}>
+          <div className="user-info">
 
-      <style>{`
-        .verification-page {
-          width: 100%;
-          font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-          box-sizing: border-box;
-        }
+            <div className="user-name">
+              <h3>{user.name}</h3>
+              <span className={`role-badge ${user.role ? user.role.toLowerCase() : ""}`}>{user.role}</span>
+            </div>
 
-        .page-header {
-          margin-bottom: 12px;
-        }
+            <p><strong>Email:</strong> {user.email}</p>
+            <p><strong>Phone:</strong> {user.phone || "Not provided"}</p>
+            <p><strong>City:</strong> {user.city || "Not provided"}</p>
+            <p><strong>Registered:</strong> {user.created_at ? new Date(user.created_at).toLocaleDateString() : "Not available"}</p>
 
-        .page-header h1 {
-          margin: 0 0 2px;
-          font-size: 20px;
-          font-weight: 700;
-          color: #111;
-        }
+          </div>
+          <div className="actions">
 
-        .page-header p {
-          margin: 0;
-          color: #666;
-          font-size: 12px;
-        }
+            <button className="approve" disabled={updatingId === user.id} onClick={() => updateStatus(user.id, "VERIFIED")}>
+              {updatingId === user.id ? "Updating..." : "Approve"}
+            </button>
 
-        .verification-card {
-          width: 100%;
-          background: #ffffff;
-          border: 1px solid #e2e8f0;
-          border-radius: 6px;
-          padding: 12px 16px;
-          box-sizing: border-box;
-        }
+            <button className="reject" disabled={updatingId === user.id} onClick={() => updateStatus(user.id, "REJECTED")}>
+              Reject
+            </button>
+          </div>
+        </div>
+      ))}
+    </div>
 
-        .card-header {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          padding-bottom: 8px;
-          border-bottom: 1px solid #e5e7eb;
-        }
+  
 
-        .card-header h2 {
-          margin: 0;
-          font-size: 15px;
-          font-weight: 700;
-          color: #111;
-        }
+      <style>{`
+        .verification-page {
+          width: 100%;
+          box-sizing: border-box;
+        }
 
-        .pending-count {
-          width: 20px;
-          height: 20px;
-          border-radius: 50%;
-          background: #18181b;
-          color: #fff;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          font-size: 11px;
-          font-weight: 600;
-        }
+        .page-header {
+          margin-bottom: 25px;
+        }
 
-        .loading {
-          padding: 15px 0;
-          text-align: center;
-          color: #666;
-          font-size: 12px;
-        }
+        .page-header h1 {
+          margin: 0 0 6px;
+          font-size: 28px;
+        }
 
-        .empty-state {
-          padding: 20px 10px;
-          text-align: center;
-        }
+        .page-header p {
+          margin: 0;
+          color: #666;
+        }
 
-        .empty-state h3 {
-          margin: 0 0 4px;
-          font-size: 14px;
-        }
+        .verification-card {
+          width: 100%;
+          background: #fff;
+          border: 1px solid #ddd;
+          border-radius: 8px;
+          padding: 20px;
+          box-sizing: border-box;
+        }
 
-        .empty-state p {
-          color: #777;
-          margin: 0;
-          font-size: 12px;
-        }
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+          }
 
-        .user-row {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          padding: 10px 0;
-          border-bottom: 1px solid #f3f4f6;
-        }
+          .card-header h2 {
+            margin: 0 0 5px;
+            font-size: 20px;
+          }
 
-        .user-row:last-child {
-          border-bottom: none;
-        }
 
-        .user-info {
-          flex: 1;
-        }
+        .pending-count {
+          min-width: 25px;
+          height: 25px;
+          padding: 0 7px;
+          border-radius: 20px;
 
-        .user-name-wrapper {
-          display: flex;
-          align-items: center;
-          gap: 6px;
-          margin-bottom: 4px;
-        }
+          background: #222;
+          color: #fff;
 
-        .user-name {
-          font-size: 14px;
-          font-weight: 700;
-          color: #111827;
-        }
+          display: flex;
+          align-items: center;
+          justify-content: center;
 
-        .role-badge {
-          padding: 1px 6px;
-          border-radius: 3px;
-          font-size: 9px;
-          font-weight: 700;
-          letter-spacing: 0.3px;
-          text-transform: uppercase;
-        }
+          font-size: 13px;
+          font-weight: bold;
+          box-sizing: border-box;
+        }
 
-        .role-badge.loader {
-          background: #18181b;
-          color: #ffffff;
-        }
+        .loading {
+          padding: 30px 0;
+          text-align: center;
+          color: #666;
+        }
 
-        .role-badge.driver {
-          background: #e5e7eb;
-          color: #374151;
-        }
+        .empty-state {
+          padding: 40px 20px;
+          text-align: center;
+          border-top: 1px solid #eee;
+        }
 
-        .user-details p {
-          margin: 1px 0;
-          color: #6b7280;
-          font-size: 12px;
-          line-height: 1.3;
-        }
+        .empty-state h3 {
+          margin: 0 0 8px;
+        }
 
-        .user-details strong {
-          color: #111827;
-          font-weight: 600;
-        }
+        .empty-state p {
+          color: #777;
+          margin: 0;
+        }
 
-        .actions {
-          display: flex;
-          gap: 6px;
-          align-items: center;
-        }
+        .user-row {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          gap: 30px;
 
-        .actions button {
-          padding: 5px 12px;
-          border-radius: 4px;
-          font-size: 12px;
-          font-weight: 600;
-          cursor: pointer;
-        }
+          padding: 22px 0;
 
-        .actions button:disabled {
-          opacity: 0.5;
-          cursor: not-allowed;
-        }
+          border-top: 1px solid #eee;
+        }
 
-        .approve {
-          border: 1px solid #18181b;
-          background: #18181b;
-          color: #ffffff;
-        }
+        .user-info {
+          flex: 1;
+          min-width: 0;
+        }
 
-        .reject {
-          border: 1px solid #d1d5db;
-          background: #ffffff;
-          color: #111827;
-        }
-      `}</style>
-    </div>
-  );
+        .user-name {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          margin-bottom: 10px;
+        }
+
+        .user-name h3 {
+          margin: 0;
+          font-size: 18px;
+        }
+
+        .role-badge {
+          padding: 4px 8px;
+          border-radius: 4px;
+          font-size: 11px;
+          font-weight: bold;
+        }
+
+        .role-badge.driver {
+          background: #eee;
+          color: #222;
+        }
+
+        .role-badge.loader {
+          background: #222;
+          color: #fff;
+        }
+
+        .user-info p {
+          margin: 5px 0;
+          color: #666;
+          font-size: 14px;
+        }
+
+        .user-info strong {
+          color: #333;
+        }
+
+        .actions {
+          display: flex;
+          gap: 10px;
+          flex-shrink: 0;
+        }
+
+        .actions button {
+          padding: 9px 16px;
+          border-radius: 6px;
+          font-size: 14px;
+          font-weight: 600;
+          cursor: pointer;
+        }
+
+        .actions button:disabled {
+          opacity: 0.5;
+          cursor: not-allowed;
+        }
+
+        .approve {
+          border: 1px solid #222;
+          background: #222;
+          color: #fff;
+        }
+
+        .approve:hover:not(:disabled) {
+          background: #444;
+        }
+
+        .reject {
+          border: 1px solid #ccc;
+          background: #fff;
+          color: #222;
+        }
+
+        .reject:hover:not(:disabled) {
+          background: #eee;
+        }
+      `}</style>
+
+    </div>
+  );
 }
-
 export default Verification;
