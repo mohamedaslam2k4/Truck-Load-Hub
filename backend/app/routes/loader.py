@@ -3,7 +3,6 @@ from sqlalchemy.orm import Session
 from sqlalchemy import text
 from app.database import get_db
 from app.schemas import LoadCreate
-from datetime import date
 
 router = APIRouter(tags=["Loader & Loads"])
 
@@ -17,7 +16,6 @@ def create_load(load: LoadCreate, db: Session = Depends(get_db)):
         )
 
     try:
-        # MySQL compatible query (Removed RETURNING id)
         query = text("""
             INSERT INTO loads (
                 pickup, destination, load_type, weight, truck_type, 
@@ -47,7 +45,6 @@ def create_load(load: LoadCreate, db: Session = Depends(get_db)):
 
     except Exception as e:
         db.rollback()
-        print(f"❌ Database Error: {str(e)}")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, 
             detail=f"Failed to initialize and save load details: {str(e)}"
@@ -89,7 +86,6 @@ def get_available_loads(db: Session = Depends(get_db)):
 @router.put("/loads/{load_id}/cancel")
 def cancel_load(load_id: int, db: Session = Depends(get_db)):
     try:
-        # Validate that the target row exists and is mutable
         check_query = text("SELECT status FROM loads WHERE id = :load_id FOR UPDATE")
         current_status = db.execute(check_query, {"load_id": load_id}).scalar()
         
@@ -104,6 +100,13 @@ def cancel_load(load_id: int, db: Session = Depends(get_db)):
 
         update_query = text("UPDATE loads SET status = 'CANCELLED' WHERE id = :load_id")
         db.execute(update_query, {"load_id": load_id})
+        
+        # Reject any active bids on this load
+        db.execute(
+            text("UPDATE deals SET status = 'REJECTED' WHERE load_id = :load_id AND status = 'PENDING'"),
+            {"load_id": load_id}
+        )
+        
         db.commit()
     except HTTPException:
         db.rollback()
@@ -120,13 +123,12 @@ def cancel_load(load_id: int, db: Session = Depends(get_db)):
 
 @router.get("/loader/available-drivers")
 def get_available_drivers(db: Session = Depends(get_db)):
-    # Data transformations offloaded to SQL engine for performance optimization
     query = text("""
         SELECT 
             u.id AS "driverUserId",
             u.name,
             u.phone,
-            CONCAT('DRV-', LPAD(CAST(u.id AS VARCHAR), 3, '0')) AS "driverId",
+            CONCAT('DRV-', LPAD(CAST(u.id AS CHAR), 3, '0')) AS "driverId",
             dp.truck_type AS "vehicleType",
             dp.truck_number AS "vehicleNumber",
             u.city AS "location",
