@@ -13,18 +13,8 @@ function MyDeals() {
   const user = storedUser ? JSON.parse(storedUser) : {};
   const driverId = user?.id || user?.driverId || user?.userId;
 
-  // Format date string safely to DD/MM/YYYY format
-  const formatDate = (dateString) => {
-    if (!dateString) return "N/A";
-    const date = new Date(dateString);
-    if (isNaN(date.getTime())) return dateString;
 
-    return date.toLocaleDateString("en-IN", {
-      day: "2-digit",
-      month: "short",
-      year: "numeric",
-    });
-  };
+ 
 
   // Fetch driver deals
   const fetchDeals = async () => {
@@ -139,9 +129,7 @@ function MyDeals() {
               filteredDeals.map((deal) => (
                 <Card key={deal.dealId}>
                   <div className="load-header">
-                    <span className="load-id">
-                      Deal # DL-{String(deal.dealId).padStart(3, "0")}
-                    </span>
+                   <span className="load-id">Deal # {deal.dealId}</span>
                     <div className="route">
                       <span>{deal.pickup}</span>
                       <span className="arrow">→</span>
