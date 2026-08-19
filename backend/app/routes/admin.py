@@ -156,21 +156,39 @@ def update_verification( user_id: int, status: str,db: Session = Depends(get_db)
 
 # GET CONTACTS
 @router.get("/contacts")
-def get_contacts( db: Session = Depends(get_db)):
+def get_contacts(
+    status: Optional[str] = Query("pending", description="Filter status: pending, resolved/closed, or all"),
+    db: Session = Depends(get_db)
+):
+    query_str = "SELECT id, name, email, phone, message, status, created_at FROM contacts"
+    params = {}
 
-    contacts = db.execute(
-        text("""SELECT id, name, email,  phone, message, status, created_at FROM contacts  WHERE status = 'PENDING' ORDER BY created_at DESC""")).mappings().all()
+    # Normalize filter parameters
+    status_filter = status.lower() if status else "pending"
+
+    if status_filter == "pending":
+        query_str += " WHERE status = 'PENDING'"
+    elif status_filter in ["resolved", "closed"]:
+        query_str += " WHERE status = 'CLOSED'"
+
+
+    query_str += " ORDER BY created_at DESC"
+
+    contacts = db.execute(text(query_str), params).mappings().all()
+    
     result = []
     for contact in contacts:
         contact_data = dict(contact)
 
-        contact_data["createdAt"] = ( contact_data["created_at"].strftime("%d-%m-%Y")
+        contact_data["createdAt"] = (
+            contact_data["created_at"].strftime("%d-%m-%Y")
             if contact_data["created_at"]
             else None
         )
 
-        contact_data.pop( "created_at", None )
+        contact_data.pop("created_at", None)
         result.append(contact_data)
+        
     return result
 
 # CLOSE CONTACT REQUEST
