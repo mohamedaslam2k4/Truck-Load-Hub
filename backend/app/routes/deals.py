@@ -46,7 +46,7 @@ def get_loader_deals(loader_id: int, db: Session = Depends(get_db)):
                l.truck_type AS "truckType", l.pickup_date AS "pickupDate", 
                driver.name AS "driverName", driver.phone AS "driverPhone", 
                driver.city AS "driverCity", dp.truck_type AS "vehicleType", 
-               dp.truck_number AS "vehicleNumber", dp.capacity, dp.experience 
+               dp.truck_number AS "vehicleNumber",dp.license_number AS licenseNumber,  dp.capacity, dp.experience 
         FROM deals d 
         INNER JOIN loads l ON d.load_id = l.id 
         INNER JOIN users driver ON d.driver_id = driver.id 
