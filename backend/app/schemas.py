@@ -16,26 +16,27 @@ class LoadCreate(BaseModel):
     loaderId: int
 
 class RegisterRequest(BaseModel):
-    # User fields
     name: str
     email: EmailStr
-    phone: Optional[str] = None
+    phone: str
     city: str
     password: str
     role: str
-    # Driver profile fields
+    
+    # Optional Driver fields
     experience: Optional[int] = None
     truckNumber: Optional[str] = None
     truckType: Optional[str] = None
-    capacity: Optional[float] = None
+    capacity: Optional[int] = None
     licenseNumber: Optional[str] = None
-    # Loader profile fields
+    
+    # Optional Loader fields
     companyName: Optional[str] = None
     contactPerson: Optional[str] = None
     businessType: Optional[str] = None
 
 class LoginRequest(BaseModel):
-    email: EmailStr
+    email: str
     password: str
 
 class ContactRequest(BaseModel):
