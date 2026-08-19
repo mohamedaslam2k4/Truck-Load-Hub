@@ -126,12 +126,12 @@ function Verification() {
         }
 
         .page-header {
-          margin-bottom: 24px;
+          margin-bottom: 12px;
         }
 
         .page-header h1 {
-          margin: 0 0 6px;
-          font-size: 26px;
+          margin: 0 0 2px;
+          font-size: 20px;
           font-weight: 700;
           color: #111;
         }
@@ -139,72 +139,74 @@ function Verification() {
         .page-header p {
           margin: 0;
           color: #666;
-          font-size: 14px;
+          font-size: 12px;
         }
 
         .verification-card {
           width: 100%;
           background: #ffffff;
           border: 1px solid #e2e8f0;
-          border-radius: 8px;
-          padding: 24px;
+          border-radius: 6px;
+          padding: 12px 16px;
           box-sizing: border-box;
-          box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
         }
 
         .card-header {
           display: flex;
           justify-content: space-between;
           align-items: center;
-          padding-bottom: 16px;
+          padding-bottom: 8px;
           border-bottom: 1px solid #e5e7eb;
         }
 
         .card-header h2 {
           margin: 0;
-          font-size: 18px;
+          font-size: 15px;
           font-weight: 700;
           color: #111;
         }
 
         .pending-count {
-          width: 24px;
-          height: 24px;
+          width: 20px;
+          height: 20px;
           border-radius: 50%;
           background: #18181b;
           color: #fff;
           display: flex;
           align-items: center;
           justify-content: center;
-          font-size: 12px;
+          font-size: 11px;
           font-weight: 600;
         }
 
         .loading {
-          padding: 30px 0;
+          padding: 15px 0;
           text-align: center;
           color: #666;
+          font-size: 12px;
         }
 
         .empty-state {
-          padding: 40px 20px;
+          padding: 20px 10px;
           text-align: center;
         }
 
         .empty-state h3 {
-          margin: 0 0 8px;
+          margin: 0 0 4px;
+          font-size: 14px;
         }
 
         .empty-state p {
           color: #777;
           margin: 0;
+          font-size: 12px;
         }
 
         .user-row {
           display: flex;
           justify-content: space-between;
-          align-items: flex-start;
-          padding: 20px 0;
+          align-items: center;
+          padding: 10px 0;
           border-bottom: 1px solid #f3f4f6;
         }
 
@@ -219,22 +221,22 @@ function Verification() {
         .user-name-wrapper {
           display: flex;
           align-items: center;
-          gap: 10px;
-          margin-bottom: 12px;
+          gap: 6px;
+          margin-bottom: 4px;
         }
 
         .user-name {
-          font-size: 17px;
+          font-size: 14px;
           font-weight: 700;
           color: #111827;
         }
 
         .role-badge {
-          padding: 2px 8px;
-          border-radius: 4px;
-          font-size: 10px;
+          padding: 1px 6px;
+          border-radius: 3px;
+          font-size: 9px;
           font-weight: 700;
-          letter-spacing: 0.5px;
+          letter-spacing: 0.3px;
           text-transform: uppercase;
         }
 
@@ -249,9 +251,10 @@ function Verification() {
         }
 
         .user-details p {
-          margin: 3px 0;
+          margin: 1px 0;
           color: #6b7280;
-          font-size: 13px;
+          font-size: 12px;
+          line-height: 1.3;
         }
 
         .user-details strong {
@@ -261,18 +264,16 @@ function Verification() {
 
         .actions {
           display: flex;
-          gap: 10px;
+          gap: 6px;
           align-items: center;
-          margin-top: 10px;
         }
 
         .actions button {
-          padding: 8px 18px;
-          border-radius: 6px;
-          font-size: 13px;
+          padding: 5px 12px;
+          border-radius: 4px;
+          font-size: 12px;
           font-weight: 600;
           cursor: pointer;
-          transition: all 0.15s ease-in-out;
         }
 
         .actions button:disabled {
@@ -286,18 +287,10 @@ function Verification() {
           color: #ffffff;
         }
 
-        .approve:hover:not(:disabled) {
-          background: #3f3f46;
-        }
-
         .reject {
           border: 1px solid #d1d5db;
           background: #ffffff;
           color: #111827;
-        }
-
-        .reject:hover:not(:disabled) {
-          background: #f9fafb;
         }
       `}</style>
     </div>
