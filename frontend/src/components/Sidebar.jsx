@@ -153,6 +153,7 @@ function Sidebar({ role }) {
           flex-direction: column;
           justify-content: space-between;
           box-sizing: border-box;
+          zoom:90%;
         }
 
         .sidebar-top {
