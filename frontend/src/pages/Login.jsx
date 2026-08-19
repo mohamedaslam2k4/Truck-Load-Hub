@@ -32,7 +32,16 @@ function Login({ setUserRole }) {
       const data = await response.json();
 
       if (!response.ok) {
-        alert( "Login failed");
+        // Extract plain string detail message from FastAPI
+        let errorMessage = "Invalid credentials";
+
+        if (typeof data.detail === "string") {
+          errorMessage = data.detail; // Catches 401, 403 status detail strings directly from backend
+        } else if (typeof data.message === "string") {
+          errorMessage = data.message;
+        }
+
+        alert(errorMessage);
         return;
       }
 
@@ -86,13 +95,37 @@ function Login({ setUserRole }) {
           <h2>Login</h2>
           <p>Login to your account</p>
 
-         <form onSubmit={handleSubmit}>
-          <div className="form-group"><label htmlFor="email">Email</label>
-            <input type="email" id="email" name="email" placeholder="Enter your email" value={formData.email} onChange={handleChange} maxLength={50} required /></div>
-          <div className="form-group"><label htmlFor="password">Password</label>
-            <input type="password" id="password" name="password" placeholder="Enter your password" value={formData.password} onChange={handleChange} maxLength={50} required /></div>
-          <button type="submit" className="primary-button" disabled={loading}>{loading ? "Logging in..." : "Login"}</button>
-        </form>
+          <form onSubmit={handleSubmit}>
+            <div className="form-group">
+              <label htmlFor="email">Email</label>
+              <input
+                type="email"
+                id="email"
+                name="email"
+                placeholder="Enter your email"
+                value={formData.email}
+                onChange={handleChange}
+                maxLength={50}
+                required
+              />
+            </div>
+            <div className="form-group">
+              <label htmlFor="password">Password</label>
+              <input
+                type="password"
+                id="password"
+                name="password"
+                placeholder="Enter your password"
+                value={formData.password}
+                onChange={handleChange}
+                maxLength={50}
+                required
+              />
+            </div>
+            <button type="submit" className="primary-button" disabled={loading}>
+              {loading ? "Logging in..." : "Login"}
+            </button>
+          </form>
 
           <p className="auth-link">
             Don't have an account? <Link to="/register">Register</Link>
@@ -104,7 +137,7 @@ function Login({ setUserRole }) {
       </div>
 
       <style>{`
-           /* FULL-SCREEN CONTAINER FOR BACKGROUND */
+        /* FULL-SCREEN CONTAINER FOR BACKGROUND */
         .auth-page {
           width: 100vw;
           height: 100vh;
