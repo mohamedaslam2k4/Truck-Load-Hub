@@ -2,27 +2,33 @@ import Navbar from "./Navbar";
 import Sidebar from "./Sidebar";
 
 function DashboardLayout({ role, children }) {
-
   return (
     <div className="dashboard-layout">
+      {/* 30% left */}
+      <Navbar role={role} />
 
-    {/*30% left*/}
-     <Navbar role={role} />
+      {/* 70% Right */}
+      <div className="dashboard-body">
+        <Sidebar role={role} />
 
-    {/*70% Right*/}
-    <div className="dashboard-body">
-
-      <Sidebar role={role} />
-
-      <main className="dashboard-content">{children}</main>
-      
-    </div>
+        <main className="dashboard-content">{children}</main>
+      </div>
 
       <style>{`
-
         .dashboard-layout {
           min-height: 100vh;
           background: #f5f6f8;
+          zoom: 80%; /* Scales entire dashboard to 80% */
+        }
+
+        /* Firefox fallback */
+        @supports not (zoom: 0.8) {
+          .dashboard-layout {
+            transform: scale(0.8);
+            transform-origin: top left;
+            width: 125%;
+            min-height: 125vh;
+          }
         }
 
         .dashboard-body {
@@ -37,7 +43,6 @@ function DashboardLayout({ role, children }) {
           min-width: 0;
         }
       `}</style>
-
     </div>
   );
 }
