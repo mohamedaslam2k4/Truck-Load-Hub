@@ -127,7 +127,7 @@ function Register() {
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.detail || "Registration failed");
+        throw new Error("Registration failed");
       }
 
       alert("Registration successful! Your account is waiting for admin verification.");
@@ -137,7 +137,7 @@ function Register() {
       navigate("/login");
     } catch (error) {
       console.error("Registration error:", error);
-      alert(error.message || "Unable to connect to server");
+      alert("Unable to connect to server");
     } finally {
       setLoading(false);
     }
