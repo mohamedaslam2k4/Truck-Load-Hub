@@ -1,10 +1,9 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy import text
 from sqlalchemy.orm import Session
 from app.database import get_db
 from app.schemas import LoginRequest, RegisterRequest
 
-# REMOVED prefix="/auth" from APIRouter because main.py already applies prefix="/auth"
 router = APIRouter(tags=["Authentication"])
 
 # REGISTER
@@ -13,7 +12,11 @@ def register(data: RegisterRequest, db: Session = Depends(get_db)):
     if data.role not in ["DRIVER", "LOADER", "ADMIN"]:
         raise HTTPException(status_code=400, detail="Invalid role")
 
-    existing_user = db.execute(text("SELECT id FROM users WHERE email = :email"), {"email": data.email}).first()
+    existing_user = db.execute(
+        text("SELECT id FROM users WHERE email = :email"), 
+        {"email": data.email.strip()}
+    ).first()
+    
     if existing_user:
         raise HTTPException(status_code=400, detail="Email already registered")
 
@@ -22,7 +25,14 @@ def register(data: RegisterRequest, db: Session = Depends(get_db)):
         result = db.execute(
             text("""INSERT INTO users (name, email, phone, password, role, status, city) 
                     VALUES (:name, :email, :phone, :password, :role, 'PENDING', :city)"""),
-            {"name": data.name, "email": data.email, "phone": data.phone, "password": data.password, "role": data.role, "city": data.city},
+            {
+                "name": data.name, 
+                "email": data.email.strip(), 
+                "phone": data.phone, 
+                "password": data.password, 
+                "role": data.role, 
+                "city": data.city
+            },
         )
         user_id = result.lastrowid
 
@@ -31,7 +41,14 @@ def register(data: RegisterRequest, db: Session = Depends(get_db)):
             db.execute(
                 text("""INSERT INTO driver_profiles (user_id, experience, truck_number, truck_type, capacity, license_number) 
                         VALUES (:user_id, :experience, :truck_number, :truck_type, :capacity, :license_number)"""),
-                {"user_id": user_id, "experience": data.experience, "truck_number": data.truckNumber, "truck_type": data.truckType, "capacity": data.capacity, "license_number": data.licenseNumber},
+                {
+                    "user_id": user_id, 
+                    "experience": data.experience, 
+                    "truck_number": data.truckNumber, 
+                    "truck_type": data.truckType, 
+                    "capacity": data.capacity, 
+                    "license_number": data.licenseNumber
+                },
             )
 
         # Loader profile store to db
@@ -39,7 +56,12 @@ def register(data: RegisterRequest, db: Session = Depends(get_db)):
             db.execute(
                 text("""INSERT INTO loader_profiles (user_id, company_name, contact_person, business_type) 
                         VALUES (:user_id, :company_name, :contact_person, :business_type)"""),
-                {"user_id": user_id, "company_name": data.companyName, "contact_person": data.contactPerson, "business_type": data.businessType},
+                {
+                    "user_id": user_id, 
+                    "company_name": data.companyName, 
+                    "contact_person": data.contactPerson, 
+                    "business_type": data.businessType
+                },
             )
 
         db.commit()
@@ -52,21 +74,39 @@ def register(data: RegisterRequest, db: Session = Depends(get_db)):
 # LOGIN
 @router.post("/login")
 def login(data: LoginRequest, db: Session = Depends(get_db)):
+    email_clean = data.email.strip()
+    
     user = db.execute(
         text("SELECT id, name, email, password, role, status, city FROM users WHERE email = :email"),
-        {"email": data.email},
+        {"email": email_clean},
     ).mappings().first()
 
     if not user or user["password"] != data.password:
-        raise HTTPException(status_code=401, detail="Invalid email or password")
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED, 
+            detail="Invalid email or password"
+        )
 
     if user["status"] == "PENDING":
-        raise HTTPException(status_code=403, detail="Your account is waiting for admin verification")
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN, 
+            detail="Your account is waiting for admin verification"
+        )
 
     if user["status"] == "REJECTED":
-        raise HTTPException(status_code=403, detail="Your account has been rejected by admin")
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN, 
+            detail="Your account has been rejected by admin"
+        )
 
     return {
         "message": "Login successful",
-        "user": {"id": user["id"], "name": user["name"], "email": user["email"], "role": user["role"], "status": user["status"], "city": user["city"]},
+        "user": {
+            "id": user["id"], 
+            "name": user["name"], 
+            "email": user["email"], 
+            "role": user["role"], 
+            "status": user["status"], 
+            "city": user["city"]
+        },
     }
