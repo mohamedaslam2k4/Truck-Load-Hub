@@ -7,24 +7,43 @@ from app.schemas import DealCreate
 router = APIRouter(tags=["Driver"])
 
 
-@router.get("/available-loads")
-def get_available_loads(db: Session = Depends(get_db)):
-    """
-    Returns all loads marked AVAILABLE. 
-    Loads remain visible here even if drivers have submitted pending bids.
-    """
-    query = text("""
-        SELECT id, pickup, destination, load_type AS "loadType", weight, 
-               truck_type AS "truckType", pickup_date AS "pickupDate", 
-               min_price AS "minPrice", max_price AS "maxPrice", description, 
-               status, loader_id AS "loaderId" 
-        FROM loads 
-        WHERE status = 'AVAILABLE' 
-        ORDER BY created_at DESC
-    """)
-    loads = db.execute(query).mappings().all()
-    return [dict(load) for load in loads]
+# backend/app/routes/driver.py
 
+@router.get("/available-loads")
+def get_available_loads(driver_id: int = None, db: Session = Depends(get_db)):
+    """
+    Returns available loads. Excludes loads that the specified driver 
+    has already submitted a deal for.
+    """
+    if driver_id:
+        query = text("""
+            SELECT l.id, l.pickup, l.destination, l.load_type AS "loadType", l.weight, 
+                   l.truck_type AS "truckType", l.pickup_date AS "pickupDate", 
+                   l.min_price AS "minPrice", l.max_price AS "maxPrice", l.description, 
+                   l.status, l.loader_id AS "loaderId" 
+            FROM loads l
+            WHERE l.status = 'AVAILABLE'
+              AND l.id NOT IN (
+                  SELECT load_id 
+                  FROM deals 
+                  WHERE driver_id = :driver_id AND status IN ('PENDING', 'ACCEPTED')
+              )
+            ORDER BY l.created_at DESC
+        """)
+        loads = db.execute(query, {"driver_id": driver_id}).mappings().all()
+    else:
+        query = text("""
+            SELECT id, pickup, destination, load_type AS "loadType", weight, 
+                   truck_type AS "truckType", pickup_date AS "pickupDate", 
+                   min_price AS "minPrice", max_price AS "maxPrice", description, 
+                   status, loader_id AS "loaderId" 
+            FROM loads 
+            WHERE status = 'AVAILABLE' 
+            ORDER BY created_at DESC
+        """)
+        loads = db.execute(query).mappings().all()
+
+    return [dict(load) for load in loads]
 
 @router.post("/deals", status_code=status.HTTP_201_CREATED)
 def create_deal(data: DealCreate, db: Session = Depends(get_db)):
