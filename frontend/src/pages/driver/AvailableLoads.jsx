@@ -20,24 +20,37 @@ function AvailableLoads() {
     });
   };
 
-  const fetchAvailableLoads = async () => {
-    setLoading(true);
-    try {
-      const response = await fetch(`${API_URL}/driver/available-loads`);
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.detail || "Failed to fetch available loads");
-      }
-
-      setLoads(data);
-    } catch (error) {
-      console.error("Error fetching loads:", error);
-      alert("Unable to load available loads");
-    } finally {
-      setLoading(false);
+ const fetchAvailableLoads = async () => {
+  setLoading(true);
+  try {
+    // 1. Read driver user from localStorage
+    const storedUser = localStorage.getItem("user");
+    let driverId = null;
+    if (storedUser) {
+      const user = JSON.parse(storedUser);
+      driverId = user?.id || user?._id || user?.driverId || user?.userId;
     }
-  };
+
+    // 2. Pass driver_id as query param to backend
+    const url = driverId 
+      ? `${API_URL}/driver/available-loads?driver_id=${driverId}`
+      : `${API_URL}/driver/available-loads`;
+
+    const response = await fetch(url);
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.detail || "Failed to fetch available loads");
+    }
+
+    setLoads(data);
+  } catch (error) {
+    console.error("Error fetching loads:", error);
+    alert("Unable to load available loads");
+  } finally {
+    setLoading(false);
+  }
+};
 
   useEffect(() => {
     fetchAvailableLoads();
