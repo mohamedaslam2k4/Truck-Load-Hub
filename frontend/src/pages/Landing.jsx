@@ -18,12 +18,8 @@ function Landing() {
             <a href="#loaders">Loaders</a>
             <a href="#contact">Contact</a>
 
-            <Link to="/login" className="secondary-button">
-              Login
-            </Link>
-            <Link to="/register" className="primary-button">
-              Get Started
-            </Link>
+            <Link to="/login" className="secondary-button"> Login   </Link>
+            <Link to="/register" className="primary-button">  Get Started </Link>
           </div>
         </div>
       </nav>
@@ -37,20 +33,8 @@ function Landing() {
           </p>
 
           <div className="hero-buttons">
-            <Link
-              to="/register"
-              state={{ defaultRole: "DRIVER" }}
-              className="primary-button"
-            >
-              Find Loads
-            </Link>
-            <Link
-              to="/register"
-              state={{ defaultRole: "LOADER" }}
-              className="secondary-button"
-            >
-              Post a Load
-            </Link>
+            <Link  to="/register"   state={{ defaultRole: "DRIVER" }}className="primary-button" > Find Loads </Link>
+            <Link to="/register" state={{ defaultRole: "LOADER" }} className="secondary-button" > Post a Load  </Link>
           </div>
         </div>
       </section>
@@ -103,11 +87,7 @@ function Landing() {
             </p>
           </div>
 
-          <Link
-            to="/register"
-            state={{ defaultRole: "DRIVER" }}
-            className="primary-button"
-          >
+          <Link to="/register" state={{ defaultRole: "DRIVER" }} className="primary-button" >
             Register as Driver
           </Link>
         </div>
@@ -120,11 +100,7 @@ function Landing() {
             <p>Publish your loads and connect with verified drivers.</p>
           </div>
 
-          <Link
-            to="/register"
-            state={{ defaultRole: "LOADER" }}
-            className="primary-button"
-          >
+          <Link to="/register"state={{ defaultRole: "LOADER" }}className="primary-button" >
             Register as Loader
           </Link>
         </div>
