@@ -8,9 +8,9 @@ function ManageLoads() {
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState("ALL");
 
-  // Fallback to _id or id depending on database model
+  // Retrieves the logged-in user's ID (user_id) from localStorage
   const currentUser = JSON.parse(localStorage.getItem("user") || "{}");
-  const loaderId = currentUser.id || currentUser._id;
+  const userId = currentUser.id || currentUser._id;
 
   const todayStr = new Date().toLocaleDateString("en-CA");
 
@@ -27,15 +27,15 @@ function ManageLoads() {
   });
 
   const fetchMyLoads = async () => {
-    // If user isn't logged in, stop immediately and clear loading state
-    if (!loaderId) {
+    if (!userId) {
       setLoading(false);
       return;
     }
 
     try {
       setLoading(true);
-      const response = await fetch(`${API_URL}/loads/loader/${loaderId}`);
+      // Endpoint maps path param user_id to loader_profiles.id
+      const response = await fetch(`${API_URL}/loads/loader/${userId}`);
 
       if (!response.ok) {
         throw new Error("Failed to fetch loads");
@@ -51,7 +51,7 @@ function ManageLoads() {
 
   useEffect(() => {
     fetchMyLoads();
-  }, [loaderId]);
+  }, [userId]);
 
   const handleChange = (e) => {
     setFormData({
@@ -63,7 +63,7 @@ function ManageLoads() {
   const handleCreateLoad = async (e) => {
     e.preventDefault();
 
-    if (!loaderId) {
+    if (!userId) {
       alert("User session expired. Please log in again.");
       return;
     }
@@ -78,11 +78,11 @@ function ManageLoads() {
       weight: parseInt(formData.weight, 10),
       minPrice: parseFloat(formData.minPrice),
       maxPrice: parseFloat(formData.maxPrice),
-      loaderId: loaderId,
+      loaderId: userId, // Passes user_id to backend subquery mapping
     };
 
     try {
-      const response = await fetch(`${API_URL}/loads`, {
+      const response = await fetch(`${API_URL}/loads/`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
@@ -144,7 +144,7 @@ function ManageLoads() {
     <div role="LOADER">
       <div className="manage-loads-page">
         <div className="page-header">
-          <span className="load-id">Loader ID: {loaderId || "N/A"}</span>
+          <span className="load-id">User ID # {userId || "N/A"}</span>
           <div>
             <h1>Manage Loads</h1>
             <p>Create and manage your loads.</p>
