@@ -22,7 +22,7 @@ function Landing() {
             <Link to="/register" className="primary-button">  Get Started </Link>
           </div>
         </div>
-      </nav>
+      </nav> 
 
       <section className="hero" id="home">
         <div className="hero-content">

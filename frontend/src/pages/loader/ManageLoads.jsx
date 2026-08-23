@@ -148,7 +148,6 @@ function ManageLoads() {
             <h1>Manage Loads</h1>
             <p>Create and manage your loads.</p>
           </div>
-
           <button type="button" className="toggle-button" onClick={() => setShowForm(!showForm)}>
             {showForm ? "- Hide Create Load " : "+ Create New Load "}
           </button>
@@ -211,8 +210,7 @@ function ManageLoads() {
               <div className="my-loads-section">
               <div className="section-header">
                 <div>
-                  <h2>My Loads</h2>
-                  <p>Loads created by you.</p>
+                  <h2>My Loads : <p>Loads created by you.</p></h2>
                 </div>
                 <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
                   <select className="filter-select" value={filter} onChange={(e) => setFilter(e.target.value)}>
