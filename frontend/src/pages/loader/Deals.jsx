@@ -199,7 +199,7 @@ function Deals() {
                       {deal.status}
                     </span>
                   </div>
-                  <div style={{ display: "flex", alignItems: "center"}}>Load # {deal.loadId}</div>
+                  <div className="load">Load # {deal.loadId}</div>
                   <div className="load-details">
                     <div className="detail">
                       <strong>Load Type : </strong>
@@ -327,6 +327,7 @@ function Deals() {
         .in-transit { background: #e6f4ea; color: #137333; }
         .completed { background: #e8eaf6; color: #3f51b5; }
         .rejected { background: #fce8e6; color: #c5221f; }
+        .load{display: flex; alignItems: center; justifyContent: center;color: #222; text-decoration: underline;font-size: 14px; font-weight: 700;}
         .load-details { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 10px; }
         .detail { display: flex; align-items: center; gap: 5px; }
         .detail span { font-size: 13px; color: #777; }
