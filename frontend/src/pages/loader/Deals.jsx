@@ -199,7 +199,7 @@ function Deals() {
                       {deal.status}
                     </span>
                   </div>
-                  <div className="driver-title">Load # {deal.loadId}</div>
+                  <div style={{ display: "flex", alignItems: "center"}}>Load # {deal.loadId}</div>
                   <div className="load-details">
                     <div className="detail">
                       <strong>Load Type : </strong>
