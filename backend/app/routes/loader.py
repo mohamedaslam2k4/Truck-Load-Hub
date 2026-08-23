@@ -16,7 +16,6 @@ def create_load(load: LoadCreate, db: Session = Depends(get_db)):
         )
 
     try:
-        # Looks up loader_profiles.id using the passed user_id (load.loaderId)
         query = text("""
             INSERT INTO loads (
                 pickup, destination, load_type, weight, truck_type, 
@@ -24,9 +23,7 @@ def create_load(load: LoadCreate, db: Session = Depends(get_db)):
             ) 
             VALUES (
                 :pickup, :destination, :loadType, :weight, :truckType, 
-                :pickupDate, :minPrice, :maxPrice, :description, 
-                (SELECT id FROM loader_profiles WHERE user_id = :user_id LIMIT 1), 
-                'AVAILABLE'
+                :pickupDate, :minPrice, :maxPrice, :description, :loaderId, 'AVAILABLE'
             )
         """)
         
@@ -40,7 +37,7 @@ def create_load(load: LoadCreate, db: Session = Depends(get_db)):
             "minPrice": load.minPrice,
             "maxPrice": load.maxPrice,
             "description": load.description,
-            "user_id": load.loaderId
+            "loaderId": load.loaderId
         })
         
         db.commit()
@@ -56,19 +53,18 @@ def create_load(load: LoadCreate, db: Session = Depends(get_db)):
     return {"message": "Load created successfully", "loadId": load_id}
 
 
-@router.get("/loads/loader/{user_id}")
-def get_loader_loads(user_id: int, db: Session = Depends(get_db)):
-    # Retrieves loads matching the loader_profiles.id mapped from user_id
+@router.get("/loads/loader/{loader_id}")
+def get_loader_loads(loader_id: int, db: Session = Depends(get_db)):
     query = text("""
         SELECT id, pickup, destination, load_type AS "loadType", weight, 
                truck_type AS "truckType", DATE_FORMAT(pickup_date, '%d/%m/%Y') AS pickupDate, 
                min_price AS "minPrice", max_price AS "maxPrice", description, 
                status, loader_id AS "loaderId" 
         FROM loads 
-        WHERE loader_id = (SELECT id FROM loader_profiles WHERE user_id = :user_id LIMIT 1) 
+        WHERE loader_id = :loader_id 
         ORDER BY created_at DESC
     """)
-    loads = db.execute(query, {"user_id": user_id}).mappings().all()
+    loads = db.execute(query, {"loader_id": loader_id}).mappings().all()
     return [dict(load) for load in loads]
 
 
