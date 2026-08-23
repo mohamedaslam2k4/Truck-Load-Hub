@@ -318,7 +318,7 @@ function Deals() {
         .filter-select { border: 1px solid #d1d5db; border-radius: 6px; padding: 8px 12px; background: #fff; font-size: 14px; cursor: pointer; }
         .load-count { padding: 7px 12px; background: #eee; border: 1px solid #a9a8a8; border-radius: 5px; font-size: 13px; font-weight: 600; }
         .loads-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(360px, 1fr)); gap: 20px; }
-        .load-header { display: flex; justify-content: space-between; align-items: center; gap: 15px; padding-bottom: 20px; margin-bottom: 20px; border-bottom: 1px solid black; }
+        .load-header { display: flex; justify-content: space-between; align-items: center; gap: 15px; padding-bottom: 20px; margin-bottom:5px; border-bottom: 1px solid black; }
         .route { display: flex; align-items: center; gap: 9px; font-size: 19px; font-weight: 700; }
         .arrow { color: #777; }
         .status { padding: 6px 9px; border-radius: 5px; font-size: 11px; font-weight: 700; white-space: nowrap; }
