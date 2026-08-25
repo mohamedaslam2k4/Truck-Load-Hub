@@ -18,7 +18,7 @@ def get_available_loads(driver_id: int = None, db: Session = Depends(get_db)):
     if driver_id:
         query = text("""
             SELECT l.id, l.pickup, l.destination, l.load_type AS "loadType", l.weight, 
-                   l.truck_type AS "truckType", l.pickup_date AS "pickupDate", 
+                   l.truck_type AS "truckType",  DATE_FORMAT(l.pickup_date, '%d/%m/%Y') AS "pickupDate", 
                    l.min_price AS "minPrice", l.max_price AS "maxPrice", l.description, 
                    l.status, l.loader_id AS "loaderId" 
             FROM loads l

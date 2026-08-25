@@ -8,17 +8,7 @@ function AvailableLoads() {
   const [dealPrices, setDealPrices] = useState({});
   const [submittingLoadId, setSubmittingLoadId] = useState(null);
 
-  const formatDate = (dateString) => {
-    if (!dateString) return "N/A";
-    const date = new Date(dateString);
-    if (isNaN(date.getTime())) return dateString;
 
-    return date.toLocaleDateString("en-IN", {
-      day: "2-digit",
-      month: "short",
-      year: "numeric",
-    });
-  };
 
  const fetchAvailableLoads = async () => {
   setLoading(true);
@@ -63,97 +53,81 @@ function AvailableLoads() {
     }));
   };
 
-  const handleMakeDeal = async (load) => {
-    const currentLoadId = load.id || load._id;
-    const price = dealPrices[currentLoadId];
+const handleMakeDeal = async (load) => {
+  const currentLoadId = load.id || load._id;
+  const price = dealPrices[currentLoadId];
 
-    if (price === undefined || price === "") {
-      alert("Please enter your deal price.");
+  if (price === undefined || price === "") {
+    alert("Please enter your deal price.");
+    return;
+  }
+  
+  const numericPrice = Number(price);
+
+  if (!Number.isFinite(numericPrice)) {
+    alert("Please enter a valid price.");
+    return;
+  }
+
+  if (
+    numericPrice < Number(load.minPrice) ||
+    numericPrice > Number(load.maxPrice)
+  ) {
+    alert(
+      `Enter a price between ₹${Number(load.minPrice).toLocaleString("en-IN")} and ₹${Number(load.maxPrice).toLocaleString("en-IN")}`
+    );
+    return;
+  }
+
+ 
+  const storedUser = localStorage.getItem("user");
+  const user = storedUser ? JSON.parse(storedUser) : null;
+  const driverId = user?.id || user?._id || user?.driverId || user?.userId;
+
+  if (!driverId) {
+    alert("Driver account session expired. Please login again.");
+    return;
+  }
+
+  try {
+    setSubmittingLoadId(currentLoadId);
+    const response = await fetch(`${API_URL}/driver/deals`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        loadId: currentLoadId,
+        driverId: driverId,
+        dealPrice: numericPrice,
+      }),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      alert(data.detail || "Failed to create deal");
       return;
     }
-    const numericPrice = Number(price);
 
-    if (!Number.isFinite(numericPrice)) {
-      alert("Please enter a valid price.");
-      return;
-    }
+    alert(
+      `Deal request sent successfully for ${load.pickup} → ${load.destination}`
+    );
 
-    if (
-      numericPrice < Number(load.minPrice) ||
-      numericPrice > Number(load.maxPrice)
-    ) {
-      alert(
-        `Enter a price between ₹${Number(load.minPrice).toLocaleString("en-IN")} and ₹${Number(load.maxPrice).toLocaleString("en-IN")}`
-      );
-      return;
-    }
+    setLoads((previousLoads) =>
+      previousLoads.filter((item) => (item.id || item._id) !== currentLoadId)
+    );
 
-    const storedUser = localStorage.getItem("user");
-    if (!storedUser) {
-      alert("User information not found. Please login again.");
-      return;
-    }
-
-    let user;
-    try {
-      user = JSON.parse(storedUser);
-    } catch (error) {
-      console.error("Invalid user data:", error);
-      alert("Invalid login information. Please login again.");
-      return;
-    }
-
-    const driverId = user?.id || user?._id || user?.driverId || user?.userId;
-
-    if (!driverId) {
-      alert("Driver user details not found. Please login again.");
-      return;
-    }
-
-    if (user.role !== "DRIVER") {
-      alert("Only registered drivers can submit a deal.");
-      return;
-    }
-
-    try {
-      setSubmittingLoadId(currentLoadId);
-      const response = await fetch(`${API_URL}/driver/deals`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          loadId: currentLoadId,
-          driverId: driverId,
-          dealPrice: numericPrice,
-        }),
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        alert(data.detail || "Failed to create deal");
-        return;
-      }
-
-      alert(
-        `Deal request sent successfully for ${load.pickup} → ${load.destination}`
-      );
-
-      setLoads((previousLoads) =>
-        previousLoads.filter((item) => (item.id || item._id) !== currentLoadId)
-      );
-
-      setDealPrices((previousPrices) => {
-        const updatedPrices = { ...previousPrices };
-        delete updatedPrices[currentLoadId];
-        return updatedPrices;
-      });
-    } catch (error) {
-      console.error("Deal error:", error);
-      alert("Unable to connect to the server. Please try again.");
-    } finally {
-      setSubmittingLoadId(null);
-    }
-  };
+    setDealPrices((previousPrices) => {
+      const updatedPrices = { ...previousPrices };
+      delete updatedPrices[currentLoadId];
+      return updatedPrices;
+    });
+  } catch (error) {
+    console.error("Deal error:", error);
+    alert("Unable to connect to the server. Please try again.");
+  } finally {
+    setSubmittingLoadId(null);
+  }
+};
 
   return (
     <div role="DRIVER">
@@ -220,7 +194,7 @@ function AvailableLoads() {
                       </div>
                       <div className="detail">
                         <strong>Pickup Date :</strong>
-                        <span>{formatDate(load.pickupDate)}</span>
+                        <span>{load.pickupDate}</span>
                       </div>
                     </div>
 

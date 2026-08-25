@@ -1,0 +1,18 @@
+services:
+  # BACKEND SERVICE
+  - type: web
+    name: truck-load-hub-server
+    env: python
+    buildCommand: pip install -r backend/requirements.txt
+    startCommand: uvicorn backend.app.main:app --host 0.0.0.0 --port $PORT
+
+  # FRONTEND STATIC SITE
+  - type: web
+    name: truck-load-hub
+    env: static
+    buildCommand: cd frontend && npm install && npm run build
+    staticPublishPath: frontend/dist
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html

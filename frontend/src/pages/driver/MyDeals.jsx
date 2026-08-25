@@ -2,12 +2,6 @@ import { useEffect, useState } from "react";
 import Card from "../../components/Card";
 import { API_URL } from "../../api";
 
-// Helper function to safely format ISO/string dates
-const formatDate = (dateString) => {
-  if (!dateString) return "N/A";
-  const date = new Date(dateString);
-  return isNaN(date.getTime()) ? "N/A" : date.toLocaleDateString("en-IN");
-};
 
 function MyDeals() {
   const [deals, setDeals] = useState([]);
@@ -180,7 +174,7 @@ function MyDeals() {
                     </div>
                     <div className="detail">
                       <strong>Pickup Date :</strong>
-                      <span>{formatDate(deal.pickupDate)}</span>
+                      <span>{deal.pickupDate}</span>
                     </div>
                   </div>
 
