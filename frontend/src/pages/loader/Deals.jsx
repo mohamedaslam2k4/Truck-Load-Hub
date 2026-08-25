@@ -204,7 +204,7 @@ function Deals() {
                     </div>
                     <div className="detail">
                       <strong>Pickup Date :</strong>
-                      <span>(deal.pickupDate}</span>
+                      <span>(deal.pickupDate)</span>
                     </div>
                   </div>
 
