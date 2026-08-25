@@ -148,7 +148,7 @@ def update_verification(user_id: int, status: str, db: Session = Depends(get_db)
     db.commit()
     return {"message": "User status updated", "user_id": user_id, "status": status}
 
-# GET CONTACTS (FIXED ROUTE)
+# GET CONTACTS 
 @router.get("/contacts")
 def get_contacts(
     status: Optional[str] = Query("pending", description="Filter status: pending, resolved/closed, or all"),

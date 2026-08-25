@@ -23,7 +23,7 @@ def get_driver_deals(driver_id: int, db: Session = Depends(get_db)):
         SELECT d.id AS "dealId", d.load_id AS "loadId", d.driver_id AS "driverId", 
                d.deal_price AS "dealPrice", d.status AS status, l.pickup, 
                l.destination, l.load_type AS "loadType", l.weight, 
-               l.truck_type AS "truckType", l.pickup_date AS "pickupDate", 
+               l.truck_type AS "truckType",  DATE_FORMAT(l.pickup_date, '%d/%m/%Y') AS "pickupDate", 
                l.loader_id AS "loaderId", loader.name AS "loaderName", 
                loader.phone AS "loaderPhone", loader.city AS "loaderCity" 
         FROM deals d 
@@ -42,7 +42,7 @@ def get_loader_deals(loader_id: int, db: Session = Depends(get_db)):
         SELECT d.id AS "dealId", d.load_id AS "loadId", d.driver_id AS "driverId", 
                d.deal_price AS "dealPrice", d.status AS status, l.pickup, 
                l.destination, l.load_type AS "loadType", l.weight, 
-               l.truck_type AS "truckType", l.pickup_date AS "pickupDate", 
+               l.truck_type AS "truckType",  DATE_FORMAT(l.pickup_date, '%d/%m/%Y') AS "pickupDate", 
                driver.name AS "driverName", driver.phone AS "driverPhone", 
                driver.city AS "driverCity", dp.truck_type AS "vehicleType", 
                dp.truck_number AS "vehicleNumber", dp.license_number AS licenseNumber, 
@@ -151,7 +151,7 @@ def get_deal(deal_id: int, db: Session = Depends(get_db)):
         SELECT d.id AS "dealId", d.load_id AS "loadId", d.driver_id AS "driverId", 
                d.deal_price AS "dealPrice", d.status AS status, l.pickup, 
                l.destination, l.load_type AS "loadType", l.weight, 
-               l.truck_type AS "truckType", l.pickup_date AS "pickupDate", 
+               l.truck_type AS "truckType",  DATE_FORMAT(l.pickup_date, '%d/%m/%Y') AS "pickupDate", 
                l.loader_id AS "loaderId", driver.name AS "driverName", 
                driver.phone AS "driverPhone", driver.city AS "driverCity", 
                loader.name AS "loaderName", loader.phone AS "loaderPhone", 

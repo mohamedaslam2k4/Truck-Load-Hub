@@ -27,7 +27,7 @@ function ManageLoads() {
   });
 
   const fetchMyLoads = async () => {
-    // If user isn't logged in, stop immediately and clear loading state
+    
     if (!loaderId) {
       setLoading(false);
       return;

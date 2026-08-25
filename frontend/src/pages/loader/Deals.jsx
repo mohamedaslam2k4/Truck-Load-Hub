@@ -13,18 +13,7 @@ function Deals() {
   const user = storedUser ? JSON.parse(storedUser) : {};
   const loaderId = user?.id || user?.loaderId || user?.userId;
 
-  // Format date string to DD/MM/YYYY format
-  const formatDate = (dateString) => {
-    if (!dateString) return "N/A";
-    const date = new Date(dateString);
-    if (isNaN(date.getTime())) return dateString;
 
-    const day = String(date.getDate()).padStart(2, "0");
-    const month = String(date.getMonth() + 1).padStart(2, "0");
-    const year = date.getFullYear();
-
-    return `${day}/${month}/${year}`;
-  };
 
   const fetchDeals = async () => {
     if (!loaderId) {
@@ -215,7 +204,7 @@ function Deals() {
                     </div>
                     <div className="detail">
                       <strong>Pickup Date :</strong>
-                      <span>{formatDate(deal.pickupDate)}</span>
+                      <span>(deal.pickupDate}</span>
                     </div>
                   </div>
 
