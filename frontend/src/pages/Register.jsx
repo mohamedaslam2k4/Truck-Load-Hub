@@ -201,7 +201,7 @@ function Register() {
     <div className="profile-section">
       <h3>Driver Information</h3>
       
-      {/* FIXED: Experience input prevents typing > 100 or > 3 digits */}
+      
       <div className="form-group">
         <label htmlFor="experience">Experience (years)</label>
         <input  type="number" id="experience"   name="experience"  placeholder="Experience in years"   min="0"  max="100" value={formData.experience}  onChange={handleChange}  onInput={(e) => { if (e.target.value.length > 3) e.target.value = e.target.value.slice(0, 3);  if (Number(e.target.value) > 100) e.target.value = 100; }}  required  />
@@ -224,7 +224,7 @@ function Register() {
         </select>
       </div>
 
-      {/* FIXED: Capacity input prevents typing > 10000 or > 5 digits */}
+
       <div className="form-group">
         <label htmlFor="capacity">Capacity (tons)</label>
         <input  type="number"  id="capacity" name="capacity"  placeholder="Capacity in tons"   min="0"   max="10000" value={formData.capacity}   onChange={handleChange}  onInput={(e) => {  if (e.target.value.length > 5) e.target.value = e.target.value.slice(0, 5);  if (Number(e.target.value) > 10000) e.target.value = 10000;}}required />

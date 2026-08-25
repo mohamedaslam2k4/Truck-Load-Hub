@@ -94,31 +94,14 @@ function Login({ setUserRole }) {
 
           <form onSubmit={handleSubmit}>
             <div className="form-group">
-              <label htmlFor="email">Email</label>
-              <input
-                type="email"
-                id="email"
-                name="email"
-                placeholder="Enter your email"
-                value={formData.email}
-                onChange={handleChange}
-                maxLength={50}
-                required
-              />
-            </div>
-            <div className="form-group">
-              <label htmlFor="password">Password</label>
-              <input
-                type="password"
-                id="password"
-                name="password"
-                placeholder="Enter your password"
-                value={formData.password}
-                onChange={handleChange}
-                maxLength={50}
-                required
-              />
-            </div>
+                <label htmlFor="email">Email</label>
+                <input type="email" id="email" name="email" placeholder="Enter your email" value={formData.email} onChange={handleChange} maxLength={50} required />
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="password">Password</label>
+                <input type="password" id="password" name="password" placeholder="Enter your password" value={formData.password} onChange={handleChange} maxLength={50} required />
+              </div>
             <button type="submit" className="primary-button" disabled={loading}>
               {loading ? "Logging in..." : "Login"}
             </button>

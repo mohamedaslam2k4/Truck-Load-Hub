@@ -1,6 +1,6 @@
 from pydantic import BaseModel, EmailStr
 from typing import Optional
-from datetime import date  # <--- Import date
+from datetime import date  
 
 class LoadCreate(BaseModel):
     pickup: str
@@ -8,7 +8,7 @@ class LoadCreate(BaseModel):
     loadType: str
     weight: float
     truckType: str
-    pickupDate: date  # <--- Change from str to date
+    pickupDate: date 
     minPrice: float
     maxPrice: float
     description: Optional[str] = ""
@@ -23,14 +23,14 @@ class RegisterRequest(BaseModel):
     password: str
     role: str
     
-    # Optional Driver fields
+  
     experience: Optional[int] = None
     truckNumber: Optional[str] = None
     truckType: Optional[str] = None
     capacity: Optional[int] = None
     licenseNumber: Optional[str] = None
     
-    # Optional Loader fields
+ 
     companyName: Optional[str] = None
     contactPerson: Optional[str] = None
     businessType: Optional[str] = None
