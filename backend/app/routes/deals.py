@@ -15,10 +15,7 @@ def fetch_deal_or_404(deal_id: int, db: Session):
         raise HTTPException(status_code=404, detail="Deal not found")
     return deal
 
-
-    loader_count = db.execute(
-        text("""SELECT COUNT(*) FROM users WHERE role = 'LOADER' """)
-    ).scalar()
+    loader_count = db.execute( text("""SELECT COUNT(*) FROM users WHERE role = 'LOADER' """)).scalar()
 
 @router.get("/driver/{driver_id}")
 def get_driver_deals(driver_id: int, db: Session = Depends(get_db)):
