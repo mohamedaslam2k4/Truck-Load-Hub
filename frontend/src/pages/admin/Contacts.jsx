@@ -28,7 +28,6 @@ function Contacts() {
     }
   };
 
-  // Re-fetch contacts whenever the filter selection changes
   useEffect(() => {
     fetchContacts();
   }, [filter]);
@@ -37,9 +36,7 @@ function Contacts() {
     setResolvingId(contactId);
 
     try {
-      const response = await fetch(
-        `${API_URL}/admin/contacts/${contactId}/resolve`,
-        {
+      const response = await fetch( `${API_URL}/admin/contacts/${contactId}/resolve`,{
           method: "PUT",
         }
       );
@@ -49,13 +46,13 @@ function Contacts() {
       if (!response.ok) {
         throw new Error(data.detail || "Failed to resolve contact");
       }
-
       fetchContacts();
       alert("Contact marked as resolved.");
     } catch (error) {
       console.error("Error resolving contact:", error);
       alert(error.message || "Failed to resolve contact");
-    } finally {
+    }
+     finally {
       setResolvingId(null);
     }
   };

@@ -4,7 +4,7 @@ import { NavLink, useNavigate } from "react-router-dom";
 function Sidebar({ role }) {
   const navigate = useNavigate();
 
-  // Retrieve user details from localStorage
+
   const user = JSON.parse(localStorage.getItem("user") || "{}");
 
   const name = user.name || user.fullName || "User";
@@ -13,12 +13,7 @@ function Sidebar({ role }) {
   const userRole = role || user.role || "USER";
 
   // Generate 2-letter initials
-  const initials = name
-    .split(" ")
-    .map((word) => word[0])
-    .join("")
-    .toUpperCase()
-    .slice(0, 2);
+  const initials = name.split(" ") .map((word) => word[0]).join("").toUpperCase().slice(0, 2);
 
  
   const adminLinks = [
@@ -109,7 +104,6 @@ function Sidebar({ role }) {
 
   return (
     <aside className="dashboard-sidebar">
-      {/* NAVIGATION LINKS WITH SVGs */}
       <div className="sidebar-top">
         <div className="sidebar-title">Welcome, {name}</div>
 
@@ -123,7 +117,7 @@ function Sidebar({ role }) {
         </nav>
       </div>
 
-      {/* BOTTOM SECTION WITH MATCHING COLORS */}
+
       <div className="sidebar-bottom">
         <div className="profile-badge">
           <div className="profile-avatar">{initials}</div>
