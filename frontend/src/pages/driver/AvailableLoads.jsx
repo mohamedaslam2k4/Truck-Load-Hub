@@ -81,14 +81,15 @@ const handleMakeDeal = async (load) => {
 
  
   const storedUser = localStorage.getItem("user");
-  const user = storedUser ? JSON.parse(storedUser) : null;
-  const driverId = user?.id || user?._id || user?.driverId || user?.userId;
+    const user = storedUser ? JSON.parse(storedUser) : null;
+    const driverId = user?.id || user?._id || user?.driverId || user?.userId;
 
-  if (!driverId) {
-    alert("Driver account session expired. Please login again.");
-    return;
-  }
+    if (!driverId) {
+      alert("Driver account session expired. Please login again.");
+      return;
+    }
 
+    
   try {
     setSubmittingLoadId(currentLoadId);
     const response = await fetch(`${API_URL}/driver/deals`, {
