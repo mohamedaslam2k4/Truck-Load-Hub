@@ -11,10 +11,6 @@ router = APIRouter(tags=["Driver"])
 
 @router.get("/available-loads")
 def get_available_loads(driver_id: int = None, db: Session = Depends(get_db)):
-    """
-    Returns available loads. Excludes loads that the specified driver 
-    has already submitted a deal for.
-    """
     if driver_id:
         query = text("""
             SELECT l.id, l.pickup, l.destination, l.load_type AS "loadType", l.weight, 
@@ -47,10 +43,7 @@ def get_available_loads(driver_id: int = None, db: Session = Depends(get_db)):
 
 @router.post("/deals", status_code=status.HTTP_201_CREATED)
 def create_deal(data: DealCreate, db: Session = Depends(get_db)):
-    """
-    Allows any driver to submit a budget deal for an AVAILABLE load.
-    The load status stays AVAILABLE so other drivers can also bid.
-    """
+    
     # 1. Verify driver profile
     driver = db.execute(text("""
         SELECT id, name, role, status 

@@ -16,7 +16,10 @@ def fetch_deal_or_404(deal_id: int, db: Session):
     return deal
 
 
-# --- Endpoints ---
+    loader_count = db.execute(
+        text("""SELECT COUNT(*) FROM users WHERE role = 'LOADER' """)
+    ).scalar()
+
 @router.get("/driver/{driver_id}")
 def get_driver_deals(driver_id: int, db: Session = Depends(get_db)):
     query = text("""

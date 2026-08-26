@@ -121,27 +121,4 @@ def cancel_load(load_id: int, db: Session = Depends(get_db)):
     return {"message": "Load cancelled successfully"}
 
 
-@router.get("/loader/available-drivers")
-def get_available_drivers(db: Session = Depends(get_db)):
-    query = text("""
-        SELECT 
-            u.id AS "driverUserId",
-            u.name,
-            u.phone,
-            CONCAT('DRV-', LPAD(CAST(u.id AS CHAR), 3, '0')) AS "driverId",
-            dp.truck_type AS "vehicleType",
-            dp.truck_number AS "vehicleNumber",
-            u.city AS "location",
-            CASE 
-                WHEN dp.experience IS NOT NULL THEN CONCAT(dp.experience, ' Years')
-                ELSE 'Not specified'
-            END AS "experience",
-            CAST(dp.capacity AS FLOAT) AS "capacity",
-            'Available' AS "availabilityStatus"
-        FROM users u 
-        INNER JOIN driver_profiles dp ON u.id = dp.user_id 
-        WHERE u.role = 'DRIVER' AND u.status = 'VERIFIED' 
-        ORDER BY u.created_at DESC
-    """)
-    drivers = db.execute(query).mappings().all()
-    return [dict(driver) for driver in drivers]
+
