@@ -23,7 +23,7 @@ function MyDeals() {
   const user = getStoredUser();
   const driverId = user?.id || user?.driverId || user?.userId;
 
-  // Fetch driver deals
+
   const fetchDeals = async () => {
     if (!driverId) {
       console.error("Driver ID missing. User payload in localStorage:", user);
@@ -53,7 +53,7 @@ function MyDeals() {
     fetchDeals();
   }, [driverId]);
 
-  // COMPLETE TRIP: IN TRANSIT → COMPLETED
+
   const handleComplete = async (dealId) => {
     const confirmComplete = window.confirm(
       "Are you sure you want to mark this trip as completed?"
@@ -108,11 +108,7 @@ function MyDeals() {
               <p>Track your ongoing and completed driver trips.</p>
             </div>
             <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-              <select
-                className="filter-select"
-                value={filter}
-                onChange={(e) => setFilter(e.target.value)}
-              >
+              <select className="filter-select" value={filter} onChange={(e) => setFilter(e.target.value)} >
                 <option value="ALL">All Deals</option>
                 <option value="PENDING">Pending</option>
                 <option value="ACCEPTED">Accepted</option>
@@ -142,11 +138,7 @@ function MyDeals() {
                       <span className="arrow">→</span>
                       <span>{deal.destination}</span>
                     </div>
-                    <span
-                      className={`status ${(deal.status || "")
-                        .toLowerCase()
-                        .replace(/\s+/g, "-")}`}
-                    >
+                    <span  className={`status ${(deal.status || "")  .toLowerCase() .replace(/\s+/g, "-")}`} >
                       {deal.status}
                     </span>
                   </div>

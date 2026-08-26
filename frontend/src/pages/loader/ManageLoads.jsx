@@ -203,8 +203,8 @@ function ManageLoads() {
                 </div>
                 <button type="submit" className="create-button">Create Load</button>
               </form>
-              </Card>
-              </div>
+           </Card>
+        </div>
               )}
               
               {/* MY LOADS */}

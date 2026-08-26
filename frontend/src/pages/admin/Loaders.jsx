@@ -7,9 +7,7 @@ function Loaders() {
   const [loading, setLoading] = useState(true);
 
 
-  // fetch load from db
-
-
+ 
   const fetchLoaders = async () => {
     try {
       setLoading(true);
@@ -38,7 +36,6 @@ function Loaders() {
 
 
   // fetch loads when loader open page
-
   useEffect(() => {
     fetchLoaders();
   }, []);

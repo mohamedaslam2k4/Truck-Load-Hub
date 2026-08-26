@@ -6,7 +6,7 @@ function Verification() {
   const [loading, setLoading] = useState(true);
   const [updatingId, setUpdatingId] = useState(null);
 
-  // get pending users
+
   const fetchPendingUsers = async () => {
     try {
       setLoading(true);
@@ -94,11 +94,7 @@ function Verification() {
               <div className="user-info">
                 <div className="user-name">
                   <h3>{user.name}</h3>
-                  <span
-                    className={`role-badge ${
-                      user.role ? user.role.toLowerCase() : ""
-                    }`}
-                  >
+                  <span className={`role-badge ${  user.role ? user.role.toLowerCase() : "" }`} >
                     {user.role}
                   </span>
                 </div>
@@ -114,9 +110,7 @@ function Verification() {
                 </p>
                 <p>
                   <strong>Registered:</strong>{" "}
-                  {user.created_at
-                    ? new Date(user.created_at).toLocaleDateString()
-                    : "Not available"}
+                  {user.created_at ? new Date(user.created_at).toLocaleDateString() : "Not available"}
                 </p>
               </div>
 
