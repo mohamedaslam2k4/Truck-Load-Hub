@@ -7,13 +7,6 @@ function ManageLoads() {
   const [loads, setLoads] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState("ALL");
-
-  // Fallback to _id or id depending on database model
-  const currentUser = JSON.parse(localStorage.getItem("user") || "{}");
-  const loaderId = currentUser.id || currentUser._id;
-
-  const todayStr = new Date().toLocaleDateString("en-CA");
-
   const [formData, setFormData] = useState({
     pickup: "",
     destination: "",
@@ -26,6 +19,14 @@ function ManageLoads() {
     description: "",
   });
 
+
+  // Fallback to _id or id depending on database model
+  const currentUser = JSON.parse(localStorage.getItem("user") || "{}");
+  const loaderId = currentUser.id || currentUser._id;
+
+  const todayStr = new Date().toLocaleDateString("en-CA");
+
+ 
   const fetchMyLoads = async () => {
     
     if (!loaderId) {
