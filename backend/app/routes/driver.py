@@ -7,7 +7,7 @@ from app.schemas import DealCreate
 router = APIRouter(tags=["Driver"])
 
 
-# backend/app/routes/driver.py
+
 
 @router.get("/available-loads")
 def get_available_loads(driver_id: int = None, db: Session = Depends(get_db)):
