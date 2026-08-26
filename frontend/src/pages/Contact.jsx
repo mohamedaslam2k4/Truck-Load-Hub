@@ -11,6 +11,19 @@ function Contact() {
   });
   const [loading, setLoading] = useState(false);
 
+    const handleChange = (e) => {
+    const { name, value } = e.target;
+
+    if (name === "phone") {
+      const digitsOnly = value.replace(/\D/g, "");
+      if (digitsOnly.length > 10) return;
+      setFormData({ ...formData, phone: digitsOnly });
+      return;
+    }
+
+    setFormData({ ...formData, [name]: value });
+  };
+
   const validateForm = () => {
     if (formData.name.trim().length < 2) {
       alert("Name must be at least 2 characters long.");
@@ -35,18 +48,6 @@ function Contact() {
     return true;
   };
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-
-    if (name === "phone") {
-      const digitsOnly = value.replace(/\D/g, "");
-      if (digitsOnly.length > 10) return;
-      setFormData({ ...formData, phone: digitsOnly });
-      return;
-    }
-
-    setFormData({ ...formData, [name]: value });
-  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
