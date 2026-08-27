@@ -13,8 +13,8 @@ function AvailableLoads() {
  const fetchAvailableLoads = async () => {
   setLoading(true);
   try {
-    // 1. Read driver user from localStorage
-    const storedUser = localStorage.getItem("user");
+    // 1. Read driver user from sessionStorage
+    const storedUser = sessionStorage.getItem("user");
     let driverId = null;
     if (storedUser) {
       const user = JSON.parse(storedUser);
@@ -80,7 +80,7 @@ const handleMakeDeal = async (load) => {
   }
 
  
-  const storedUser = localStorage.getItem("user");
+  const storedUser = sessionStorage.getItem("user");
     const user = storedUser ? JSON.parse(storedUser) : null;
     const driverId = user?.id || user?._id || user?.driverId || user?.userId;
 

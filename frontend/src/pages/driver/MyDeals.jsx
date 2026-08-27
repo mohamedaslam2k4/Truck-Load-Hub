@@ -9,13 +9,13 @@ function MyDeals() {
   const [filter, setFilter] = useState("ALL");
   const [completingDeal, setCompletingDeal] = useState(null);
 
-  // Safely extract driver details from localStorage
+  // Safely extract driver details from sessionStorage
   const getStoredUser = () => {
     try {
-      const storedUser = localStorage.getItem("user");
+      const storedUser = sessionStorage.getItem("user");
       return storedUser ? JSON.parse(storedUser) : {};
     } catch (e) {
-      console.error("Failed to parse user from localStorage", e);
+      console.error("Failed to parse user from sessionStorage", e);
       return {};
     }
   };
@@ -26,7 +26,7 @@ function MyDeals() {
 
   const fetchDeals = async () => {
     if (!driverId) {
-      console.error("Driver ID missing. User payload in localStorage:", user);
+      console.error("Driver ID missing. User payload in sessionStorage:", user);
       alert("Driver information not found. Please log in again.");
       setLoading(false);
       return;

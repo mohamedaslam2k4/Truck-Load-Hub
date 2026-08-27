@@ -5,7 +5,7 @@ function Sidebar({ role }) {
   const navigate = useNavigate();
 
 
-  const user = JSON.parse(localStorage.getItem("user") || "{}");
+  const user = JSON.parse(sessionStorage.getItem("user") || "{}");
 
   const name = user.name || user.fullName || "User";
   const email = user.email || user.gmail || "user@example.com";

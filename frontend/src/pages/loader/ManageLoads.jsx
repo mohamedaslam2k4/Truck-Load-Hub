@@ -22,7 +22,7 @@ function ManageLoads() {
   });
 
   // Fallback to _id or id depending on database model
-  const currentUser = JSON.parse(localStorage.getItem("user") || "{}");
+  const currentUser = JSON.parse(sessionStorage.getItem("user") || "{}");
   const loaderId = currentUser.id || currentUser._id;
 
   const todayStr = new Date().toLocaleDateString("en-CA");

@@ -8,8 +8,8 @@ function Deals() {
   const [filter, setFilter] = useState("ALL");
   const [processingDeal, setProcessingDeal] = useState(null);
 
-  // Safely extract loader details from localStorage (supports multiple user object schemas)
-  const storedUser = localStorage.getItem("user");
+  // Safely extract loader details from sessionStorage (supports multiple user object schemas)
+  const storedUser = sessionStorage.getItem("user");
   const user = storedUser ? JSON.parse(storedUser) : {};
   const loaderId = user?.id || user?.loaderId || user?.userId;
 
@@ -17,7 +17,7 @@ function Deals() {
 
   const fetchDeals = async () => {
     if (!loaderId) {
-      console.error("Loader ID missing. User payload in localStorage:", user);
+      console.error("Loader ID missing. User payload in sessionStorage:", user);
       alert("Loader information not found. Please log in again.");
       setLoading(false);
       return;
