@@ -134,7 +134,7 @@ function Landing() {
       </footer>
 
       <style>{`
-       html { scroll-behavior: smooth; }
+        html { scroll-behavior: smooth; }
 
         body { margin: 0; font-family: system-ui, -apple-system, sans-serif; color: #222; width: 100%; }
 
@@ -197,6 +197,8 @@ function Landing() {
         .footer { width: 100%; padding: 20px 6%; text-align: center; border-top: 1px solid #eee; color: #060606; background: #a8a8a8; box-sizing: border-box; }
 
         #home, #how-it-works, #drivers, #loaders, #contact { scroll-margin-top: 70px; }
+
+        @media (max-width: 768px) { .hero h1 { font-size: 36px; } .hero p { font-size: 16px; } .hero-buttons { flex-direction: column; align-items: center; } .role-card { flex-direction: column; gap: 20px; text-align: center; } .contact-info { flex-direction: column; gap: 20px; } .nav-links { gap: 10px; } }
       `}</style>
     </div>
   );
