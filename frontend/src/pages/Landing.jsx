@@ -198,7 +198,18 @@ function Landing() {
 
         #home, #how-it-works, #drivers, #loaders, #contact { scroll-margin-top: 70px; }
 
-        @media (max-width: 768px) { .hero h1 { font-size: 36px; } .hero p { font-size: 16px; } .hero-buttons { flex-direction: column; align-items: center; } .role-card { flex-direction: column; gap: 20px; text-align: center; } .contact-info { flex-direction: column; gap: 20px; } .nav-links { gap: 10px; } }
+        @media (max-width: 768px) {
+        .navbar { height: auto; padding: 12px 0; }
+        .nav-container { flex-direction: column; align-items: center; gap: 12px; padding: 0 4%; }
+        .logo { justify-content: center; font-size: 20px; }
+        .logo img { width: 45px; height: 45px; }
+        .nav-links { width: 100%; justify-content: center; flex-wrap: wrap; gap: 12px 16px; }
+        .nav-links a { font-size: 14px; padding: 4px 8px; white-space: nowrap; }
+        .hero h1 { font-size: 36px; }
+        .hero p { font-size: 16px; }
+        .hero-buttons { flex-direction: column; align-items: center; }
+        .role-card { flex-direction: column; gap: 20px; text-align: center; }
+        .contact-info { flex-direction: column; gap: 20px; }}
       `}</style>
     </div>
   );
