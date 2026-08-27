@@ -15,70 +15,68 @@ function Login({ setUserRole }) {
     });
   };
 
- const handleSubmit = async (e) => {
-  e.preventDefault();
-  setLoading(true);
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
 
-  try {
-    const response = await fetch(`${API_URL}/auth/login`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        email: formData.email.trim(),
-        password: formData.password,
-      }),
-    });
+    try {
+      const response = await fetch(`${API_URL}/auth/login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: formData.email.trim(),
+          password: formData.password,
+        }),
+      });
 
-    const data = await response.json();
+      const data = await response.json();
 
-    if (!response.ok) {
-      let errorMessage = "Invalid email or password";
+      if (!response.ok) {
+        let errorMessage = "Invalid email or password";
 
-      // Extracts 401 & 403 string details
-      if (typeof data.detail === "string") {
-        errorMessage = data.detail;
-      } 
-      // Extracts 422 Pydantic schema validation errors
-      else if (Array.isArray(data.detail) && data.detail.length > 0) {
-        errorMessage = data.detail.map((err) => `${err.loc[err.loc.length - 1]}: ${err.msg}`).join("\n");
+        if (typeof data.detail === "string") {
+          errorMessage = data.detail;
+        } else if (Array.isArray(data.detail) && data.detail.length > 0) {
+          errorMessage = data.detail.map((err) => `${err.loc[err.loc.length - 1]}: ${err.msg}`).join("\n");
+        }
+
+        alert(errorMessage);
+        return;
       }
 
-      alert(errorMessage);
-      return;
+      const user = data.user;
+      const role = user.role ? user.role.toUpperCase() : "";
+
+      // Store user info and role in sessionStorage instead of localStorage
+      sessionStorage.setItem("user", JSON.stringify(user));
+      sessionStorage.setItem("role", role);
+
+      if (setUserRole) {
+        setUserRole(role);
+      }
+
+      alert("Login successfully!");
+
+      switch (role) {
+        case "DRIVER":
+          navigate("/driver");
+          break;
+        case "LOADER":
+          navigate("/loader");
+          break;
+        case "ADMIN":
+          navigate("/admin");
+          break;
+        default:
+          alert("Invalid user role");
+      }
+    } catch (error) {
+      console.error("Login error:", error);
+      alert("Unable to connect to server");
+    } finally {
+      setLoading(false);
     }
-
-    const user = data.user;
-    const role = user.role ? user.role.toUpperCase() : "";
-
-    localStorage.setItem("user", JSON.stringify(user));
-    sessionStorage.setItem("role", role);
-
-    if (setUserRole) {
-      setUserRole(role);
-    }
-
-    alert("Login successfully!");
-
-    switch (role) {
-      case "DRIVER":
-        navigate("/driver");
-        break;
-      case "LOADER":
-        navigate("/loader");
-        break;
-      case "ADMIN":
-        navigate("/admin");
-        break;
-      default:
-        alert("Invalid user role");
-    }
-  } catch (error) {
-    console.error("Login error:", error);
-    alert("Unable to connect to server");
-  } finally {
-    setLoading(false);
-  }
-};
+  };
 
   return (
     <div className="auth-page">
@@ -94,14 +92,14 @@ function Login({ setUserRole }) {
 
           <form onSubmit={handleSubmit}>
             <div className="form-group">
-                <label htmlFor="email">Email</label>
-                <input type="email" id="email" name="email" placeholder="Enter your email" value={formData.email} onChange={handleChange} maxLength={50} required />
-              </div>
+              <label htmlFor="email">Email</label>
+              <input type="email" id="email" name="email" placeholder="Enter your email" value={formData.email} onChange={handleChange} maxLength={50} required />
+            </div>
 
-              <div className="form-group">
-                <label htmlFor="password">Password</label>
-                <input type="password" id="password" name="password" placeholder="Enter your password" value={formData.password} onChange={handleChange} maxLength={50} required />
-              </div>
+            <div className="form-group">
+              <label htmlFor="password">Password</label>
+              <input type="password" id="password" name="password" placeholder="Enter your password" value={formData.password} onChange={handleChange} maxLength={50} required />
+            </div>
             <button type="submit" className="primary-button" disabled={loading}>
               {loading ? "Logging in..." : "Login"}
             </button>
@@ -117,7 +115,6 @@ function Login({ setUserRole }) {
       </div>
 
       <style>{`
-        /* FULL-SCREEN CONTAINER FOR BACKGROUND */
         .auth-page {
           width: 100vw;
           height: 100vh;
@@ -125,7 +122,6 @@ function Login({ setUserRole }) {
           box-sizing: border-box;
           overflow: hidden;
         }
-        /* ALIGNMENT WRAPPER FOR WIDE SCREENS */
         .auth-container {
           max-width: 1600px;
           width: 100%;
@@ -283,7 +279,6 @@ function Login({ setUserRole }) {
           border-radius: 10px;
         }
 
-        /* RESPONSIVE RESPONSIVENESS FOR TABLETS/MOBILES */
         @media (max-width: 768px) {
           .auth-container {
             justify-content: center;
