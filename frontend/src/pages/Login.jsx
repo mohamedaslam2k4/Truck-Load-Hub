@@ -48,7 +48,6 @@ function Login({ setUserRole }) {
       const role = user.role ? user.role.toUpperCase() : "";
 
       sessionStorage.setItem("user", JSON.stringify(user));
-      sessionStorage.setItem("role", role);
 
       if (setUserRole) {
         setUserRole(role);

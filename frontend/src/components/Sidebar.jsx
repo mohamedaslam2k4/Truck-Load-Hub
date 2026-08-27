@@ -5,14 +5,14 @@ function Sidebar({ role }) {
   const navigate = useNavigate();
 
 
-  const user = JSON.parse(sessionStorage.getItem("user") || "{}");
+  const user = JSON.parse(sessionStorage.getItem("user"));
 
-  const name = user.name || user.fullName || "User";
-  const email = user.email || user.gmail || "user@example.com";
-  const userId = user.id || user._id || user.userId || "1042";
-  const userRole = role || user.role || "USER";
+  const name = user.name || "User";
+  const email = user.email || "user@example.com";
+  const userId = user.id ||"0";
+  const userRole =  user.role || "USER";
 
-  // Generate 2-letter initials
+ 
   const initials = name.split(" ") .map((word) => word[0]).join("").toUpperCase().slice(0, 2);
 
  
