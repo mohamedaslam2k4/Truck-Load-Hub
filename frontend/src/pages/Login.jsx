@@ -47,7 +47,6 @@ function Login({ setUserRole }) {
       const user = data.user;
       const role = user.role ? user.role.toUpperCase() : "";
 
-      // Store user info and role in sessionStorage instead of localStorage
       sessionStorage.setItem("user", JSON.stringify(user));
       sessionStorage.setItem("role", role);
 
@@ -115,179 +114,53 @@ function Login({ setUserRole }) {
       </div>
 
       <style>{`
-        .auth-page {
-          width: 100vw;
-          height: 100vh;
-          background: url('/bg.png') no-repeat center center / cover;
-          box-sizing: border-box;
-          overflow: hidden;
-        }
-        .auth-container {
-          max-width: 1600px;
-          width: 100%;
-          height: 100%;
-          margin: 0 auto;
-          display: flex;
-          align-items: center;
-          justify-content: flex-end;
-          padding-right: 100px;
-          box-sizing: border-box;
-        }
+        .auth-page { width: 100vw; height: 100vh; background: url('/bg.png') no-repeat center center / cover; box-sizing: border-box; overflow: hidden; }
 
-        .auth-card {
-          width: 100%;
-          max-width: 450px;
-          max-height: calc(100vh - 40px);
-          overflow-y: auto;
-          padding: 30px 40px;
-          background: rgba(255, 255, 255, 0.2);
-          backdrop-filter: blur(10px);
-          border: 1px solid rgba(255, 255, 255, 0.4);
-          box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
-          border-radius: 16px;
-          box-sizing: border-box;
-        }
+        .auth-container { max-width: 1600px; width: 100%; height: 100%; margin: 0 auto; display: flex; align-items: center; justify-content: flex-end; padding-right: 100px; box-sizing: border-box; }
 
-        .logo {
-          display: flex;
-          flex-direction: row;
-          align-items: center;
-          justify-content: center;
-          border-radius: 16px;
-          background-color: rgba(255, 255, 255, 0.8);
-          border: 1px solid black;
-          padding: 8px 10px;
-          gap: 10px;
-          margin-bottom: 5px;
-        }
+        .auth-card { width: 100%; max-width: 450px; max-height: calc(100vh - 40px); overflow-y: auto; padding: 30px 40px; background: rgba(255, 255, 255, 0.2); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.4); box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15); border-radius: 16px; box-sizing: border-box; }
 
-        .auth-card img {
-          width: 55px;
-          height: 55px;
-          background: inherit;
-          border-radius: 50%;
-        }
+        .logo { display: flex; flex-direction: row; align-items: center; justify-content: center; border-radius: 16px; background-color: rgba(255, 255, 255, 0.8); border: 1px solid black; padding: 8px 10px; gap: 10px; margin-bottom: 5px; }
 
-        .auth-card h1 {
-          color: rgba(0, 0, 0);
-          text-align: center;
-          font-size: 22px;
-        }
+        .auth-card img { width: 55px; height: 55px; background: inherit; border-radius: 50%; }
 
-        .auth-card h2 {
-          color: #0082d8;
-          text-align: center;
-          margin-top: 15px;
-        }
+        .auth-card h1 { color: rgba(0, 0, 0); text-align: center; font-size: 22px; }
 
-        .auth-card > p {
-          text-align: center;
-          color: #d3d1d1;
-          margin-bottom: 15px;
-        }
+        .auth-card h2 { color: #0082d8; text-align: center; margin-top: 15px; }
 
-        .form-group {
-          margin-bottom: 15px;
-          color: #d3d1d1;
-        }
+        .auth-card > p { text-align: center; color: #d3d1d1; margin-bottom: 15px; }
 
-        .form-group label {
-          display: block;
-          margin-bottom: 5px;
-          font-weight: 600;
-          font-size: 14px;
-        }
+        .form-group { margin-bottom: 15px; color: #d3d1d1; }
 
-        .form-group input {
-          width: 100%;
-          padding: 12px;
-          background: rgba(255, 255, 255, 0.6);
-          border: 1px solid rgba(255, 255, 255, 0.5);
-          border-radius: 6px;
-          font-size: 12px;
-          font-family: inherit;
-          box-sizing: border-box;
-        }
+        .form-group label { display: block; margin-bottom: 5px; font-weight: 600; font-size: 14px; }
 
-        .form-group input:focus {
-          outline: none;
-          border-color: #222;
-          background: rgba(255, 255, 255, 0.85);
-        }
+        .form-group input { width: 100%; padding: 12px; background: rgba(255, 255, 255, 0.6); border: 1px solid rgba(255, 255, 255, 0.5); border-radius: 6px; font-size: 12px; font-family: inherit; box-sizing: border-box; }
 
-        .primary-button {
-          width: 100%;
-          padding: 12px;
-          border: none;
-          border-radius: 8px;
-          background: #298ce2;
-          color: #ffffff;
-          font-weight: bold;
-          cursor: pointer;
-          font-size: 16px;
-          margin-top: 10px;
-        }
+        .form-group input:focus { outline: none; border-color: #222; background: rgba(255, 255, 255, 0.85); }
 
-        .primary-button:hover {
-          background: #60a8cc;
-          color: #051329;
-        }
+        .primary-button { width: 100%; padding: 12px; border: none; border-radius: 8px; background: #298ce2; color: #ffffff; font-weight: bold; cursor: pointer; font-size: 16px; margin-top: 10px; }
 
-        .primary-button:disabled {
-          background: #888;
-          cursor: not-allowed;
-        }
+        .primary-button:hover { background: #60a8cc; color: #051329; }
 
-        .auth-link {
-          margin-top: 15px;
-          text-align: center;
-        }
+        .primary-button:disabled { background: #888; cursor: not-allowed; }
 
-        .auth-link a {
-          color: #9c9393;
-          font-weight: 600;
-          text-decoration: none;
-        }
+        .auth-link { margin-top: 15px; text-align: center; }
 
-        .auth-link a:hover {
-          color: #c8c6c6;
-          text-decoration: underline;
-        }
+        .auth-link a { color: #9c9393; font-weight: 600; text-decoration: none; }
 
-        .back-link {
-          display: block;
-          text-align: center;
-          margin-top: 10px;
-          color: #d3d1d1;
-          text-decoration: none;
-        }
+        .auth-link a:hover { color: #c8c6c6; text-decoration: underline; }
 
-        .back-link:hover {
-          text-decoration: underline;
-          color: #9c9393;
-        }
+        .back-link { display: block; text-align: center; margin-top: 10px; color: #d3d1d1; text-decoration: none; }
 
-        .auth-card::-webkit-scrollbar {
-          width: 6px;
-        }
-        .auth-card::-webkit-scrollbar-track {
-          background: rgba(255, 255, 255, 0.1);
-          border-radius: 10px;
-        }
-        .auth-card::-webkit-scrollbar-thumb {
-          background: rgba(255, 255, 255, 0.4);
-          border-radius: 10px;
-        }
+        .back-link:hover { text-decoration: underline; color: #9c9393; }
 
-        @media (max-width: 768px) {
-          .auth-container {
-            justify-content: center;
-            padding-right: 0;
-          }
-          .auth-card {
-            max-width: 90%;
-          }
-        }
+        .auth-card::-webkit-scrollbar { width: 6px; }
+
+        .auth-card::-webkit-scrollbar-track { background: rgba(255, 255, 255, 0.1); border-radius: 10px; }
+
+        .auth-card::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.4); border-radius: 10px; }
+
+        @media (max-width: 768px) { .auth-container { justify-content: center; padding-right: 0; } .auth-card { max-width: 90%; } }
       `}</style>
     </div>
   );

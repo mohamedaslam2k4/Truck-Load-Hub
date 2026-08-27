@@ -134,243 +134,69 @@ function Landing() {
       </footer>
 
       <style>{`
-        html {
-          scroll-behavior: smooth;
-        }
+       html { scroll-behavior: smooth; }
 
-        body {
-          margin: 0;
-          font-family: system-ui, -apple-system, sans-serif;
-          color: #222;
-          width: 100%;
-        }
+        body { margin: 0; font-family: system-ui, -apple-system, sans-serif; color: #222; width: 100%; }
 
-        a {
-          text-decoration: none;
-          padding: 5px 5px;
-        }
+        a { text-decoration: none; padding: 5px 5px; }
 
-        /* BUTTONS */
-        .primary-button { 
-          background: #222; 
-          color: #fff !important; 
-          padding: 7px 16px; 
-          border-radius: 6px; 
-          font-weight: 600; 
-          display: inline-block; 
-          cursor: pointer;
-          transition: background 0.2s ease-in-out; 
-        } 
+        .primary-button { background: #222; color: #fff !important; padding: 7px 16px; border-radius: 6px; font-weight: 600; display: inline-block; cursor: pointer; transition: background 0.2s ease-in-out; }
 
-        .secondary-button { 
-          background: #f0f0f0; 
-          color: #222 !important; 
-          padding: 7px 16px; 
-          border-radius: 6px; 
-          font-weight: 600; 
-          display: inline-block; 
-          border: 1.3px solid #464646; 
-          cursor: pointer;
-          transition: background 0.2s ease-in-out, border-color 0.2s ease-in-out;
-        }
+        .secondary-button { background: #f0f0f0; color: #222 !important; padding: 7px 16px; border-radius: 6px; font-weight: 600; display: inline-block; border: 1.3px solid #464646; cursor: pointer; transition: background 0.2s ease-in-out, border-color 0.2s ease-in-out; }
 
-        .primary-button:hover {
-          background: #444; 
-        }
+        .primary-button:hover { background: #444; }
 
-        .secondary-button:hover {
-          background: #e0e0e0; 
-          border-color: #999; 
-        }
+        .secondary-button:hover { background: #e0e0e0; border-color: #999; }
 
-        /* NAVBAR */
-        .navbar {
-          width: 100%;
-          height: 70px;
-          background: white;
-          border-bottom: 1px solid #696868;
-          position: sticky;
-          top: 0;
-          z-index: 1000;
-        }
+        .navbar { width: 100%; height: 70px; background: white; border-bottom: 1px solid #696868; position: sticky; top: 0; z-index: 1000; }
 
-        .nav-container {
-          max-width: 1300px;
-          height: 100%;
-          margin: 0 auto;
-          padding: 0 6%;
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-        }
+        .nav-container { max-width: 1300px; height: 100%; margin: 0 auto; padding: 0 6%; display: flex; align-items: center; justify-content: space-between; }
 
-        .logo {
-          display: flex;
-          flex-direction: row;
-          align-items: center;
-          font-weight: bold;
-          color: #222;
-          font-size: 24px;
-        }
+        .logo { display: flex; flex-direction: row; align-items: center; font-weight: bold; color: #222; font-size: 24px; }
 
-        .logo img { 
-          width: 60px;
-          height: 60px;
-        }
+        .logo img { width: 60px; height: 60px; }
 
-        .nav-links {
-          display: flex;
-          align-items: center;
-          gap: 20px;
-        }
+        .nav-links { display: flex; align-items: center; gap: 20px; }
 
-        .nav-links a {
-          color: #0a0909;
-        }
+        .nav-links a { color: #0a0909; }
 
-        .nav-links a:hover {
-          background: #817d7d; 
-          border-radius: 5px;
-          transition: background 0.2s ease-in-out; 
-        }
+        .nav-links a:hover { background: #817d7d; border-radius: 5px; transition: background 0.2s ease-in-out; }
 
-        /* HERO */
-        .hero { 
-          width: 100%;
-          padding: 100px 6%; 
-          text-align: center; 
-          background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('/hero.png') no-repeat center/cover; 
-          box-sizing: border-box;
-        }
+        .hero { width: 100%; padding: 100px 6%; text-align: center; background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('/hero.png') no-repeat center/cover; box-sizing: border-box; }
 
-        .hero-content {
-          background-color: rgba(226, 226, 226, 0.8); 
-          border-radius: 8px;
-          padding: 5px 20px 20px;
-          display: inline-block;
-          max-width: 1000px;
-          width: 100%;
-          box-sizing: border-box;
-        }
+        .hero-content { background-color: rgba(226, 226, 226, 0.8); border-radius: 8px; padding: 5px 20px 20px; display: inline-block; max-width: 1000px; width: 100%; box-sizing: border-box; }
 
-        .hero h1 { 
-          font-size: 60px; 
-          margin-bottom: 16px; 
-          color: #000; 
-        } 
+        .hero h1 { font-size: 60px; margin-bottom: 16px; color: #000; }
 
-        .hero p { 
-          font-size: 18px; 
-          color: #111; 
-          margin-bottom: 20px; 
-        } 
+        .hero p { font-size: 18px; color: #111; margin-bottom: 20px; }
 
-        .hero-buttons { 
-          display: flex; 
-          gap: 15px; 
-          justify-content: center; 
-          margin-top: 20px;
-        }
+        .hero-buttons { display: flex; gap: 15px; justify-content: center; margin-top: 20px; }
 
-        /* HOW IT WORKS */
-        .how-it-works {
-          width: 100%;
-          padding: 65px 6%;
-          text-align: center;
-          background: #a8a8a8;
-          box-sizing: border-box;
-        }
+        .how-it-works { width: 100%; padding: 65px 6%; text-align: center; background: #a8a8a8; box-sizing: border-box; }
 
-        .section-container {
-          max-width: 1300px;
-          margin: 0 auto;
-        }
+        .section-container { max-width: 1300px; margin: 0 auto; }
 
-        .how-it-works h2 {
-          font-size: 35px;
-          margin-bottom: 20px;
-          text-align: center;
-        }
+        .how-it-works h2 { font-size: 35px; margin-bottom: 20px; text-align: center; }
 
-        .steps {
-          display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-          gap: 24px;
-          margin-top: 40px;
-        }
+        .steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 24px; margin-top: 40px; }
 
-        .step {
-          padding: 24px;
-          background: #f9f9f9;
-          border-radius: 8px;
-          border: 2px solid #9b9b9b;
-        }
+        .step { padding: 24px; background: #f9f9f9; border-radius: 8px; border: 2px solid #9b9b9b; }
 
-        .step-number {
-          font-size: 28px;
-          font-weight: bold;
-          color: #f5f4f4;
-          background: #9b9b9b;
-          border-radius: 8px;
-          margin-bottom: 10px;
-        }
+        .step-number { font-size: 28px; font-weight: bold; color: #f5f4f4; background: #9b9b9b; border-radius: 8px; margin-bottom: 10px; }
 
-        /* ROLE SECTION */
-        .role-section {
-          width: 100%;
-          padding: 80px 6% 40px;
-          box-sizing: border-box;
-        }
+        .role-section { width: 100%; padding: 80px 6% 40px; box-sizing: border-box; }
 
-        .role-card {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          background: #fff;
-          border: 1px solid #9b9b9b;
-          border-radius: 8px;
-          padding: 30px;
-          max-width: 900px;
-          margin: 0 auto;
-        }
+        .role-card { display: flex; justify-content: space-between; align-items: center; background: #fff; border: 1px solid #9b9b9b; border-radius: 8px; padding: 30px; max-width: 900px; margin: 0 auto; }
 
-        /* CONTACT */
-        .contact-section {
-          width: 100%;
-          padding: 40px 6%;
-          background: #e2e2e2;
-          text-align: center;
-          box-sizing: border-box;
-        }
+        .contact-section { width: 100%; padding: 40px 6%; background: #e2e2e2; text-align: center; box-sizing: border-box; }
 
-        .contact-section h2 {
-          font-size: 35px;
-          margin-bottom: 30px;
-        }
+        .contact-section h2 { font-size: 35px; margin-bottom: 30px; }
 
-        .contact-info {
-          display: flex;
-          justify-content: center;
-          gap: 100px;
-          margin: 24px 0;
-          line-height: 1.8;
-        }
+        .contact-info { display: flex; justify-content: center; gap: 100px; margin: 24px 0; line-height: 1.8; }
 
-        /* FOOTER */
-        .footer {
-          width: 100%;
-          padding: 20px 6%;
-          text-align: center;
-          border-top: 1px solid #eee;
-          color: #060606;
-          background: #a8a8a8;
-          box-sizing: border-box;
-        }
+        .footer { width: 100%; padding: 20px 6%; text-align: center; border-top: 1px solid #eee; color: #060606; background: #a8a8a8; box-sizing: border-box; }
 
-        /* SCROLL OFFSET */
-        #home, #how-it-works, #drivers, #loaders, #contact {
-          scroll-margin-top: 70px;
-        }
+        #home, #how-it-works, #drivers, #loaders, #contact { scroll-margin-top: 70px; }
       `}</style>
     </div>
   );
