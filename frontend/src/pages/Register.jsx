@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { Link, useNavigate, useLocation } from "react-router-dom"; // 1. Added useLocation
 import { API_URL } from "../api";
 import logo from "/logo.png";
 
@@ -22,9 +22,19 @@ const initialFormData = {
 
 function Register() {
   const navigate = useNavigate();
-  const [role, setRole] = useState("");
+  const location = useLocation(); // 2. Initialize location hook
+  
+  // 3. Initialize state with defaultRole if passed via navigation
+  const [role, setRole] = useState(location.state?.defaultRole || "");
   const [formData, setFormData] = useState(initialFormData);
   const [loading, setLoading] = useState(false);
+
+  // 4. Update role state whenever location.state changes
+  useEffect(() => {
+    if (location.state?.defaultRole) {
+      setRole(location.state.defaultRole);
+    }
+  }, [location.state]);
 
   // Handle input change
   const handleChange = (e) => {
@@ -125,11 +135,9 @@ function Register() {
       if (!response.ok) {
         let serverMsg = "Registration failed";
 
-        // Handle string errors (e.g. 400 "Email already registered")
         if (typeof data.detail === "string") {
           serverMsg = data.detail;
         } 
-        // Handle FastAPI 422 Validation Error arrays
         else if (Array.isArray(data.detail) && data.detail.length > 0) {
           serverMsg = data.detail
             .map((err) => `${err.loc[err.loc.length - 1]}: ${err.msg}`)
@@ -167,108 +175,107 @@ function Register() {
         <h2>Create an Account</h2>
         <p>Register as a Driver or Loader</p>
 
-     <form onSubmit={handleSubmit}>
-        <div className="form-group">
-          <label htmlFor="name">Full Name</label>
-          <input type="text" id="name" name="name" placeholder="Enter your name" value={formData.name} onChange={handleChange} maxLength={50} required />
-        </div>
-
-        <div className="form-group">
-          <label htmlFor="email">Email</label>
-          <input type="email" id="email" name="email" placeholder="Enter your email" value={formData.email} onChange={handleChange} maxLength={50} required />
-        </div>
-
-        <div className="form-group">
-          <label htmlFor="phone">Phone</label>
-          <input type="tel" id="phone" name="phone" placeholder="Enter your 10 digit phone number" value={formData.phone} onChange={handleChange} maxLength={10} required />
-        </div>
-
-        <div className="form-group">
-          <label htmlFor="city">City</label>
-          <input type="text" id="city" name="city" placeholder="Enter your city" value={formData.city} onChange={handleChange} maxLength={30} required />
-        </div>
-
-        <div className="form-group">
-          <label htmlFor="role">Register As</label>
-          <select id="role" value={role} onChange={handleRoleChange} required>
-            <option value="">Select Role</option>
-            <option value="DRIVER">Driver</option>
-            <option value="LOADER">Loader</option>
-          </select>
-        </div>
-
-        {role === "DRIVER" && (
-          <div className="profile-section">
-            <h3>Driver Information</h3>
-            
-            
-            <div className="form-group">
-              <label htmlFor="experience">Experience (years)</label>
-              <input  type="number" id="experience"   name="experience"  placeholder="Experience in years"   min="0"  max="100" value={formData.experience}  onChange={handleChange}  onInput={(e) => { if (e.target.value.length > 3) e.target.value = e.target.value.slice(0, 3);  if (Number(e.target.value) > 100) e.target.value = 100; }}  required  />
-            </div>
-
-            <div className="form-group">
-              <label htmlFor="truckNumber">Truck Number</label>
-              <input type="text" id="truckNumber" name="truckNumber" placeholder="Enter truck number" value={formData.truckNumber} onChange={handleChange} maxLength={15} required />
-            </div>
-
-            <div className="form-group">
-              <label htmlFor="truckType">Truck Type</label>
-              <select id="truckType" name="truckType" value={formData.truckType} onChange={handleChange} required>
-                <option value="" disabled>Select truck type</option>
-                <option value="pickup">Pickup Truck</option>
-                <option value="box_truck">Box / Delivery Truck</option>
-                <option value="flatbed">Flatbed Truck</option>
-                <option value="semi_trailer">Semi-Trailer / Tractor-Trailer</option>
-                <option value="dump_truck">Dump Truck</option>
-              </select>
-            </div>
-
-
-            <div className="form-group">
-              <label htmlFor="capacity">Capacity (tons)</label>
-              <input  type="number"  id="capacity" name="capacity"  placeholder="Capacity in tons"   min="0"   max="10000" value={formData.capacity}   onChange={handleChange}  onInput={(e) => {  if (e.target.value.length > 5) e.target.value = e.target.value.slice(0, 5);  if (Number(e.target.value) > 10000) e.target.value = 10000;}}required />
-            </div>
-
-            <div className="form-group">
-              <label htmlFor="licenseNumber">License Number</label>
-              <input type="text" id="licenseNumber" name="licenseNumber" placeholder="Enter license number" value={formData.licenseNumber} onChange={handleChange} maxLength={20} required />
-            </div>
+        <form onSubmit={handleSubmit}>
+          <div className="form-group">
+            <label htmlFor="name">Full Name</label>
+            <input type="text" id="name" name="name" placeholder="Enter your name" value={formData.name} onChange={handleChange} maxLength={50} required />
           </div>
-        )}
 
-        {role === "LOADER" && (
-          <div className="profile-section">
-            <h3>Loader Information</h3>
-            <div className="form-group">
-              <label htmlFor="companyName">Company Name</label>
-              <input type="text" id="companyName" name="companyName" placeholder="Enter company name" value={formData.companyName} onChange={handleChange} maxLength={50} required />
-            </div>
-            <div className="form-group">
-              <label htmlFor="contactPerson">Contact Person</label>
-              <input type="text" id="contactPerson" name="contactPerson" placeholder="Enter contact person" value={formData.contactPerson} onChange={handleChange} maxLength={50} required />
-            </div>
-            <div className="form-group">
-              <label htmlFor="businessType">Business Type</label>
-              <input type="text" id="businessType" name="businessType" placeholder="Example: Manufacturing" value={formData.businessType} onChange={handleChange} maxLength={50} required />
-            </div>
+          <div className="form-group">
+            <label htmlFor="email">Email</label>
+            <input type="email" id="email" name="email" placeholder="Enter your email" value={formData.email} onChange={handleChange} maxLength={50} required />
           </div>
-        )}
 
-        <div className="form-group">
-          <label htmlFor="password">Password</label>
-          <input type="password" id="password" name="password" placeholder="Enter your password" value={formData.password} onChange={handleChange} maxLength={50} required />
-        </div>
+          <div className="form-group">
+            <label htmlFor="phone">Phone</label>
+            <input type="tel" id="phone" name="phone" placeholder="Enter your 10 digit phone number" value={formData.phone} onChange={handleChange} maxLength={10} required />
+          </div>
 
-        <div className="form-group">
-          <label htmlFor="confirmPassword">Confirm Password</label>
-          <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Confirm your password" value={formData.confirmPassword} onChange={handleChange} maxLength={50} required />
-        </div>
+          <div className="form-group">
+            <label htmlFor="city">City</label>
+            <input type="text" id="city" name="city" placeholder="Enter your city" value={formData.city} onChange={handleChange} maxLength={30} required />
+          </div>
 
-        <button type="submit" className="primary-button" disabled={loading}>
-          {loading ? "Registering..." : "Create Account"}
-        </button>
-      </form>
+          <div className="form-group">
+            <label htmlFor="role">Register As</label>
+            <select id="role" value={role} onChange={handleRoleChange} required>
+              <option value="">Select Role</option>
+              <option value="DRIVER">Driver</option>
+              <option value="LOADER">Loader</option>
+            </select>
+          </div>
+
+          {role === "DRIVER" && (
+            <div className="profile-section">
+              <h3>Driver Information</h3>
+              
+              <div className="form-group">
+                <label htmlFor="experience">Experience (years)</label>
+                <input type="number" id="experience" name="experience" placeholder="Experience in years" min="0" max="100" value={formData.experience} onChange={handleChange} onInput={(e) => { if (e.target.value.length > 3) e.target.value = e.target.value.slice(0, 3); if (Number(e.target.value) > 100) e.target.value = 100; }} required />
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="truckNumber">Truck Number</label>
+                <input type="text" id="truckNumber" name="truckNumber" placeholder="Enter truck number" value={formData.truckNumber} onChange={handleChange} maxLength={15} required />
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="truckType">Truck Type</label>
+                <select id="truckType" name="truckType" value={formData.truckType} onChange={handleChange} required>
+                  <option value="" disabled>Select truck type</option>
+                  <option value="pickup">Pickup Truck</option>
+                  <option value="box_truck">Box / Delivery Truck</option>
+                  <option value="flatbed">Flatbed Truck</option>
+                  <option value="semi_trailer">Semi-Trailer / Tractor-Trailer</option>
+                  <option value="dump_truck">Dump Truck</option>
+                </select>
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="capacity">Capacity (tons)</label>
+                <input type="number" id="capacity" name="capacity" placeholder="Capacity in tons" min="0" max="10000" value={formData.capacity} onChange={handleChange} onInput={(e) => { if (e.target.value.length > 5) e.target.value = e.target.value.slice(0, 5); if (Number(e.target.value) > 10000) e.target.value = 10000;}} required />
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="licenseNumber">License Number</label>
+                <input type="text" id="licenseNumber" name="licenseNumber" placeholder="Enter license number" value={formData.licenseNumber} onChange={handleChange} maxLength={20} required />
+              </div>
+            </div>
+          )}
+
+          {role === "LOADER" && (
+            <div className="profile-section">
+              <h3>Loader Information</h3>
+              <div className="form-group">
+                <label htmlFor="companyName">Company Name</label>
+                <input type="text" id="companyName" name="companyName" placeholder="Enter company name" value={formData.companyName} onChange={handleChange} maxLength={50} required />
+              </div>
+              <div className="form-group">
+                <label htmlFor="contactPerson">Contact Person</label>
+                <input type="text" id="contactPerson" name="contactPerson" placeholder="Enter contact person" value={formData.contactPerson} onChange={handleChange} maxLength={50} required />
+              </div>
+              <div className="form-group">
+                <label htmlFor="businessType">Business Type</label>
+                <input type="text" id="businessType" name="businessType" placeholder="Example: Manufacturing" value={formData.businessType} onChange={handleChange} maxLength={50} required />
+              </div>
+            </div>
+          )}
+
+          <div className="form-group">
+            <label htmlFor="password">Password</label>
+            <input type="password" id="password" name="password" placeholder="Enter your password" value={formData.password} onChange={handleChange} maxLength={50} required />
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="confirmPassword">Confirm Password</label>
+            <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Confirm your password" value={formData.confirmPassword} onChange={handleChange} maxLength={50} required />
+          </div>
+
+          <button type="submit" className="primary-button" disabled={loading}>
+            {loading ? "Registering..." : "Create Account"}
+          </button>
+        </form>
+        
         <p className="auth-link">
           Already have an account? <Link to="/login">Login</Link>
         </p>
