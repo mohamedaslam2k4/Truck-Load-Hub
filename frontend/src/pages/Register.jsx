@@ -22,14 +22,14 @@ const initialFormData = {
 
 function Register() {
   const navigate = useNavigate();
-  const location = useLocation(); // 2. Initialize location hook
+  const location = useLocation(); 
   
-  // 3. Initialize state with defaultRole if passed via navigation
+
   const [role, setRole] = useState(location.state?.defaultRole || "");
   const [formData, setFormData] = useState(initialFormData);
   const [loading, setLoading] = useState(false);
 
-  // 4. Update role state whenever location.state changes
+ 
   useEffect(() => {
     if (location.state?.defaultRole) {
       setRole(location.state.defaultRole);
