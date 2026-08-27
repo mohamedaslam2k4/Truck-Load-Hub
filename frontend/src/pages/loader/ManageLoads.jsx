@@ -6,6 +6,8 @@ function ManageLoads() {
   const [showForm, setShowForm] = useState(false);
   const [loads, setLoads] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [submitting, setSubmitting] = useState(false);
+  const [cancellingId, setCancellingId] = useState(null);
   const [filter, setFilter] = useState("ALL");
   const [formData, setFormData] = useState({
     pickup: "",
@@ -19,16 +21,13 @@ function ManageLoads() {
     description: "",
   });
 
-
   // Fallback to _id or id depending on database model
   const currentUser = JSON.parse(localStorage.getItem("user") || "{}");
   const loaderId = currentUser.id || currentUser._id;
 
   const todayStr = new Date().toLocaleDateString("en-CA");
 
- 
   const fetchMyLoads = async () => {
-    
     if (!loaderId) {
       setLoading(false);
       return;
@@ -83,6 +82,7 @@ function ManageLoads() {
     };
 
     try {
+      setSubmitting(true);
       const response = await fetch(`${API_URL}/loads`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -113,6 +113,8 @@ function ManageLoads() {
     } catch (error) {
       console.error("Create load error:", error);
       alert("Unable to connect to server.");
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -121,6 +123,7 @@ function ManageLoads() {
     if (!confirmCancel) return;
 
     try {
+      setCancellingId(loadId);
       const response = await fetch(`${API_URL}/loads/${loadId}/cancel`, {
         method: "PUT",
       });
@@ -136,6 +139,8 @@ function ManageLoads() {
     } catch (error) {
       console.error("Cancel load error:", error);
       alert("Unable to connect to server.");
+    } finally {
+      setCancellingId(null);
     }
   };
 
@@ -163,7 +168,7 @@ function ManageLoads() {
               <p className="section-description">
                 Enter the details of the load you want to publish.
               </p>
-             <form className="load-form" onSubmit={handleCreateLoad}>
+              <form className="load-form" onSubmit={handleCreateLoad}>
                 <div className="form-grid">
                   <div className="form-group">
                     <label htmlFor="pickup">Pickup Location</label>
@@ -202,99 +207,104 @@ function ManageLoads() {
                   <label htmlFor="description">Description</label>
                   <textarea id="description" name="description" rows="4" placeholder="Enter additional load details..." value={formData.description} onChange={handleChange} maxLength={200} />
                 </div>
-                <button type="submit" className="create-button">Create Load</button>
+                <button type="submit" className="create-button" disabled={submitting}>
+                  {submitting ? "Creating Load..." : "Create Load"}
+                </button>
               </form>
-           </Card>
+            </Card>
+          </div>
+        )}
+
+        {/* MY LOADS */}
+        <div className="my-loads-section">
+          <div className="section-header">
+            <div>
+              <h2>My Loads</h2>
+              <p>Loads created by you.</p>
+            </div>
+            <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+              <select className="filter-select" value={filter} onChange={(e) => setFilter(e.target.value)}>
+                <option value="ALL">All Loads</option>
+                <option value="AVAILABLE">Available</option>
+                <option value="BOOKED">Booked</option>
+                <option value="CANCELLED">Cancelled</option>
+                <option value="COMPLETED">Completed</option>
+              </select>
+              <span className="load-count">{filteredLoads.length} Loads</span>
+            </div>
+          </div>
+
+          <div className="loads-grid">
+            {loading ? (
+              <p>Loading your loads...</p>
+            ) : filteredLoads.length === 0 ? (
+              <div className="empty-state">
+                <h3>No Loads Found</h3>
+                <p>No loads match the selected filter criteria.</p>
+              </div>
+            ) : (
+              filteredLoads.map((load) => {
+                const currentLoadId = load.id || load._id;
+                const status = load.status || "AVAILABLE";
+                const isCancelling = cancellingId === currentLoadId;
+
+                return (
+                  <Card key={currentLoadId}>
+                    <div className="load-header">
+                      <span className="load-id">Load # {currentLoadId}</span>
+                      <div className="route">
+                        <span>{load.pickup}</span>
+                        <span className="arrow">→</span>
+                        <span>{load.destination}</span>
+                      </div>
+                      <span className={`status ${status.toLowerCase()}`}>{status}</span>
+                    </div>
+
+                    <div className="load-details">
+                      <div className="detail">
+                        <strong>Load Type : </strong>
+                        <span>{load.loadType || "N/A"}</span>
+                      </div>
+                      <div className="detail">
+                        <strong>Weight :</strong>
+                        <span>{load.weight ? `${load.weight} Tons` : "N/A"}</span>
+                      </div>
+                      <div className="detail">
+                        <strong>Truck Type :</strong>
+                        <span>{load.truckType || "N/A"}</span>
+                      </div>
+                      <div className="detail">
+                        <strong>Pickup Date :</strong>
+                        <span>{load.pickupDate || "N/A"}</span>
+                      </div>
+                    </div>
+
+                    <div className="price">
+                      <strong>Price Range :</strong>
+                      <strong>
+                        ₹{Number(load.minPrice).toLocaleString()} - ₹{Number(load.maxPrice).toLocaleString()}
+                      </strong>
+                    </div>
+
+                    {load.description && (
+                      <div className="description">
+                        <strong>Description : </strong>
+                        <span>{load.description}</span>
+                      </div>
+                    )}
+
+                    {status === "AVAILABLE" && (
+                      <button type="button" className="cancel-button" disabled={isCancelling}  onClick={() => handleCancelLoad(currentLoadId)} >
+                        {isCancelling ? "Cancelling..." : "Cancel Load"}
+                      </button>
+                    )}
+                  </Card>
+                );
+              })
+            )}
+          </div>
         </div>
-              )}
-              
-              {/* MY LOADS */}
-              <div className="my-loads-section">
-              <div className="section-header">
-                <div>
-                  <h2>My Loads</h2>
-                  <p>Loads created by you.</p>
-                </div>
-                <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-                  <select className="filter-select" value={filter} onChange={(e) => setFilter(e.target.value)}>
-                    <option value="ALL">All Loads</option>
-                    <option value="AVAILABLE">Available</option>
-                    <option value="BOOKED">Booked</option>
-                    <option value="CANCELLED">Cancelled</option>
-                    <option value="COMPLETED">Completed</option>
-                  </select>
-                  <span className="load-count">{filteredLoads.length} Loads</span>
-                </div>
-              </div>
-              
-              <div className="loads-grid">
-                {loading ? (
-                  <p>Loading your loads...</p>
-                ) : filteredLoads.length === 0 ? (
-                  <div className="empty-state">
-                    <h3>No Loads Found</h3>
-                    <p>No loads match the selected filter criteria.</p>
-                  </div>
-                ) : (
-                  filteredLoads.map((load) => {
-                    const currentLoadId = load.id || load._id;
-                    const status = load.status || "AVAILABLE";
-              
-                    return (
-                      <Card key={currentLoadId}>
-                        <div className="load-header">
-                          <span className="load-id">Load # {currentLoadId}</span>
-                          <div className="route">
-                            <span>{load.pickup}</span>
-                            <span className="arrow">→</span>
-                            <span>{load.destination}</span>
-                          </div>
-                          <span className={`status ${status.toLowerCase()}`}>{status}</span>
-                        </div>
-              
-                        <div className="load-details">
-                          <div className="detail">
-                            <strong>Load Type : </strong>
-                            <span>{load.loadType || "N/A"}</span>
-                          </div>
-                          <div className="detail">
-                            <strong>Weight :</strong>
-                            <span>{load.weight ? `${load.weight} Tons` : "N/A"}</span>
-                          </div>
-                          <div className="detail">
-                            <strong>Truck Type :</strong>
-                            <span>{load.truckType || "N/A"}</span>
-                          </div>
-                          <div className="detail">
-                            <strong>Pickup Date :</strong>
-                            <span>{load.pickupDate || "N/A"}</span>
-                          </div>
-                        </div>
-              
-                        <div className="price">
-                          <strong>Price Range :</strong>
-                          <strong>
-                            ₹{Number(load.minPrice).toLocaleString()} - ₹{Number(load.maxPrice).toLocaleString()}
-                          </strong>
-                        </div>
-              
-                        {load.description && (
-                          <div className="description">
-                            <strong>Description : </strong>
-                            <span>{load.description}</span>
-                          </div>
-                        )}
-              
-                        {status === "AVAILABLE" && (
-                          <button type="button" className="cancel-button" onClick={() => handleCancelLoad(currentLoadId)}>Cancel Load</button>
-                        )}
-                      </Card>
-                    );
-                  })
-                )}
-              </div>
-              </div>
-              </div>
+      </div>
 
       <style>{`
         .manage-loads-page { width: 100%; }
@@ -315,6 +325,7 @@ function ManageLoads() {
         .form-group textarea { resize: vertical; }
         .form-group input:focus, .form-group textarea:focus { outline: none; border-color: #222; }
         .create-button { width: 100%; padding: 13px; border: none; border-radius: 6px; background: #222; color: white; font-weight: 600; cursor: pointer; }
+        .create-button:disabled, .cancel-button:disabled { opacity: 0.6; cursor: not-allowed; }
         .my-loads-section { margin-top: 10px; }
         .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
         .section-header h2 { margin: 0 0 5px; font-size: 22px; }
